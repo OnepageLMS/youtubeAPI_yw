@@ -104,16 +104,15 @@ public class HomeController {
     	
         if (videos != null && videos.size() > 0) {
             model.addAttribute("numberOfVideos", videos.size());
+            System.out.println("Success!\n");
         } else {
-        	System.out.println("error with get the list of youtube videos!\n");
+        	System.out.println("Error!\n");
             model.addAttribute("numberOfVideos", 0);
         }
     	
         //put it in the model
         model.addAttribute("videos", videos);
         
-        System.out.println("Success to get the list of youtube videos!\n");
-
         return "redirect:main";
 	}
 }

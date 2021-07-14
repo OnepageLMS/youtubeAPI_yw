@@ -16,13 +16,6 @@
 		<jackson.version>2.12.1</jackson.version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>google-api-services</id>
-			<url>http://google-api-client-libraries.appspot.com/mavenrepo</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<!-- Spring -->
 		<dependency>
@@ -189,20 +182,12 @@
 			<artifactId>google-api-services-youtube</artifactId>
 			<version>v3-rev222-1.25.0</version>
 		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.google.http-client/google-http-client-jackson2 -->
+		
 		<dependency>
-			<groupId>com.google.http-client</groupId>
-			<artifactId>google-http-client-jackson2</artifactId>
-			<version>1.39.2</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client-jackson2 -->
-		<dependency>
-			<groupId>com.google.api-client</groupId>
-			<artifactId>google-api-client-jackson2</artifactId>
-			<version>1.20.0</version>
-		</dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-storage</artifactId>
+            <version>v1-rev158-1.25.0</version>
+        </dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client-gson -->
 		<dependency>
@@ -211,6 +196,19 @@
 			<version>1.31.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.32.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.google.http-client/google-http-client -->
+		<dependency>
+			<groupId>com.google.http-client</groupId>
+			<artifactId>google-http-client</artifactId>
+			<version>1.39.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.google.http-client</groupId>
