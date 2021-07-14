@@ -1,10 +1,11 @@
 package com.mycom.myapp;
 
-import java.util.Map;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.mycom.myapp.youtube.youtubeProvider;
+import com.mycom.myapp.youtube.youtubeVO;
+
 
 /**
  * Handles requests for the application home page.
@@ -31,6 +34,9 @@ public class HomeController {
 	final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
 	
 	final static String GOOGLE_YOUTUBE_REQUEST = "https://www.googleapis.com/youtube/v3/search";
+	
+	@Autowired
+	private youtubeProvider service;
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -86,13 +92,28 @@ public class HomeController {
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String main(Model model) {
 		
-		return "main";
-	}
-	
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
-	public String youtubeSearch(Model model) {
 		
 		return "main";
 	}
 	
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String searchAction(String keyword, Model model) {
+    	
+      //get the list of YouTube videos that match the search term
+        List<youtubeVO> videos = service.fetchVideosByQuery(keyword);
+    	
+        if (videos != null && videos.size() > 0) {
+            model.addAttribute("numberOfVideos", videos.size());
+        } else {
+        	System.out.println("error with get the list of youtube videos!\n");
+            model.addAttribute("numberOfVideos", 0);
+        }
+    	
+        //put it in the model
+        model.addAttribute("videos", videos);
+        
+        System.out.println("Success to get the list of youtube videos!\n");
+
+        return "redirect:main";
+	}
 }

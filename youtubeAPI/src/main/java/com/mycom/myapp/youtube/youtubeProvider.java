@@ -1,5 +1,7 @@
 package com.mycom.myapp.youtube;
 
+import java.util.List;
+
 public interface youtubeProvider {
-	youtubeVO get();
+	public List<youtubeVO> fetchVideosByQuery(String keyword);
 }
