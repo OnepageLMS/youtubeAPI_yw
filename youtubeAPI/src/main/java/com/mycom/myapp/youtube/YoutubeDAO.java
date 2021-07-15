@@ -16,12 +16,14 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.ResourceId;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.Thumbnail;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 
 @Repository
@@ -33,7 +35,7 @@ public class YoutubeDAO {
 	 */
 	private static final long NUMBER_OF_VIDEOS_RETURNED = 25;
 	private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-	private static final JsonFactory JSON_FACTORY = new GsonFactory();
+	private static final JsonFactory JSON_FACTORY = new JacksonFactory(); //GsonFactory
 
 	public List<youtubeVO> fetchVideosByQuery(String keyword) {
 
@@ -49,12 +51,15 @@ public class YoutubeDAO {
 
 		List<youtubeVO> videos = new ArrayList<youtubeVO>();
 		try {
-
-			YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, (new HttpRequestInitializer() {
+			YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
+		          public void initialize(HttpRequest request) throws IOException {
+		          }
+		          
+		        }).setApplicationName("youtube-search").build();
+			
+			/*YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, (new HttpRequestInitializer() {
 		        public void initialize(HttpRequest request) throws IOException {}
-		      })).setApplicationName("youtube-search").build();
-
-			System.out.println("??\n");
+		      })).setApplicationName("youtube-search").build();*/
 
 			// define what info we want to get
 			YouTube.Search.List search = youtube.search().list("id,snippet");
@@ -152,12 +157,11 @@ public class YoutubeDAO {
 
 			// Double checks the kind is video.
 			if (rId.getKind().equals("youtube#video")) {
-				// Thumbnail thumbnail =
-				// singleVideo.getSnippet().getThumbnails().get("default");
+				Thumbnail thumbnail = (Thumbnail) singleVideo.getSnippet().getThumbnails().get("default");
 
 				System.out.println(" Video Id" + rId.getVideoId());
 				System.out.println(" Title: " + singleVideo.getSnippet().getTitle());
-				// System.out.println(" Thumbnail: " + thumbnail.getUrl());
+				System.out.println(" Thumbnail: " + thumbnail.getUrl());
 				System.out.println("\n-------------------------------------------------------------\n");
 			}
 		}
