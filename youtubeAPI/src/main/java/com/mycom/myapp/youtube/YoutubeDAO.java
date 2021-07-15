@@ -93,9 +93,7 @@ public class YoutubeDAO {
 				for (SearchResult result : searchResultList) {
 					youtubeVO video = new youtubeVO();
 					video.setTitle(result.getSnippet().getTitle());
-					video.setUrl(buildVideoUrl(result.getId().getVideoId()));
-					// video.setUrl(result.getId().getVideoId());
-
+					video.setVideoID(result.getId().getVideoId());
 					video.setThumbnailUrl(result.getSnippet().getThumbnails().getDefault().getUrl());
 					video.setDescription(result.getSnippet().getDescription());
 
@@ -119,17 +117,6 @@ public class YoutubeDAO {
 		}
 
 		return videos;
-	}
-
-	/**
-	 * Constructs the URL to play the YouTube video
-	 */
-	private String buildVideoUrl(String videoId) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("https://www.youtube.com/watch?v="); // 이부분 지우기?!
-		builder.append(videoId);
-
-		return builder.toString();
 	}
 
 	/*

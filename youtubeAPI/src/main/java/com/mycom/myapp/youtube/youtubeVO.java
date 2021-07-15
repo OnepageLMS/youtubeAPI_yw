@@ -3,7 +3,7 @@ package com.mycom.myapp.youtube;
 public class youtubeVO {
 	
 	private String title;
-    private String url;
+    private String videoID;
     private String thumbnailUrl;
     private String publishDate;
     private String description;
@@ -14,11 +14,11 @@ public class youtubeVO {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getUrl() {
-		return url;
+	public String getVideoID() {
+		return videoID;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+	public void setVideoID(String videoID) {
+		this.videoID = videoID;
 	}
 	public String getThumbnailUrl() {
 		return thumbnailUrl;

@@ -33,8 +33,6 @@ public class HomeController {
 	final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
 	final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
 	
-	final static String GOOGLE_YOUTUBE_REQUEST = "https://www.googleapis.com/youtube/v3/search";
-	
 	@Autowired
 	private youtubeProvider service;
 	
@@ -116,3 +114,4 @@ public class HomeController {
         return "redirect:main";
 	}
 }
+
