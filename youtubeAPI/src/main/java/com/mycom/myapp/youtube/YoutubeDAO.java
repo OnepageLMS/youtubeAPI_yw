@@ -36,11 +36,14 @@ public class YoutubeDAO {
 	private static final long NUMBER_OF_VIDEOS_RETURNED = 25;
 	private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 	private static final JsonFactory JSON_FACTORY = new JacksonFactory(); //GsonFactory
+	
+	//https://www.googleapis.com/youtube/v3/search?key=내KEY값 'GET' ?access_token=oauth2-token
 
-	public List<youtubeVO> fetchVideosByQuery(String keyword) {
+	public List<youtubeVO> fetchVideosByQuery(String keyword, String accessToken) {
 
 		/*
-		 * apikey를 root-context bean에 저장하기! Properties properties = new Properties();
+		 apikey를 root-context bean에 저장하기! 
+		 Properties properties = new Properties();
 		 * try { InputStream in = YoutubeDAO.class.getResourceAsStream("");
 		 * properties.load(in);
 		 * 
@@ -48,7 +51,9 @@ public class YoutubeDAO {
 		 * System.err.println("There was an error reading root-context : " +
 		 * e.getCause() + " : " + e.getMessage()); System.exit(1); }
 		 */
-
+		
+		String reuqestHTTP = "https://www.googleapis.com/youtube/v3/search?access_token=" + accessToken; 
+		
 		List<youtubeVO> videos = new ArrayList<youtubeVO>();
 		try {
 			YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +33,7 @@ public class HomeController {
 	final static String GOOGLE_AUTH_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 	final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
 	final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
+	static String accessToken = "";
 	
 	@Autowired
 	private youtubeProvider service;
@@ -81,7 +83,7 @@ public class HomeController {
 		GoogleOAuthResponse result = mapper.readValue(resultEntity.getBody(), new TypeReference<GoogleOAuthResponse>() {
 		});
 
-		model.addAttribute("accessToken", result.getAccessToken()); //accesss token 저장
+		accessToken = result.getAccessToken(); //accesss token 저장
 		
 		
 		return "redirect:/main";
@@ -90,7 +92,6 @@ public class HomeController {
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String main(Model model) {
 		
-		
 		return "main";
 	}
 	
@@ -98,7 +99,7 @@ public class HomeController {
 	public String searchAction(String keyword, Model model) {
     	
       //get the list of YouTube videos that match the search term
-        List<youtubeVO> videos = service.fetchVideosByQuery(keyword);
+        List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); //keyword, google OAuth2 accessToken 전달
     	
         if (videos != null && videos.size() > 0) {
             model.addAttribute("numberOfVideos", videos.size());
