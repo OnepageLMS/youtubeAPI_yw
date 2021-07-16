@@ -97,8 +97,15 @@ public class HomeController {
 	
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public String searchAction(String keyword, Model model) {
-    	
-      //get the list of YouTube videos that match the search term
+		System.out.println(accessToken);
+		String order = "relevance";
+		String maxResults="50";
+		String key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; //API key 
+		String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="+order+"&q="+keyword;
+		
+		//String requestURL = "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
+		
+		//get the list of YouTube videos that match the search term
         List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); //keyword, google OAuth2 accessToken 전달
     	
         if (videos != null && videos.size() > 0) {

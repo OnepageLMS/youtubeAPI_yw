@@ -23,10 +23,18 @@
 		$("#get_view").empty();
 		$("#nav_view").empty();
 		var order = "relevance";
-		var maxResults = "50";
+		var maxResults = "30";
 		var key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; //API key 
+		//var accessToken = "ya29.a0ARrdaM_R2D0RP4Zsjx_zliW1Xi9hDmZJ9jd0dy4SXyGoaikWXFpX9KWQVX64ss3HHB4RE1zpSJztWonIxrUKio_aO7XAc1hrNG4O1WQjSKSuesea8I7p7RXPlFhRIZ1sVwGboyCfWweJ_rKShZ82rqbyhTuW3A";
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
-				+ order + "&q=" + encodeURIComponent($getval) + "&key=" + key + "&maxResults=" + maxResults; 
+				+ order
+				+ "&q="
+				+ encodeURIComponent($getval)
+				+ "&key="
+				+ key
+				//+ "&access_token="
+				//+ accessToken
+				+ "&maxResults=" + maxResults;
 		console.log(sGetToken);
 		if (sGetToken != null) {
 			sTargetUrl += "&pageToken=" + sGetToken + "";
@@ -38,9 +46,9 @@
 			dataType : "jsonp",
 			success : function(jdata) {
 				console.log(jdata);
-				$(jdata.items).each( //받아온 youtube video list
+				$(jdata.items).each(
+						//받아온 youtube video list
 						function(i) {
-							//console.log(this.snippet.channelId);
 							$("#get_view").append(
 									'<p class="box"><a href="https://youtu.be/'+this.id.videoId+'">'
 											+ '<span>' + this.snippet.title
@@ -51,13 +59,13 @@
 								$("#nav_view").append(
 										'<a href="javascript:fnGetList(\''
 												+ jdata.prevPageToken
-												+ '\');"><이전페이지></a>');
+												+ '\');"><이전></a>');
 							}
 							if (jdata.nextPageToken) {
 								$("#nav_view").append(
 										'<a href="javascript:fnGetList(\''
 												+ jdata.nextPageToken
-												+ '\');"><다음페이지></a>');
+												+ '\');"><다음></a>');
 							}
 						});
 			},
@@ -82,13 +90,13 @@
 
 	<div id="nav_view"></div>
 
-	<!-- 
-	
-	 
+
+
+	<h2>Controller 전송</h2>
 	<form action="search">
 		검색창 <input type="text" name="keyword"
-			placeholder="For example: tom brady" /> <input type="hidden"
-			name="accessToken" /> <input type="submit" name="submit" />
+			placeholder="For example: tom brady" /> <input type="submit"
+			name="submit" />
 	</form>
 
 	<h2>검색 결과</h2>
@@ -111,7 +119,7 @@
 		</table>
 
 	</div>
-	-->
+
 
 </body>
 </html>
