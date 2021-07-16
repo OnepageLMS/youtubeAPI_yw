@@ -23,13 +23,22 @@
 		$("#get_view").empty();
 		$("#nav_view").empty();
 		var order = "relevance";
+		/*
+		date – 리소스를 만든 날짜를 기준으로 최근 항목부터 시간 순서대로 리소스를 정렬합니다.
+		rating – 높은 평가부터 낮은 평가순으로 리소스를 정렬합니다.
+		relevance – 검색 쿼리에 대한 관련성을 기준으로 리소스를 정렬합니다. 이 매개변수의 기본값입니다.
+		title – 제목에 따라 문자순으로 리소스를 정렬합니다.
+		videoCount – 업로드한 동영상 수에 따라 채널을 내림차순으로 정렬합니다.
+		viewCount – 리소스를 조회수가 높은 항목부터 정렬합니다.
+		*/
+		
 		var maxResults = "30";
 		var key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; //API key 
 		//var accessToken = "ya29.a0ARrdaM_R2D0RP4Zsjx_zliW1Xi9hDmZJ9jd0dy4SXyGoaikWXFpX9KWQVX64ss3HHB4RE1zpSJztWonIxrUKio_aO7XAc1hrNG4O1WQjSKSuesea8I7p7RXPlFhRIZ1sVwGboyCfWweJ_rKShZ82rqbyhTuW3A";
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
 				+ order
 				+ "&q="
-				+ encodeURIComponent($getval)
+				+ encodeURIComponent($getval) //encoding
 				+ "&key="
 				+ key
 				//+ "&access_token="
@@ -40,7 +49,7 @@
 			sTargetUrl += "&pageToken=" + sGetToken + "";
 		}
 		console.log(sTargetUrl);
-		$.ajax({
+		$.ajax({	//video like, length 정보 등도 같이 가져오기!
 			type : "POST",
 			url : sTargetUrl,
 			dataType : "jsonp",

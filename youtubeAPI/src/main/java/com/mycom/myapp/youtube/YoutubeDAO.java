@@ -52,11 +52,11 @@ public class YoutubeDAO {
 		 * e.getCause() + " : " + e.getMessage()); System.exit(1); }
 		 */
 		
-		String reuqestHTTP = "https://www.googleapis.com/youtube/v3/search?access_token=" + accessToken; 
+		//String reuqestHTTP = "https://www.googleapis.com/youtube/v3/search?access_token=" + accessToken; 
 		
 		List<youtubeVO> videos = new ArrayList<youtubeVO>();
 		try {
-			YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
+			YouTube youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() { //error 발생 구간 
 		          public void initialize(HttpRequest request) throws IOException {
 		          }
 		          
