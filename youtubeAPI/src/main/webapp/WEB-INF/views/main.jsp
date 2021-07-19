@@ -8,26 +8,26 @@
 <meta charset="UTF-8">
 <title>Youtube Search</title>
 <style>
-	.box {
-		padding: 10px 15px;
-	}
-	
-	.info {
-		font-size: 12px;
-	}
-	
-	img {
-		width:128px;
-		height:80px;
-		padding: 5px;
-	}
+.video {
+	padding: 7px;
+}
+
+.info {
+	font-size: 12px;
+}
+
+img {
+	width: 128px;
+	height: 80px;
+	padding: 5px;
+}
 </style>
 </head>
 <script src="https://code.jquery.com/jquery-3.5.1.js"
 	integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
 	crossorigin="anonymous"></script>
 
-<script>
+<script>	
 	function fnGetList(sGetToken) {
 		var $getval = $("#search_box").val();
 		var $getorder = $("#opt").val();
@@ -39,69 +39,97 @@
 		$("#get_view").empty();
 		$("#nav_view").empty();
 
+		var videoList; //youtube Search-API 결과 저장
+
 		var maxResults = "20";
-		var key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; //API key 
+		var key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c";
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
 				+ $getorder + "&q=" + encodeURIComponent($getval) //encoding
 				+ "&key=" + key
 				//+ "&access_token="
 				//+ accessToken
 				+ "&maxResults=" + maxResults + "&type=video";
-		//console.log(sGetToken);
 		if (sGetToken != null) {
 			sTargetUrl += "&pageToken=" + sGetToken + "";
 		}
-		$.ajax({ 
-			type : "POST",
-			url : sTargetUrl,
-			dataType : "jsonp",
-			success : function(jdata) {
-				//console.log(jdata);
-				$(jdata.items).each( //받아온 youtube video list
-						function(i) {
-							var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id="+ this.id.videoId + "&key=" + key;
-							var thumbnail = '<img src="https://img.youtube.com/vi/' + this.id.videoId + '/0.jpg">';
-							var url = '<a href="https://youtu.be/' + this.id.videoId + '">';
-							var title = this.snippet.title;
-							var viewCount, likeCount, dislikeCount = 0;
-							
-							$.ajax({
-								type : "GET",
-								url : getVideo,
-								dataType : "jsonp",
-								success : function(jdata2) {
-										console.log(jdata2)
-										viewCount = jdata2.items[0].statistics.viewCount;
-										likeCount = jdata2.items[0].statistics.likeCount;
-										dislikeCount = jdata2.items[0].statistics.dislikeCount;
-										$("#get_view").append(
-												'<div class="box">' +thumbnail + url + '<span>' + title + '</span></a>' + '<p class="info"> view: ' + viewCount + ' like: ' +  likeCount + ' dislike: '+ dislikeCount + '</p></div>');
-									}
+		$.ajax({
+				type : "POST",
+				url : sTargetUrl,
+				dataType : "jsonp",
+				
+				success : function(jdata) {
+					//videoList = jdata;
+					//console.log(jdata);
+					$(jdata.items).each(function(i) {
+									var id = this.id.videoId;
+									var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
+									var url = '<a href="https://youtu.be/' + id + '">';
+									var title = this.snippet.title;
+									var viewCount, likeCount, dislikeCount = 0;
+									var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id="
+										+ id
+										+ "&key="
+										+ key;
+									console.log(i + "--> jdata: " + title);
+									$.ajax({
+											type : "GET",
+											url : getVideo,
+											dataType : "jsonp",
+											success : function(jdata2) {
+												viewCount = jdata2.items[0].statistics.viewCount;
+												likeCount = jdata2.items[0].statistics.likeCount;
+												dislikeCount = jdata2.items[0].statistics.dislikeCount;
+												$("#get_view")
+														.append(
+																'<div class="video">'
+																		+ thumbnail
+																		+ url
+																		+ '<span>'
+																		+ title
+																		+ '</span></a>'
+																		+ '<p class="info"> view: '
+																		+ viewCount
+																		+ ' like: '
+																		+ likeCount
+																		+ ' dislike: '
+																		+ dislikeCount
+																		+ '</p></div>');
+												console.log("jdata2: " + title);
+												},
+												error : function(xhr, textStatus) {
+													console.log(xhr.responseText);
+													alert("video detail 에러");
+													return;
+												}
+											
+											})
 								})
-							
-						}).promise().done(
-						function() {
-							if (jdata.prevPageToken) {
-								$("#nav_view").append(
-										'<a href="javascript:fnGetList(\''
-												+ jdata.prevPageToken
-												+ '\');"><이전></a>');
-							}
-							if (jdata.nextPageToken) {
-								$("#nav_view").append(
-										'<a href="javascript:fnGetList(\''
-												+ jdata.nextPageToken
-												+ '\');"><다음></a>');
-							}
-						});
-			},
+							.promise()
+							.done(
+									function() {
+										if (jdata.prevPageToken) {
+											$("#nav_view")
+													.append(
+															'<a href="javascript:fnGetList(\''
+																	+ jdata.prevPageToken
+																	+ '\');"><이전></a>');
+										}
+										if (jdata.nextPageToken) {
+											$("#nav_view")
+													.append(
+															'<a href="javascript:fnGetList(\''
+																	+ jdata.nextPageToken
+																	+ '\');"><다음></a>');
+										}
+									});
+				},
 
-			error : function(xhr, textStatus) {
-				console.log(xhr.responseText);
-				alert("에러");
-				return;
-			}
-		});
+				error : function(xhr, textStatus) {
+					console.log(xhr.responseText);
+					alert("에러");
+					return;
+				}
+			});
 	}
 </script>
 
@@ -114,44 +142,36 @@
 			<option value="viewCount">조회순</option>
 			<option value="title">문자순</option>
 			<option value="rating">평가순</option>
-		</select>
+		</select> 
 		<input type="text" id="search_box">
-		<button onclick="fnGetList();">가져오기</button>
+		<button onclick="fnGetList();">검색</button>
 	</form>
 
 	<div id="get_view"></div>
 
 	<div id="nav_view"></div>
-
-
-	<!--  
-	<form action="search">
+	 
+	 <!-- 
+	<form action="main">
 		검색창 <input type="text" name="keyword"
 			placeholder="For example: tom brady" /> <input type="submit"
 			name="submit" />
 	</form>
-
+	
 	<h2>검색 결과</h2>
 	<div class="resultlist">
 		<table>
-			<tr>
-				<td>title</td>
-				<td>description</td>
-				<td>URL</td>
-				<td>publishDate</td>
-			</tr>
-			<c:forEach var="v" items="${videos}">
+			<c:forEach items="${videos}" var="v">
 				<tr>
 					<td>${v.title}</td>
 					<td>${v.description}</td>
-					<td>${v.url}</td>
-					<td>${v.publishDate}</td>
+					<td>${v.videoID}</td>
+					<td>${v.thumbnailUrl}</td>
 				</tr>
 			</c:forEach>
 		</table>
 
 	</div>
-	-->
-
+ 	-->
 </body>
 </html>

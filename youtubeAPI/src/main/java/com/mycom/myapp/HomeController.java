@@ -23,37 +23,36 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mycom.myapp.youtube.youtubeProvider;
 import com.mycom.myapp.youtube.youtubeVO;
 
-
 /**
  * Handles requests for the application home page.
  */
 @Controller
 public class HomeController {
-	
+
 	final static String GOOGLE_AUTH_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 	final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
 	final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
 	static String accessToken = "";
-	
+
 	@Autowired
 	private youtubeProvider service;
-	
+
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home() {
-		
+
 		return "home";
 	}
-	
+
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String google(RedirectAttributes rttr) {
 		String url = "redirect:https://accounts.google.com/o/oauth2/v2/auth?client_id=99431484339-5lvpv4ieg4gd75l57g0k4inh10tiqkdj.apps.googleusercontent.com&redirect_uri=http://localhost:8080/myapp/oauth2callback&response_type=code&scope=email%20profile%20openid&access_type=offline";
-		
+
 		return url;
 	}
-	
+
 	@RequestMapping(value = "/oauth2callback", method = RequestMethod.GET)
 	public String googleAuth(Model model, @RequestParam(value = "code") String authCode, HttpServletRequest request,
 			HttpSession session, RedirectAttributes redirectAttributes) throws Exception {
@@ -65,8 +64,8 @@ public class HomeController {
 		GoogleOAuthRequest googleOAuthRequestParam = new GoogleOAuthRequest();
 		googleOAuthRequestParam.setClientId("99431484339-5lvpv4ieg4gd75l57g0k4inh10tiqkdj.apps.googleusercontent.com");
 		googleOAuthRequestParam.setClientSecret("NwHS9eyyrYE5LYVy7c0CDIkv");
-		googleOAuthRequestParam.setCode(authCode); //access token과 교환할 수 있는 임시 인증 코드 
-		googleOAuthRequestParam.setRedirectUri("http://localhost:8080/myapp/oauth2callback"); 
+		googleOAuthRequestParam.setCode(authCode); // access token과 교환할 수 있는 임시 인증 코드
+		googleOAuthRequestParam.setRedirectUri("http://localhost:8080/myapp/oauth2callback");
 		googleOAuthRequestParam.setGrantType("authorization_code");
 
 		// JSON 파싱을 위한 기본값 세팅
@@ -83,43 +82,28 @@ public class HomeController {
 		GoogleOAuthResponse result = mapper.readValue(resultEntity.getBody(), new TypeReference<GoogleOAuthResponse>() {
 		});
 
-		accessToken = result.getAccessToken(); //accesss token 저장
-		
-		
+		accessToken = result.getAccessToken(); // accesss token 저장
+
 		return "redirect:/main";
 	}
-	
+
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
-	public String main(Model model) {
-		
+	public String main(Model model, String keyword) {
+		String order = "relevance";
+		String maxResults = "50";
+		String key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; // API key
+		String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="
+				+ keyword;
+
+		// String requestURL =
+		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
+
+		if (keyword != "") {
+			//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
+			//model.addAttribute("videos", videos);																
+		}
+
 		return "main";
 	}
-	
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
-	public String searchAction(String keyword, Model model) {
-		System.out.println(accessToken);
-		String order = "relevance";
-		String maxResults="50";
-		String key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; //API key 
-		String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="+order+"&q="+keyword;
-		
-		//String requestURL = "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
-		
-		//get the list of YouTube videos that match the search term
-        List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); //keyword, google OAuth2 accessToken 전달
-    	
-        if (videos != null && videos.size() > 0) {
-            model.addAttribute("numberOfVideos", videos.size());
-            System.out.println("Success!\n");
-        } else {
-        	System.out.println("Error!\n");
-            model.addAttribute("numberOfVideos", 0);
-        }
-    	
-        //put it in the model
-        model.addAttribute("videos", videos);
-        
-        return "redirect:main";
-	}
-}
 
+}
