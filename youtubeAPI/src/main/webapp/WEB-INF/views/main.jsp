@@ -66,6 +66,10 @@ img {
 				dataType : "jsonp",
 				async: false,
 				success : function(jdata) {
+					if (jdata.error) {
+						$("#nav_view")
+						.append('<p>정상적으로 검색이 되지 않았습니다! 나중에 다시 시도해주세요</p>');
+						}
 					console.log(jdata);
 					$(jdata.items).each(function(i) {
 						setList(i, this.id.videoId, this.snippet.title, this.snippet.publishedAt);
