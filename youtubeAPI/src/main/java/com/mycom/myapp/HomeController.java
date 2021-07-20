@@ -43,7 +43,7 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home() {
 
-		return "home";
+		return "main";
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -87,6 +87,7 @@ public class HomeController {
 		return "redirect:/main";
 	}
 
+	/*
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String main(Model model, String keyword) {
 		String order = "relevance";
@@ -105,5 +106,6 @@ public class HomeController {
 
 		return "main";
 	}
+	*/
 
 }

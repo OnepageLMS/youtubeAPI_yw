@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Youtube Search</title>
+<title>Insert title here</title>
 <style>
 .video {
 	padding: 7px;
@@ -26,9 +26,19 @@ img {
 <script src="https://code.jquery.com/jquery-3.5.1.js"
 	integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
 	crossorigin="anonymous"></script>
-
 <script>	
+	var maxResults = "20";
+	var idList = [maxResults]; //youtube Search 결과 저장
+	var titleList = [maxResults];
+	var dateList = [maxResults];
+	var viewCount = [maxResults];
+	var likeCount = [maxResults];
+	var dislikeCount = [maxResults];
+	var count = 0;
+	
+	
 	function fnGetList(sGetToken) {
+		count = 0;
 		var $getval = $("#search_box").val();
 		var $getorder = $("#opt").val();
 		if ($getval == "") {
@@ -38,10 +48,7 @@ img {
 		}
 		$("#get_view").empty();
 		$("#nav_view").empty();
-
-		var videoList; //youtube Search-API 결과 저장
-
-		var maxResults = "20";
+		
 		var key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c";
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
 				+ $getorder + "&q=" + encodeURIComponent($getval) //encoding
@@ -49,6 +56,7 @@ img {
 				//+ "&access_token="
 				//+ accessToken
 				+ "&maxResults=" + maxResults + "&type=video";
+		
 		if (sGetToken != null) {
 			sTargetUrl += "&pageToken=" + sGetToken + "";
 		}
@@ -56,81 +64,101 @@ img {
 				type : "POST",
 				url : sTargetUrl,
 				dataType : "jsonp",
-				
+				async: false,
 				success : function(jdata) {
-					//videoList = jdata;
-					//console.log(jdata);
+					console.log(jdata);
 					$(jdata.items).each(function(i) {
-									var id = this.id.videoId;
-									var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
-									var url = '<a href="https://youtu.be/' + id + '">';
-									var title = this.snippet.title;
-									var viewCount, likeCount, dislikeCount = 0;
-									var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id="
-										+ id
-										+ "&key="
-										+ key;
-									console.log(i + "--> jdata: " + title);
-									$.ajax({
-											type : "GET",
-											url : getVideo,
-											dataType : "jsonp",
-											success : function(jdata2) {
-												viewCount = jdata2.items[0].statistics.viewCount;
-												likeCount = jdata2.items[0].statistics.likeCount;
-												dislikeCount = jdata2.items[0].statistics.dislikeCount;
-												$("#get_view")
-														.append(
-																'<div class="video">'
-																		+ thumbnail
-																		+ url
-																		+ '<span>'
-																		+ title
-																		+ '</span></a>'
-																		+ '<p class="info"> view: '
-																		+ viewCount
-																		+ ' like: '
-																		+ likeCount
-																		+ ' dislike: '
-																		+ dislikeCount
-																		+ '</p></div>');
-												console.log("jdata2: " + title);
-												},
-												error : function(xhr, textStatus) {
-													console.log(xhr.responseText);
-													alert("video detail 에러");
-													return;
-												}
-											
-											})
+						setList(i, this.id.videoId, this.snippet.title, this.snippet.publishedAt);
+					}).promise().done(
+						$(jdata.items).each(function(i) {
+							var id = idList[i];
+							var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id="
+								+ id
+								+ "&key="
+								+ key;
+							$.ajax({
+								type : "GET",
+								url : getVideo,
+								dataType : "jsonp",
+								success : function(jdata2) {
+									setDetails(i, jdata2.items[0].statistics.viewCount, jdata2.items[0].statistics.likeCount, jdata2.items[0].statistics.dislikeCount);
+									},
+									error : function(xhr, textStatus) {
+										console.log(xhr.responseText);
+										alert("video detail 에러");
+										return;
+									}
+								
 								})
-							.promise()
-							.done(
-									function() {
-										if (jdata.prevPageToken) {
-											$("#nav_view")
-													.append(
-															'<a href="javascript:fnGetList(\''
-																	+ jdata.prevPageToken
-																	+ '\');"><이전></a>');
-										}
-										if (jdata.nextPageToken) {
-											$("#nav_view")
-													.append(
-															'<a href="javascript:fnGetList(\''
-																	+ jdata.nextPageToken
-																	+ '\');"><다음></a>');
-										}
-									});
+						})
+					);	
+					
+					if (jdata.prevPageToken) {
+						lastandnext(jdata.prevPageToken, "이전");
+					}
+					if (jdata.nextPageToken) {
+						lastandnext(jdata.nextPageToken, "다음");
+					}
+					
 				},
 
 				error : function(xhr, textStatus) {
 					console.log(xhr.responseText);
-					alert("에러");
+					alert("an error occured for searching");
 					return;
 				}
 			});
 	}
+
+	
+	function getView(){
+		for(var i=0; i<maxResults; i++){
+			var id = idList[i];
+			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
+			var url = '<a href="https://youtu.be/' + id + '">';
+			console.log(i, titleList[i], viewCount[i]);
+			$("#get_view")
+			.append(
+					'<div class="video">'
+							+ thumbnail
+							+ url
+							+ '<span>'
+							+ titleList[i]
+							+ '</span></a>'
+							+ '<p class="info"> publised: '
+							+ dateList[i]
+							+ ' view: '
+							+ viewCount[i]
+							+ ' like: '
+							+ likeCount[i]
+							+ ' dislike: '
+							+ dislikeCount[i]
+							+ '</p></div>');
+		}
+	}
+
+	function lastandnext(token, direction){
+		$("#nav_view")
+		.append(
+				'<a href="javascript:fnGetList(\''
+						+ token
+						+ '\');"> ' + direction + ' </a>');
+	}
+	
+	function setList(i, id, title, date){
+		idList[i] = id;
+		titleList[i] = title;
+		dateList[i] = date
+	}
+
+	function setDetails(i, view, like, dislike){
+		viewCount[i] = view;
+		likeCount[i] = like;
+		dislikeCount[i] = dislike;
+		count += 1;
+		if (count == 20) getView();
+	}
+	
 </script>
 
 <body>
@@ -151,27 +179,7 @@ img {
 
 	<div id="nav_view"></div>
 	 
-	 <!-- 
-	<form action="main">
-		검색창 <input type="text" name="keyword"
-			placeholder="For example: tom brady" /> <input type="submit"
-			name="submit" />
-	</form>
-	
-	<h2>검색 결과</h2>
-	<div class="resultlist">
-		<table>
-			<c:forEach items="${videos}" var="v">
-				<tr>
-					<td>${v.title}</td>
-					<td>${v.description}</td>
-					<td>${v.videoID}</td>
-					<td>${v.thumbnailUrl}</td>
-				</tr>
-			</c:forEach>
-		</table>
 
-	</div>
- 	-->
 </body>
 </html>
+
