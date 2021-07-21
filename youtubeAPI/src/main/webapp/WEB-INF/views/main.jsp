@@ -49,13 +49,13 @@ img {
 		$("#get_view").empty();
 		$("#nav_view").empty();
 		
-		var key = "AIzaSyAAwiwQmW9kVJT5y-_no-A5lGJwk4B2QK8";
-		//AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c
+		//var key = "AIzaSyAAwiwQmW9kVJT5y-_no-A5lGJwk4B2QK8"; //AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c
+		var accessToken = "${accessToken}";
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
 				+ $getorder + "&q=" + encodeURIComponent($getval) //encoding
-				+ "&key=" + key
-				//+ "&access_token="
-				//+ accessToken
+				//+ "&key=" + key
+				+ "&access_token="
+				+ accessToken
 				+ "&maxResults=" + maxResults + "&type=video";
 		
 		if (sGetToken != null) {
@@ -79,8 +79,8 @@ img {
 							var id = idList[i];
 							var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id="
 								+ id
-								+ "&key="
-								+ key;
+								+ "&access_token="
+								+ accessToken;
 							$.ajax({
 								type : "GET",
 								url : getVideo,

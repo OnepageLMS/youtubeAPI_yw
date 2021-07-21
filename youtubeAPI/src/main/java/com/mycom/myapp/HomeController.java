@@ -30,7 +30,7 @@ import com.mycom.myapp.youtube.youtubeVO;
 public class HomeController {
 
 	final static String GOOGLE_AUTH_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-	final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
+	final static String GOOGLE_TOKEN_BASE_URL = "https://accounts.google.com/o/oauth2/token"; //https://oauth2.googleapis.com/token
 	final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
 	static String accessToken = "";
 
@@ -43,12 +43,15 @@ public class HomeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home() {
 
-		return "main";
+		return "home";
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String google(RedirectAttributes rttr) {
-		String url = "redirect:https://accounts.google.com/o/oauth2/v2/auth?client_id=99431484339-5lvpv4ieg4gd75l57g0k4inh10tiqkdj.apps.googleusercontent.com&redirect_uri=http://localhost:8080/myapp/oauth2callback&response_type=code&scope=email%20profile%20openid&access_type=offline";
+		String url = "redirect:https://accounts.google.com/o/oauth2/v2/auth?client_id=99431484339-5lvpv4ieg4gd75l57g0k4inh10tiqkdj.apps.googleusercontent.com&redirect_uri=http://localhost:8080/myapp/oauth2callback"
+				+"&response_type=code"
+				+"&scope=email%20profile%20openid"+"%20https://www.googleapis.com/auth/youtube%20https://www.googleapis.com/auth/youtube.readonly"
+				+"&access_type=offline";
 
 		return url;
 	}
@@ -88,7 +91,7 @@ public class HomeController {
 	}
 	
 
-	/*
+	
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String main(Model model, String keyword) {
 		String order = "relevance";
@@ -96,6 +99,8 @@ public class HomeController {
 		String key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; // API key
 		String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="
 				+ keyword;
+		
+		model.addAttribute("accessToken", accessToken);
 
 		// String requestURL =
 		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
@@ -107,6 +112,6 @@ public class HomeController {
 
 		return "main";
 	}
-	*/
+	
 
 }
