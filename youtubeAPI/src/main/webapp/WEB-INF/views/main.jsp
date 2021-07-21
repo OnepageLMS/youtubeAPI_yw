@@ -49,7 +49,8 @@ img {
 		$("#get_view").empty();
 		$("#nav_view").empty();
 		
-		var key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c";
+		var key = "AIzaSyAAwiwQmW9kVJT5y-_no-A5lGJwk4B2QK8";
+		//AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
 				+ $getorder + "&q=" + encodeURIComponent($getval) //encoding
 				+ "&key=" + key
@@ -70,7 +71,7 @@ img {
 						$("#nav_view")
 						.append('<p>정상적으로 검색이 되지 않았습니다! 나중에 다시 시도해주세요</p>');
 						}
-					console.log(jdata);
+					//console.log(jdata);
 					$(jdata.items).each(function(i) {
 						setList(i, this.id.videoId, this.snippet.title, this.snippet.publishedAt);
 					}).promise().done(
@@ -129,13 +130,13 @@ img {
 							+ '<span>'
 							+ titleList[i]
 							+ '</span></a>'
-							+ '<p class="info"> publised: '
+							+ '<p class="info"> <bold>publised</bold>: '
 							+ dateList[i]
-							+ ' view: '
+							+ ' <bold>view</bold>: '
 							+ viewCount[i]
-							+ ' like: '
+							+ ' <bold>like</bold>: '
 							+ likeCount[i]
-							+ ' dislike: '
+							+ ' <bold>dislike</bold>: '
 							+ dislikeCount[i]
 							+ '</p></div>');
 		}
@@ -152,16 +153,28 @@ img {
 	function setList(i, id, title, date){
 		idList[i] = id;
 		titleList[i] = title;
-		dateList[i] = date
+		dateList[i] = date.substring(0, 10);
 	}
 
 	function setDetails(i, view, like, dislike){
-		viewCount[i] = view;
-		likeCount[i] = like;
-		dislikeCount[i] = dislike;
+		viewCount[i] = convertNotation(view);
+		likeCount[i] = convertNotation(like);
+		dislikeCount[i] = convertNotation(dislike);
 		count += 1;
 		if (count == 20) getView();
 	}
+
+	function convertNotation(value){
+		var num = parseInt(value);
+
+		if (num >= 1000000)
+			return(parseInt(num/1000000) + "m");
+		else if (num >= 1000)
+			return(parseInt(num/1000) + "k"); 
+		else 
+			return value;
+	}
+
 	
 </script>
 

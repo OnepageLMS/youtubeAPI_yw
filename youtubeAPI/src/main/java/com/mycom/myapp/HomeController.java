@@ -86,6 +86,7 @@ public class HomeController {
 
 		return "redirect:/main";
 	}
+	
 
 	/*
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
