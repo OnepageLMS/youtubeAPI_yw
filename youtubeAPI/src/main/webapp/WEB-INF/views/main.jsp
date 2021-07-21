@@ -36,7 +36,6 @@ img {
 	var dislikeCount = [maxResults];
 	var count = 0;
 	
-	
 	function fnGetList(sGetToken) {
 		count = 0;
 		var $getval = $("#search_box").val();
@@ -54,20 +53,19 @@ img {
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
 				+ $getorder + "&q=" + encodeURIComponent($getval) //encoding
 				//+ "&key=" + key
-				+ "&access_token="
-				+ accessToken
+				+ "&access_token=" + accessToken
 				+ "&maxResults=" + maxResults + "&type=video";
 		
-		if (sGetToken != null) {
+		if (sGetToken != null) { //이전 or 다음페이지 이동할때 해당 페이지 token
 			sTargetUrl += "&pageToken=" + sGetToken + "";
 		}
 		$.ajax({
 				type : "POST",
-				url : sTargetUrl,
+				url : sTargetUrl, //youtube-search api 
 				dataType : "jsonp",
 				async: false,
 				success : function(jdata) {
-					if (jdata.error) {
+					if (jdata.error) { //api 할당량 끝났을 때 에러메세지
 						$("#nav_view")
 						.append('<p>정상적으로 검색이 되지 않았습니다! 나중에 다시 시도해주세요</p>');
 						}
@@ -79,11 +77,11 @@ img {
 							var id = idList[i];
 							var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id="
 								+ id
-								+ "&access_token="
-								+ accessToken;
+								//+ "&key=" + key;
+								+ "&access_token=" + accessToken;
 							$.ajax({
 								type : "GET",
-								url : getVideo,
+								url : getVideo, //youtube-videos api
 								dataType : "jsonp",
 								success : function(jdata2) {
 									setDetails(i, jdata2.items[0].statistics.viewCount, jdata2.items[0].statistics.likeCount, jdata2.items[0].statistics.dislikeCount);
@@ -99,10 +97,10 @@ img {
 					);	
 					
 					if (jdata.prevPageToken) {
-						lastandnext(jdata.prevPageToken, "이전");
+						lastandnext(jdata.prevPageToken, " <-이전 ");
 					}
 					if (jdata.nextPageToken) {
-						lastandnext(jdata.nextPageToken, "다음");
+						lastandnext(jdata.nextPageToken, " 다음-> ");
 					}
 					
 				},
@@ -115,34 +113,34 @@ img {
 			});
 	}
 
-	
-	function getView(){
+	function getView(){ //페이지별로 video 정보가 다 가져와지면 이 함수를 통해 결과 list 출력
 		for(var i=0; i<maxResults; i++){
 			var id = idList[i];
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
-			var url = '<a href="https://youtu.be/' + id + '">';
-			console.log(i, titleList[i], viewCount[i]);
+			//var url = '<a href="https://youtu.be/' + id + '">';
 			$("#get_view")
 			.append(
-					'<div class="video">'
+					'<div class="video" onclick="viewVideo(\'' + id.toString() + '\')" >'
 							+ thumbnail
-							+ url
-							+ '<span>'
 							+ titleList[i]
-							+ '</span></a>'
-							+ '<p class="info"> <bold>publised</bold>: '
+							+ '</p>'
+							+ '<p class="info"> publised: <b>'
 							+ dateList[i]
-							+ ' <bold>view</bold>: '
+							+ '</b> view: <b>'
 							+ viewCount[i]
-							+ ' <bold>like</bold>: '
+							+ '</b> like: <b>'
 							+ likeCount[i]
-							+ ' <bold>dislike</bold>: '
+							+ '</b> dislike: <b>'
 							+ dislikeCount[i]
-							+ '</p></div>');
+							+ '</b> </p></div>');
 		}
 	}
 
-	function lastandnext(token, direction){
+	function viewVideo(videoID){ // 선택한 비디오 id 전달함으로 상단에 플레이어 띄워지도록 (여기서 player 띄우도록)
+		document.getElementById("selectedVideo").innerHTML = '<p> video id: ' + videoID + '</p>';
+	}
+
+	function lastandnext(token, direction){ // 검색결과 이전/다음 페이지 이동
 		$("#nav_view")
 		.append(
 				'<a href="javascript:fnGetList(\''
@@ -150,13 +148,13 @@ img {
 						+ '\');"> ' + direction + ' </a>');
 	}
 	
-	function setList(i, id, title, date){
+	function setList(i, id, title, date){ // search api사용할 때 데이터 저장
 		idList[i] = id;
 		titleList[i] = title;
 		dateList[i] = date.substring(0, 10);
 	}
 
-	function setDetails(i, view, like, dislike){
+	function setDetails(i, view, like, dislike){ // videos api 사용할 때 디테일 데이터 저장 
 		viewCount[i] = convertNotation(view);
 		likeCount[i] = convertNotation(like);
 		dislikeCount[i] = convertNotation(dislike);
@@ -164,7 +162,7 @@ img {
 		if (count == 20) getView();
 	}
 
-	function convertNotation(value){
+	function convertNotation(value){ //조회수 등 단위 변환
 		var num = parseInt(value);
 
 		if (num >= 1000000)
@@ -191,6 +189,8 @@ img {
 		<input type="text" id="search_box">
 		<button onclick="fnGetList();">검색</button>
 	</form>
+	
+	<div id="selectedVideo"></div>
 
 	<div id="get_view"></div>
 

@@ -33,6 +33,7 @@ public class HomeController {
 	final static String GOOGLE_TOKEN_BASE_URL = "https://accounts.google.com/o/oauth2/token"; //https://oauth2.googleapis.com/token
 	final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
 	static String accessToken = "";
+	static String refreshToken = "";
 
 	@Autowired
 	private youtubeProvider service;
@@ -86,6 +87,7 @@ public class HomeController {
 		});
 
 		accessToken = result.getAccessToken(); // accesss token 저장
+		refreshToken = result.getRefreshToken(); //사용자 정보와 함께 DB에 저장해야 한다 
 
 		return "redirect:/main";
 	}
@@ -96,7 +98,6 @@ public class HomeController {
 	public String main(Model model, String keyword) {
 		String order = "relevance";
 		String maxResults = "50";
-		String key = "AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c"; // API key
 		String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="
 				+ keyword;
 		
