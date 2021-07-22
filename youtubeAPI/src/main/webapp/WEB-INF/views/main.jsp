@@ -121,6 +121,7 @@ img {
 			$("#get_view")
 			.append(
 					'<div class="video" onclick="viewVideo(\'' + id.toString() + '\')" >'
+					//'<div class="video" data-play-youtube-video"' + id.toString() + '" >'
 							+ thumbnail
 							+ titleList[i]
 							+ '</p>'
@@ -136,9 +137,6 @@ img {
 		}
 	}
 
-	function viewVideo(videoID){ // 선택한 비디오 id 전달함으로 상단에 플레이어 띄워지도록 (여기서 player 띄우도록)
-		document.getElementById("selectedVideo").innerHTML = '<p> video id: ' + videoID + '</p>';
-	}
 
 	function lastandnext(token, direction){ // 검색결과 이전/다음 페이지 이동
 		$("#nav_view")
@@ -190,7 +188,49 @@ img {
 		<button onclick="fnGetList();">검색</button>
 	</form>
 	
-	<div id="selectedVideo"></div>
+	<div id="player"></div>
+	
+	<script>
+		var videoId;
+		var tag;
+		var firstScriptTag;
+	    var player;
+		
+		function viewVideo(videoID){ // 선택한 비디오 아이디를 가지고 플레이어 띄우기
+			//document.getElementById("selectedVideo").innerHTML = '<p> video id: ' + videoID + '</p>';
+			videoId = videoID;
+
+			tag = document.createElement('script');
+			
+		    tag.src = "https://www.youtube.com/iframe_api";
+		    firstScriptTag = document.getElementsByTagName('script')[0];
+		    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+			 //이미 다른 영상이 player로 띄워져 있을 때
+			player.loadVideoById(videoId, 0, "large");
+
+		}
+	
+	    // 3. This function creates an <iframe> (and YouTube player)
+	    //    after the API code downloads.
+	    function onYouTubeIframeAPIReady() {
+	        player = new YT.Player('player', {
+	          height: '360',
+	          width: '640',
+	          videoId: videoId,
+	          events: {
+	            'onReady': onPlayerReady,
+	          }
+	        });
+	      }
+	      
+	 	// 4. The API will call this function when the video player is ready.
+	      function onPlayerReady() {
+	        player.playVideo();
+	      }
+		
+
+	</script>
 
 	<div id="get_view"></div>
 

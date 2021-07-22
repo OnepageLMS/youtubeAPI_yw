@@ -46,6 +46,12 @@ public class HomeController {
 
 		return "home";
 	}
+	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public String test() {
+
+		return "test2";
+	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String google(RedirectAttributes rttr) {
