@@ -1,6 +1,8 @@
 package com.mycom.myapp;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -20,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.mycom.myapp.playlist.PlaylistService;
+import com.mycom.myapp.playlist.PlaylistVO;
 import com.mycom.myapp.youtube.youtubeProvider;
 import com.mycom.myapp.youtube.youtubeVO;
 
@@ -37,6 +42,9 @@ public class HomeController {
 
 	@Autowired
 	private youtubeProvider service;
+	@Autowired
+	PlaylistService playlistService;
+	
 
 	/**
 	 * Simply selects the home view to render by returning its name.
@@ -55,7 +63,8 @@ public class HomeController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String google(RedirectAttributes rttr) {
-		String url = "redirect:https://accounts.google.com/o/oauth2/v2/auth?client_id=99431484339-5lvpv4ieg4gd75l57g0k4inh10tiqkdj.apps.googleusercontent.com&redirect_uri=http://localhost:8080/myapp/oauth2callback"
+		String clientID = "99431484339-5lvpv4ieg4gd75l57g0k4inh10tiqkdj.apps.googleusercontent.com";
+		String url = "redirect:https://accounts.google.com/o/oauth2/v2/auth?client_id=" + clientID + "&redirect_uri=http://localhost:8080/myapp/oauth2callback"
 				+"&response_type=code"
 				+"&scope=email%20profile%20openid"+"%20https://www.googleapis.com/auth/youtube%20https://www.googleapis.com/auth/youtube.readonly"
 				+"&access_type=offline";
@@ -101,23 +110,47 @@ public class HomeController {
 
 	
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
-	public String main(Model model, String keyword) {
-		String order = "relevance";
-		String maxResults = "50";
-		String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="
-				+ keyword;
+	public Object main(Model model, String keyword) {
+		//String order = "relevance";
+		//String maxResults = "50";
+		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
 		
 		model.addAttribute("accessToken", accessToken);
+		
+		model.addAttribute("allPlaylist", playlistService.getAllPlaylist()); //초기에 현재 저장된 playlist 모두보이기
 
 		// String requestURL =
 		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
 
-		if (keyword != "") {
-			//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
-			//model.addAttribute("videos", videos);																
-		}
+		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
+		//model.addAttribute("videos", videos);																
 
 		return "main";
+	}
+	
+	//playlist 생성할 때 ajax 통해 data 전달받아 db에 저장!
+	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
+	@ResponseBody
+	public int addPlaylist(Model model, HttpServletRequest request) {
+		String playlistName = request.getParameter("name");
+		String creatorEmail = request.getParameter("creator");
+		
+		PlaylistVO vo = new PlaylistVO();
+		
+		vo.setCreatorEmail(creatorEmail);
+		vo.setPlaylistName(playlistName);
+		
+		int playlistID = playlistService.addPlaylist(vo); //방금 생성한 playlist id 가져오기
+
+		if(playlistID >= 0) {
+			//int playlistID = playlistService.
+			System.out.println("playlist 추가 성공! ");
+			//List<PlaylistVO> playlists = playlistService.getAllPlaylist(); //all playlist 저장 후 리턴
+			model.addAttribute("allPlaylist", playlistService.getAllPlaylist());
+		}
+		else
+			System.out.println("playlist 추가 실패! ");
+		return playlistID;
 	}
 	
 
