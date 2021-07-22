@@ -8,6 +8,9 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
+body {
+	padding: 10px;
+}
 .video {
 	padding: 7px;
 }
@@ -26,6 +29,8 @@ img {
 <script src="https://code.jquery.com/jquery-3.5.1.js"
 	integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
 	crossorigin="anonymous"></script>
+	
+<!-- 아래 script는 youtube-search, video API 사용해서 original video 가져오기. 변경할 때 예원에게 말해주세요!!! -->
 <script>	
 	var maxResults = "20";
 	var idList = [maxResults]; //youtube Search 결과 저장
@@ -34,6 +39,7 @@ img {
 	var viewCount = [maxResults];
 	var likeCount = [maxResults];
 	var dislikeCount = [maxResults];
+	var durationCount = [maxResults];
 	var count = 0;
 	
 	function fnGetList(sGetToken) {
@@ -67,7 +73,7 @@ img {
 				success : function(jdata) {
 					if (jdata.error) { //api 할당량 끝났을 때 에러메세지
 						$("#nav_view")
-						.append('<p>정상적으로 검색이 되지 않았습니다! 나중에 다시 시도해주세요</p>');
+						.append('<p>검색 일일 한도가 초과되었습니다 나중에 다시 시도해주세요!</p>');
 						}
 					//console.log(jdata);
 					$(jdata.items).each(function(i) {
@@ -75,16 +81,18 @@ img {
 					}).promise().done(
 						$(jdata.items).each(function(i) {
 							var id = idList[i];
-							var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics&id="
+							var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id="
 								+ id
 								//+ "&key=" + key;
 								+ "&access_token=" + accessToken;
+								
 							$.ajax({
 								type : "GET",
 								url : getVideo, //youtube-videos api
 								dataType : "jsonp",
 								success : function(jdata2) {
-									setDetails(i, jdata2.items[0].statistics.viewCount, jdata2.items[0].statistics.likeCount, jdata2.items[0].statistics.dislikeCount);
+									//console.log(jdata2);
+									setDetails(i, jdata2.items[0].statistics.viewCount, jdata2.items[0].statistics.likeCount, jdata2.items[0].statistics.dislikeCount, jdata2.items[0].contentDetails.duration);
 									},
 									error : function(xhr, textStatus) {
 										console.log(xhr.responseText);
@@ -120,8 +128,8 @@ img {
 			//var url = '<a href="https://youtu.be/' + id + '">';
 			$("#get_view")
 			.append(
-					'<div class="video" onclick="viewVideo(\'' + id.toString() + '\')" >'
-					//'<div class="video" data-play-youtube-video"' + id.toString() + '" >'
+					//'<div class="video" onclick="viewVideo(\'' + id.toString() + '\')" >' 
+					'<div class="video" onclick="viewVideo(\'' + id.toString() + '\'' + ',\'' + titleList[i].toString() +  '\'' + ',\'' + durationCount[i] + '\')" >'
 							+ thumbnail
 							+ titleList[i]
 							+ '</p>'
@@ -137,7 +145,6 @@ img {
 		}
 	}
 
-
 	function lastandnext(token, direction){ // 검색결과 이전/다음 페이지 이동
 		$("#nav_view")
 		.append(
@@ -152,10 +159,11 @@ img {
 		dateList[i] = date.substring(0, 10);
 	}
 
-	function setDetails(i, view, like, dislike){ // videos api 사용할 때 디테일 데이터 저장 
+	function setDetails(i, view, like, dislike, duration){ // videos api 사용할 때 디테일 데이터 저장 
 		viewCount[i] = convertNotation(view);
 		likeCount[i] = convertNotation(like);
 		dislikeCount[i] = convertNotation(dislike);
+		durationCount[i] = duration;
 		count += 1;
 		if (count == 20) getView();
 	}
@@ -188,17 +196,25 @@ img {
 		<button onclick="fnGetList();">검색</button>
 	</form>
 	
+	<div id="player_info"></div>
 	<div id="player"></div>
 	
 	<script>
+		// 각 video를 클릭했을 때 함수 parameter로 넘어오는 정보들
 		var videoId;
-		var tag;
+		var videoTitle;
+		var videoDuration;
+
+		// player api 사용 변수 
+		var tag; 
 		var firstScriptTag;
 	    var player;
 		
-		function viewVideo(videoID){ // 선택한 비디오 아이디를 가지고 플레이어 띄우기
-			//document.getElementById("selectedVideo").innerHTML = '<p> video id: ' + videoID + '</p>';
-			videoId = videoID;
+		function viewVideo(id, title, duration){ // 선택한 비디오 아이디를 가지고 플레이어 띄우기
+			videoId = id;
+			videoTitle = title;
+			videoDuration = duration;
+			document.getElementById("player_info").innerHTML = '<h2> Title: ' + videoTitle + '</h2> <p> Duration: ' + videoDuration + ' </p>';
 
 			tag = document.createElement('script');
 			
@@ -212,7 +228,7 @@ img {
 		}
 	
 	    // 3. This function creates an <iframe> (and YouTube player)
-	    //    after the API code downloads.
+	    //    after the API code downloads. 
 	    function onYouTubeIframeAPIReady() {
 	        player = new YT.Player('player', {
 	          height: '360',
