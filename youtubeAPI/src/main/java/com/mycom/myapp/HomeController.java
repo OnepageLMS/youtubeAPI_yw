@@ -1,5 +1,6 @@
 package com.mycom.myapp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,15 +111,13 @@ public class HomeController {
 
 	
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
-	public Object main(Model model, String keyword) {
+	public String main(Model model, String keyword) {
 		//String order = "relevance";
 		//String maxResults = "50";
 		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
 		
 		model.addAttribute("accessToken", accessToken);
 		
-		model.addAttribute("allPlaylist", playlistService.getAllPlaylist()); //초기에 현재 저장된 playlist 모두보이기
-
 		// String requestURL =
 		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
 
@@ -128,10 +127,9 @@ public class HomeController {
 		return "main";
 	}
 	
-	//playlist 생성할 때 ajax 통해 data 전달받아 db에 저장!
 	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
 	@ResponseBody
-	public int addPlaylist(Model model, HttpServletRequest request) {
+	public void addPlaylist(HttpServletRequest request) {
 		String playlistName = request.getParameter("name");
 		String creatorEmail = request.getParameter("creator");
 		
@@ -139,19 +137,39 @@ public class HomeController {
 		
 		vo.setCreatorEmail(creatorEmail);
 		vo.setPlaylistName(playlistName);
-		
-		int playlistID = playlistService.addPlaylist(vo); //방금 생성한 playlist id 가져오기
 
-		if(playlistID >= 0) {
-			//int playlistID = playlistService.
+
+		if(playlistService.addPlaylist(vo) != 0) 
 			System.out.println("playlist 추가 성공! ");
-			//List<PlaylistVO> playlists = playlistService.getAllPlaylist(); //all playlist 저장 후 리턴
-			model.addAttribute("allPlaylist", playlistService.getAllPlaylist());
-		}
 		else
 			System.out.println("playlist 추가 실패! ");
-		return playlistID;
 	}
+	
+	@RequestMapping(value = "/deletePlaylist", method = RequestMethod.POST)
+	@ResponseBody
+	public void deletePlaylist(HttpServletRequest request, @RequestParam(value = "id") int playlistID) {
+		
+		if( playlistService.deletePlaylist(playlistID) != 0) 
+			System.out.println("playlist 삭제 성공! ");
+		else
+			System.out.println("playlist 삭제 실패! ");
+	}
+	
+	
+	@RequestMapping(value = "/getAllPlaylist", method = RequestMethod.POST)
+	@ResponseBody
+	public Object getAllPlaylist() {
+		List<PlaylistVO> result = new ArrayList<PlaylistVO>();
+		result = playlistService.getAllPlaylist();
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("allPlaylist", result);
+		map.put("code", "ok");
+		
+		return map;
+		
+	}
+	
 	
 
 }

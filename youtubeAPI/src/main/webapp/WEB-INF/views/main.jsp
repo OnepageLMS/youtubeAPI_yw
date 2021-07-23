@@ -200,6 +200,75 @@ img {
 </script>
 
 <body>
+<script>
+	$( document ).ready(function() {
+	 	getAllPlaylist();
+	});
+
+		function getAllPlaylist(){ //all playlist 출력
+		  $.ajax({
+		    type:'post',
+		    url : 'http://localhost:8080/myapp/getAllPlaylist',
+		    global : false,
+		    async : true,
+		    success : function(result) {
+			    if(result.code == "ok"){
+			    	$('#allPlaylist').empty();
+				    values = result.allPlaylist;
+				    $.each(values, function( index, value ){ //여기서 index는 playlistID가 아님! 
+						var html = '<p>' + index + ' : ' + value.playlistName + '<a href="#" onclick="deletePlaylist(\'' + value.playlistID + '\')"> 삭제 </a></p>';
+						$('#allPlaylist').append(html);
+					});
+				}
+			    else
+				    alert('playlist 불러오기 실패! ')
+		      
+		    },error:function(json){
+		 		alert('ajax 실패! ');
+		    }
+		  }); 
+			
+		}
+
+		function createPlaylist(){ //playlist 생성
+			var playlistName = $("#playlistName").val();
+			var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
+
+			$.ajax({
+				'type' : "post",
+				'url' : "http://localhost:8080/myapp/addPlaylist",
+				'data' : {
+							name : playlistName,
+							creator : creatorEmail
+				},
+				success : function(data){
+					console.log('successfully added a playlist');
+					getAllPlaylist();
+			
+				}, error : function(err){
+					alert("playlist 추가 실패! : ", err.responseText);
+				}
+
+			});
+		}
+
+		function deletePlaylist(id){ //playlist 삭제
+			$.ajax({
+				'type' : "post",
+				'url' : "http://localhost:8080/myapp/deletePlaylist",
+				'data' : {id : id},
+				success : function(data){
+					console.log('successfully deleted a playlist');
+					getAllPlaylist();
+			
+				}, error : function(err){
+					alert("playlist 삭제 실패! : ", err.responseText);
+				}
+
+			});
+		}
+		
+	</script>
 	<div id="playlist">
 		<!-- Playlist CRUD -->
 		<h3>Playlist</h3>
@@ -219,42 +288,7 @@ img {
 		-->
 	</div>
 	
-	<script>
-	$( document ).ready(function() {
-		function getAllPlaylist(){
-			var str = "";
-			<c:forEach items="${allPlaylist}" var="u">
-				var temp = '<p>'+'${u.playlistName}'+'</p>';
-				str += temp;
-			</c:forEach>
-			document.getElementById("allPlaylist").innerHTML = str;
-				//<a href="javascript:delete_ok('${u.playlistID}')"><b>-</b></a>
-		}
-	});
-
-		function createPlaylist(){
-			var playlistName = $("#playlistName").val();
-			var creatorEmail = "yewon.lee@onepage.edu";
-
-			$.ajax({
-				'type' : "post",
-				'url' : "http://localhost:8080/myapp/addPlaylist",
-				'data' : {
-							name : playlistName,
-							creator : creatorEmail
-				},
-				success : function(data){
-					$("#playlist").append("<p> playlistID: " + data + "</p>");
-					getAllPlaylist();
-			
-				}, error : function(err){
-					alert("playlist 추가 실패! : ", err.responseText);
-				}
-
-			});
-		}
-		
-	</script>
+	
 
 	<form name="form1" method="post" onsubmit="return false;">
 		<select name="opt" id="opt">
