@@ -4,8 +4,8 @@ public class PlaylistVO {
 	private int playlistID;
 	private String playlistName;
 	private String creatorEmail;
+	private int seq;
 	//private boolean allow; //public 이름 바꿔야함
-	//private int folderID;
 	
 	public int getPlaylistID() { 
 		return playlistID;
@@ -19,11 +19,16 @@ public class PlaylistVO {
 	public void setPlaylistName(String playlistName) {
 		this.playlistName = playlistName;
 	}
-	
 	public String getCreatorEmail() {
 		return creatorEmail;
 	}
 	public void setCreatorEmail(String creatorEmail) {
 		this.creatorEmail = creatorEmail;
+	}
+	public int getSeq() {
+		return seq;
+	}
+	public void setSeq(int seq) {
+		this.seq = seq;
 	}
 }

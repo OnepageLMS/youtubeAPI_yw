@@ -15,6 +15,11 @@ public class PlaylistServiceImpl implements PlaylistService{
 	}
 	
 	@Override
+	public int changeSeq(PlaylistVO vo) {
+		return playlistDAO.changeSeq(vo);
+	}
+	
+	@Override
 	public int deletePlaylist(int playlistID) {
 		return playlistDAO.deletePlaylist(playlistID);
 	}

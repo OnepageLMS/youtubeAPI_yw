@@ -17,6 +17,11 @@ public class PlaylistDAO {
 		return result;
 	}
 	
+	public int changeSeq(PlaylistVO vo) {
+		int result = sqlSession.update("Playlist.changeSeq", vo);
+		return result;
+	}
+	
 	public int deletePlaylist(int playlistID) {
 		int result = sqlSession.delete("Playlist.deletePlaylist", playlistID);
 		return result;

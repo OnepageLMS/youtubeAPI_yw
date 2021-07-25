@@ -132,12 +132,14 @@ public class HomeController {
 	public void addPlaylist(HttpServletRequest request) {
 		String playlistName = request.getParameter("name");
 		String creatorEmail = request.getParameter("creator");
+		int total = Integer.parseInt(request.getParameter("total"));
+		System.out.println(total);
 		
 		PlaylistVO vo = new PlaylistVO();
 		
 		vo.setCreatorEmail(creatorEmail);
 		vo.setPlaylistName(playlistName);
-
+		vo.setSeq(total);
 
 		if(playlistService.addPlaylist(vo) != 0) 
 			System.out.println("playlist 추가 성공! ");
@@ -167,9 +169,24 @@ public class HomeController {
 		map.put("code", "ok");
 		
 		return map;
-		
 	}
 	
+	@RequestMapping(value = "/changeItemsOrder", method = RequestMethod.POST)
+	@ResponseBody
+	public void changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
+		int index = 0;
+		
+		for(String order : changedList) {
+			PlaylistVO vo = new PlaylistVO();
+			vo.setPlaylistID(Integer.parseInt(order));
+			vo.setSeq((index++));
+			
+			if (playlistService.changeSeq(vo) != 0)
+				System.out.println("playlist 순서 변경 성공! ");
+			else
+				System.out.println("playlist 순서 변경 실패! ");
+		}
+	}
 	
 
 }

@@ -264,14 +264,17 @@ img {
 		    if(result.code == "ok"){
 		    	$('#allPlaylist').empty();
 			    values = result.allPlaylist;
+			    total = 0;
 			    $.each(values, function( index, value ){ //여기서 index는 playlistID가 아님! 
 					var html = '<div class = "playlistSeq card text-white bg-info mb-10">' 
-						+ '<div class="card-header">' 
+						+ '<div class="card-header" listID="' + value.playlistID + '" >' 
 						+ index + ' : ' + value.playlistName + '<a href="#" onclick="deletePlaylist(\'' + value.playlistID + '\')"> 삭제 </a></div>'
 						+ '<div class="card-body"> body </div>'
 						+ '</div>';
 					$('#allPlaylist').append(html);
+					total += 1;
 				});
+				document.getElementById("allPlaylist").setAttribute("total", total);
 			}
 		    else
 			    alert('playlist 불러오기 실패! ')
@@ -285,16 +288,17 @@ img {
 	function createPlaylist(){ //playlist 생성
 		var playlistName = $("#playlistName").val();
 		var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
+		var total = $("#allPlaylist").attr("total");
 
 		$.ajax({
 			'type' : "post",
 			'url' : "http://localhost:8080/myapp/addPlaylist",
 			'data' : {
 						name : playlistName,
-						creator : creatorEmail
+						creator : creatorEmail,
+						total : total
 			},
 			success : function(data){
-				console.log('successfully added a playlist');
 				getAllPlaylist();
 		
 			}, error : function(err){
@@ -310,7 +314,6 @@ img {
 			'url' : "http://localhost:8080/myapp/deletePlaylist",
 			'data' : {id : id},
 			success : function(data){
-				console.log('successfully deleted a playlist');
 				getAllPlaylist();
 		
 			}, error : function(err){
@@ -322,33 +325,34 @@ img {
 
 	$(function() { //playlist 순서변경
 		$("#allPlaylist").sortable({
-			connectWith: ".column", // 드래그 앤 드롭 단위 css 선택자
+			connectWith: "#allPlaylist", // 드래그 앤 드롭 단위 css 선택자
 			handle: ".card-header", // 움직이는 css 선택자
 			cancel: ".no-move", // 움직이지 못하는 css 선택자
-			placeholder: "card-placeholder" // 이동하려는 location에 추가 되는 클래스
-				
-			start: function(e, ui) { // 이동 시킬 아이템 클릭 시
-			    $(this).attr('data-previndex', ui.item.index()); // 기존 순서값을 data-previndex에 저장 
-			  },
+			placeholder: "card-placeholder", // 이동하려는 location에 추가 되는 클래스
+			
 			update : function(e, ui){ // 이동 완료 후, 새로운 순서로 db update
-			    var newOrd = Number(ui.item.index()) + 1; // index값이 0에서 시작하기 때문에 1 더하기 
-			    var oldOrd = Number($(this).attr('data-previndex')) + 1;
-			    var grpno = "${param.grpno}"; // item group key
-			    
-			    $.ajax({
+				var idList = new Array();
+				$(".card-header").each(function(index){
+					var playlistID = $(this).attr('listID'); //listID의 value값 가져오기
+					idList.push(playlistID);
+				});
+				
+		    $.ajax({
 			      type: "POST",
-			      url: "/changeItemsOrder",   // 서버단 메소드 url 
-			      data : {
-				     	grpno':grpno, 'neword':newOrd, 'oldord':oldOrd
-				  		},
+			      url: "http://localhost:8080/myapp/changeItemsOrder",   // 서버단 메소드 url 
+			      data : {"changedList" : idList},
 			      dataType  : "json", 
 			      success  : function(data) {
-			        // 정상적으로 response 시 
-			        // To Do ..
+			    	  alert("list 순서 변경 성공!");
+			    	  $("#allPlaylist").load(window.location.href + "#allPlaylist"); //부분 새로고침
+			    	  getAllPlaylist(); 
 			      }
 			    });
+
+			}
 		});
 			$( "#allPlaylist .card" ).disableSelection(); //해당 클래스 하위의 텍스트는 변경x
+	
 	});
 	</script>
 	
