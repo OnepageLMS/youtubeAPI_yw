@@ -25,11 +25,60 @@ img {
 	height: 80px;
 	padding: 5px;
 }
+
+.playlist {	/* playlist 구간 시작 */
+	width: 400px;
+}
+
+.playlistSeq{
+	background-color: #cecece;
+	padding: 10px;
+	margin: 5px;
+}
+
+#allPlaylist {
+	border: 1px solid #cecece;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.container-fluid{
+	margin : 7px;
+}
+/* 이동 타켓 */
+.card-placeholder {
+	border: 1px dashed grey;
+	margin: 0 1em 1em 0;
+	height: 50px;
+	margin-left:auto;
+	margin-right:auto;
+	background-color: #E8E8E8;
+}
+/* 마우스 포인터을 손가락으로 변경 */
+.card:not(.no-move) .card-header{
+	cursor: pointer;
+}
+
+.card{
+	border-radius: 5px;
+}
+.card-header{
+	border-bottom: 1px solid;
+	margin: 0px -10px;
+	padding: 5px 10px;
+	padding-top: 0px;
+}
+/* playlist 구간 끝 */
+
 </style>
 </head>
 <script src="https://code.jquery.com/jquery-3.5.1.js"
 	integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
 	crossorigin="anonymous"></script>
+	
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" /> <!-- jquery for drag&drop list order -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
 <!-- 아래 script는 youtube-search, video API 사용해서 original video 가져오기. 변경할 때 예원에게 말해주세요!!! -->
 <script>
@@ -102,13 +151,11 @@ img {
 																	+ "&access_token="
 																	+ accessToken;
 
-															$
-																	.ajax({
+															$.ajax({
 																		type : "GET",
 																		url : getVideo, //youtube-videos api
 																		dataType : "jsonp",
-																		success : function(
-																				jdata2) {
+																		success : function(jdata2) {
 																			//console.log(jdata2);
 																			setDetails(
 																					i,
@@ -117,11 +164,8 @@ img {
 																					jdata2.items[0].statistics.dislikeCount,
 																					jdata2.items[0].contentDetails.duration);
 																		},
-																		error : function(
-																				xhr,
-																				textStatus) {
-																			console
-																					.log(xhr.responseText);
+																		error : function(xhr, textStatus) {
+																			console.log(xhr.responseText);
 																			alert("video detail 에러");
 																			return;
 																		}
@@ -200,92 +244,130 @@ img {
 </script>
 
 <body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<!-- 부트스트랩 3.x를 사용한다. -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 <script>
-	$( document ).ready(function() {
+	$(function() { //페이지 처음 불러올때 playlist 띄우기
 	 	getAllPlaylist();
 	});
 
-		function getAllPlaylist(){ //all playlist 출력
-		  $.ajax({
-		    type:'post',
-		    url : 'http://localhost:8080/myapp/getAllPlaylist',
-		    global : false,
-		    async : true,
-		    success : function(result) {
-			    if(result.code == "ok"){
-			    	$('#allPlaylist').empty();
-				    values = result.allPlaylist;
-				    $.each(values, function( index, value ){ //여기서 index는 playlistID가 아님! 
-						var html = '<p>' + index + ' : ' + value.playlistName + '<a href="#" onclick="deletePlaylist(\'' + value.playlistID + '\')"> 삭제 </a></p>';
-						$('#allPlaylist').append(html);
-					});
-				}
-			    else
-				    alert('playlist 불러오기 실패! ')
-		      
-		    },error:function(json){
-		 		alert('ajax 실패! ');
-		    }
-		  }); 
-			
-		}
+	function getAllPlaylist(){ //all playlist 출력
+	  $.ajax({
+	    type:'post',
+	    url : 'http://localhost:8080/myapp/getAllPlaylist',
+	    global : false,
+	    async : true,
+	    success : function(result) {
+		    if(result.code == "ok"){
+		    	$('#allPlaylist').empty();
+			    values = result.allPlaylist;
+			    $.each(values, function( index, value ){ //여기서 index는 playlistID가 아님! 
+					var html = '<div class = "playlistSeq card text-white bg-info mb-10">' 
+						+ '<div class="card-header">' 
+						+ index + ' : ' + value.playlistName + '<a href="#" onclick="deletePlaylist(\'' + value.playlistID + '\')"> 삭제 </a></div>'
+						+ '<div class="card-body"> body </div>'
+						+ '</div>';
+					$('#allPlaylist').append(html);
+				});
+			}
+		    else
+			    alert('playlist 불러오기 실패! ')
+	      
+	    },error:function(json){
+	 		alert('ajax 실패! ');
+	    }
+	  }); 
+	}
 
-		function createPlaylist(){ //playlist 생성
-			var playlistName = $("#playlistName").val();
-			var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
+	function createPlaylist(){ //playlist 생성
+		var playlistName = $("#playlistName").val();
+		var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
 
-			$.ajax({
-				'type' : "post",
-				'url' : "http://localhost:8080/myapp/addPlaylist",
-				'data' : {
-							name : playlistName,
-							creator : creatorEmail
-				},
-				success : function(data){
-					console.log('successfully added a playlist');
-					getAllPlaylist();
-			
-				}, error : function(err){
-					alert("playlist 추가 실패! : ", err.responseText);
-				}
-
-			});
-		}
-
-		function deletePlaylist(id){ //playlist 삭제
-			$.ajax({
-				'type' : "post",
-				'url' : "http://localhost:8080/myapp/deletePlaylist",
-				'data' : {id : id},
-				success : function(data){
-					console.log('successfully deleted a playlist');
-					getAllPlaylist();
-			
-				}, error : function(err){
-					alert("playlist 삭제 실패! : ", err.responseText);
-				}
-
-			});
-		}
+		$.ajax({
+			'type' : "post",
+			'url' : "http://localhost:8080/myapp/addPlaylist",
+			'data' : {
+						name : playlistName,
+						creator : creatorEmail
+			},
+			success : function(data){
+				console.log('successfully added a playlist');
+				getAllPlaylist();
 		
+			}, error : function(err){
+				alert("playlist 추가 실패! : ", err.responseText);
+			}
+
+		});
+	}
+
+	function deletePlaylist(id){ //playlist 삭제
+		$.ajax({
+			'type' : "post",
+			'url' : "http://localhost:8080/myapp/deletePlaylist",
+			'data' : {id : id},
+			success : function(data){
+				console.log('successfully deleted a playlist');
+				getAllPlaylist();
+		
+			}, error : function(err){
+				alert("playlist 삭제 실패! : ", err.responseText);
+			}
+
+		});
+	}
+
+	$(function() { //playlist 순서변경
+		$("#allPlaylist").sortable({
+			connectWith: ".column", // 드래그 앤 드롭 단위 css 선택자
+			handle: ".card-header", // 움직이는 css 선택자
+			cancel: ".no-move", // 움직이지 못하는 css 선택자
+			placeholder: "card-placeholder" // 이동하려는 location에 추가 되는 클래스
+				
+			start: function(e, ui) { // 이동 시킬 아이템 클릭 시
+			    $(this).attr('data-previndex', ui.item.index()); // 기존 순서값을 data-previndex에 저장 
+			  },
+			update : function(e, ui){ // 이동 완료 후, 새로운 순서로 db update
+			    var newOrd = Number(ui.item.index()) + 1; // index값이 0에서 시작하기 때문에 1 더하기 
+			    var oldOrd = Number($(this).attr('data-previndex')) + 1;
+			    var grpno = "${param.grpno}"; // item group key
+			    
+			    $.ajax({
+			      type: "POST",
+			      url: "/changeItemsOrder",   // 서버단 메소드 url 
+			      data : {
+				     	grpno':grpno, 'neword':newOrd, 'oldord':oldOrd
+				  		},
+			      dataType  : "json", 
+			      success  : function(data) {
+			        // 정상적으로 response 시 
+			        // To Do ..
+			      }
+			    });
+		});
+			$( "#allPlaylist .card" ).disableSelection(); //해당 클래스 하위의 텍스트는 변경x
+	});
 	</script>
-	<div id="playlist">
-		<!-- Playlist CRUD -->
+	
+	<div class="playlist"> <!-- Playlist CRUD -->
+		
 		<h3>Playlist</h3>
 		<div id="addPlaylist">
-		
-		<input type="text" id="playlistName" />
-		<button onclick="createPlaylist()">생성</button>
-
+			<input type="text" id="playlistName" />
+			<button onclick="createPlaylist()">생성</button>
 		</div>
-		<div id="allPlaylist"></div>
-		<!--  
-		<c:forEach items="${allPlaylist}" var="u">
-			<p>${u.playlistName}
-				<a href="javascript:delete_ok('${u.playlistID}')"><b>-</b></a>
-			</p>
-		</c:forEach>
-		-->
+		
+		<!-- playlist 출력 -->
+		 <div class="container-fluid">
+			<div class="row">
+				<div id="allPlaylist" class="col-sm-8" >
+					<!-- 각 카드 리스트 박스 추가되는 공간-->
+				</div>
+			</div>
+		</div>
 	</div>
 	
 	
