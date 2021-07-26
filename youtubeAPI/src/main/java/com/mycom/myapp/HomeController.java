@@ -176,17 +176,17 @@ public class HomeController {
 	@ResponseBody
 	public String changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
 		int size = changedList.size()-1;
-		int count = 0;
 		
 		for(String order : changedList) {
 			PlaylistVO vo = new PlaylistVO();
 			vo.setPlaylistID(Integer.parseInt(order));
-			vo.setSeq(size--);
+			vo.setSeq(size);
 			
 			if (playlistService.changeSeq(vo) != 0)
-				count += 1;
+				size-=1;
 		}
-		if (count == size)
+
+		if (size == -1)
 			System.out.println("playlist 순서 변경 성공! ");
 		else
 			System.out.println("playlist 순서 변경 실패! ");

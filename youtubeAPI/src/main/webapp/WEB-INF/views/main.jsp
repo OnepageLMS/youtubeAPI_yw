@@ -323,7 +323,7 @@ img {
 		});
 	}
 
-	function changeAllList(deletedID){
+	function changeAllList(deletedID){ // playlist 추가, 삭제 뒤 재정렬
 		var idList = new Array();
 		
 		$(".card-header").each(function(index){
@@ -342,24 +342,23 @@ img {
 		      data : {changedList : idList},
 		      dataType  : "json", 
 		      success  : function(data) {
-		    		$("#allPlaylist").load(window.location.href + "#allPlaylist"); //부분 새로고침
 		  	  		getAllPlaylist(); 
 		    	  
 		      }, error:function(request,status,error){
 		          //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-		          $("#allPlaylist").load(window.location.href + "#allPlaylist");
+		    	  getAllPlaylist(); 
 		       }
 		    });
 	}
 
-	$(function() { //playlist 순서변경
+	$(function() { // playlist 순서변경
 		$("#allPlaylist").sortable({
 			connectWith: "#allPlaylist", // 드래그 앤 드롭 단위 css 선택자
 			handle: ".card-header", // 움직이는 css 선택자
 			cancel: ".no-move", // 움직이지 못하는 css 선택자
 			placeholder: "card-placeholder", // 이동하려는 location에 추가 되는 클래스
 
-			update : function(e, ui){ // 이동 완료 후, 새로운 순서로 db update
+			stop : function(e, ui){ // 이동 완료 후, 새로운 순서로 db update
 				changeAllList();
 			}
 		});
