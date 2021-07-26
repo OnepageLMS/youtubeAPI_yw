@@ -133,7 +133,6 @@ public class HomeController {
 		String playlistName = request.getParameter("name");
 		String creatorEmail = request.getParameter("creator");
 		int total = Integer.parseInt(request.getParameter("total"));
-		System.out.println(total);
 		
 		PlaylistVO vo = new PlaylistVO();
 		
@@ -149,10 +148,12 @@ public class HomeController {
 	
 	@RequestMapping(value = "/deletePlaylist", method = RequestMethod.POST)
 	@ResponseBody
-	public void deletePlaylist(HttpServletRequest request, @RequestParam(value = "id") int playlistID) {
+	public void deletePlaylist(HttpServletRequest request) {
+		int playlistID = Integer.parseInt(request.getParameter("id"));
 		
-		if( playlistService.deletePlaylist(playlistID) != 0) 
+		if( playlistService.deletePlaylist(playlistID) != 0) {
 			System.out.println("playlist 삭제 성공! ");
+		}
 		else
 			System.out.println("playlist 삭제 실패! ");
 	}
@@ -173,20 +174,23 @@ public class HomeController {
 	
 	@RequestMapping(value = "/changeItemsOrder", method = RequestMethod.POST)
 	@ResponseBody
-	public void changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
-		int index = 0;
+	public String changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
+		int size = changedList.size()-1;
+		int count = 0;
 		
 		for(String order : changedList) {
 			PlaylistVO vo = new PlaylistVO();
 			vo.setPlaylistID(Integer.parseInt(order));
-			vo.setSeq((index++));
+			vo.setSeq(size--);
 			
 			if (playlistService.changeSeq(vo) != 0)
-				System.out.println("playlist 순서 변경 성공! ");
-			else
-				System.out.println("playlist 순서 변경 실패! ");
+				count += 1;
 		}
+		if (count == size)
+			System.out.println("playlist 순서 변경 성공! ");
+		else
+			System.out.println("playlist 순서 변경 실패! ");
+		return "ok";
 	}
-	
 
 }
