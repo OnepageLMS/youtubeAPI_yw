@@ -53,12 +53,6 @@ public class HomeController {
 
 		return "home";
 	}
-	
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	public String test() {
-
-		return "test2";
-	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public String google(RedirectAttributes rttr) {
@@ -170,7 +164,7 @@ public class HomeController {
 		return map;
 	}
 	
-	@RequestMapping(value = "/changeItemsOrder", method = RequestMethod.POST)
+	@RequestMapping(value = "/changeItemsOrder", method = RequestMethod.POST) //playlist 순서 변경될때
 	@ResponseBody
 	public String changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
 		int size = changedList.size()-1;

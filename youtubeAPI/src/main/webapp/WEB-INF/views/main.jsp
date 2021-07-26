@@ -369,7 +369,6 @@ img {
 	</script>
 	
 	<div class="playlist"> <!-- Playlist CRUD -->
-		
 		<h3>Playlist</h3>
 		<div id="addPlaylist">
 			<input type="text" id="playlistName" />
