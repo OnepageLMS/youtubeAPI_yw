@@ -159,11 +159,11 @@ public class HomeController {
 	@RequestMapping(value = "/getAllPlaylist", method = RequestMethod.POST)
 	@ResponseBody
 	public Object getAllPlaylist() {
-		List<PlaylistVO> result = new ArrayList<PlaylistVO>();
-		result = playlistService.getAllPlaylist();
+		List<PlaylistVO> playlists = new ArrayList<PlaylistVO>();
+		playlists = playlistService.getAllPlaylist();
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allPlaylist", result);
+		map.put("allPlaylist", playlists);
 		map.put("code", "ok");
 		
 		return map;
@@ -200,4 +200,16 @@ public class HomeController {
 		return "home";
 	}
 
+	@RequestMapping(value = "/getOnePlaylist", method = RequestMethod.POST)
+	@ResponseBody
+	public Object getOnePlaylist(@RequestParam(value = "id") String id) {
+		List<VideoVO> videos = new ArrayList<VideoVO>();
+		videos = videoService.getVideoList(Integer.parseInt(id));
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("allVideo", videos);
+		map.put("code", "ok");
+		
+		return map;
+	}
 }

@@ -8,5 +8,4 @@ public interface VideoService {
 	public int updateVideo(VideoVO vo);
 //	public VideoVO getVideo(int playlistID);
 	public List<VideoVO> getVideoList(int playlistID);
-//	public PlaylistVO getPlaylist(int id);
 }

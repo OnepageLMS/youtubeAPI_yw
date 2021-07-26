@@ -28,8 +28,8 @@ public class VideoDAO {
 		return sqlSession.selectOne("Video.getVideo", playlistID);
 	}
 	public List<VideoVO> getVideoList(int playlistID) {
-		System.out.println(playlistID);
-		return sqlSession.selectList("Video.getVideoList", playlistID);
+		List<VideoVO> result = sqlSession.selectList("Video.getVideoList", playlistID);
+		return result;
 	}
 //	public PlaylistVO getPlaylist (int id) {
 //		return sqlSession.selectOne("Playlist.getPlaylist", id);

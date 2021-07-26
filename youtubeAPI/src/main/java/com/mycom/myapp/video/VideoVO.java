@@ -5,6 +5,7 @@ import java.util.Date;
 public class VideoVO {
 	private int id;
 	private String youtubeID;
+	private String title;
 	private double start_s;
 	private double end_s;
 	private int playlistID;
@@ -22,6 +23,12 @@ public class VideoVO {
 	}
 	public void setYoutubeID(String youtubeID) {
 		this.youtubeID = youtubeID;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	public double getStart_s() {
 		return start_s;

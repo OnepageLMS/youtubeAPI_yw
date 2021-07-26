@@ -26,24 +26,15 @@ img {
 	padding: 5px;
 }
 
-.playlist {	/* playlist 구간 시작 */
-	width: 400px;
-}
-
 .playlistSeq{
 	background-color: #cecece;
 	padding: 10px;
 	margin: 5px;
 }
-
-#allPlaylist {
-	border: 1px solid #cecece;
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-
 .container-fluid{
 	margin : 7px;
+	width: 400px;
+	float: right;
 }
 /* 이동 타켓 */
 .card-placeholder {
@@ -241,18 +232,17 @@ img {
 			return value;
 	}
 
-	// (jw) video 저장 
-	function savePlaylist(event){		
+	function savePlaylist(event){ // video 저장 		
 		event.preventDefault(); // avoid to execute the actual submit of the form.
-		var form = $('#savePlaylistForm');
-		var url = form.attr('action');
+		var passData = $('#savePlaylistForm').serialize();
+		var videoTitle = document.getElementsByClassName('videoTitle');
+		passData.push({name:'title', value=videoTitle});
 		
 		$.ajax({
 			'type': "POST",
 			'url': "http://localhost:8080/myapp/addVideo",
-			'data': form.serialize(),
+			'data': passData,
 			success: function(data) {
-				alert("saved successfully!");
 				console.log("saved succes");
 			},
 			error: function(error) {
@@ -279,21 +269,49 @@ img {
 	    type:'post',
 	    url : 'http://localhost:8080/myapp/getAllPlaylist',
 	    global : false,
-	    async : true,
 	    success : function(result) {
 		    if(result.code == "ok"){
 		    	$('#allPlaylist').empty();
-			    values = result.allPlaylist; //order seq desc 로 가져온다.
+			    playlists = result.allPlaylist; //order seq desc 로 가져온다.
 			    total = 0;
-			    $.each(values, function( index, value ){ //여기서 index는 playlistID가 아님! 
+			    
+			    $.each(playlists, function( index, value ){ //여기서 index는 playlistID가 아님! 
+					var playlistID = value.playlistID;
+
 					var html = '<div class = "playlistSeq card text-white bg-info mb-10" >' 
-						+ '<div class="card-header" listID="' + value.playlistID + '" >' 
+						+ '<div class="card-header" listID="' + playlistID + '" >' 
 						+ (value.seq+1) + ' : ' + value.playlistName 
-						+ '<a href="#" onclick="deletePlaylist(\'' + value.playlistID + '\')"> 삭제 </a></div>'
-						+ '<div class="card-body"> body </div>'
+						+ '<a href="#" onclick="deletePlaylist(\'' + playlistID + '\')"> 삭제 </a></div>'
+						+ '<div class="card-body" videoTotal="0"></div>'
 						+ '</div>';
+					
 					$('#allPlaylist').append(html);
 					total += 1;
+					 
+					$.ajax({
+						type:'post',
+					    url : 'http://localhost:8080/myapp/getOnePlaylist',
+					    data : {id : playlistID},
+					    success : function(result){
+						    videos = result.allVideo;
+						    total2 = 0;
+						   
+						    $.each(videos, function( index2, value2 ){ 
+							    var title = value2.title;
+							    var youtubeID = value2.youtubeID;
+							    var start_s = value2.start_s;
+							    var endp_s = value2.end_s;
+							    var seq = value2.seq;
+
+								var html2 = '<div class="videos" ' + '> ' + title + '</div>';
+								$(document.getElementsByClassName("card-body")[index]).append(html2);
+							    total2 += 1;
+							});
+							
+						    document.getElementsByClassName("card-body")[index].setAttribute("videoTotal", total2);
+						}
+					});
+					
 				});
 				document.getElementById("allPlaylist").setAttribute("total", total);
 			}
@@ -389,18 +407,17 @@ img {
 	});
 	</script>
 	
-	<div class="playlist"> <!-- Playlist CRUD -->
-		<h3>Playlist</h3>
+	
+	 <div class="container-fluid"> <!-- Playlist CRUD -->
+	 	<h3>Playlist</h3>
+	 	
 		<div id="addPlaylist">
 			<input type="text" id="playlistName" />
 			<button onclick="createPlaylist()">생성</button>
 		</div>
 		
-		<!-- playlist 출력 -->
-		 <div class="container-fluid">
-			<div id="allPlaylist" class="col-sm-8" >
-				<!-- 각 카드 리스트 박스 추가되는 공간-->
-			</div>
+		<div id="allPlaylist" class="" >
+			<!-- 각 카드 리스트 박스 추가되는 공간-->
 		</div>
 	</div>
 
@@ -424,6 +441,7 @@ img {
 		<input type="hidden" name="youtubeID" id="youtubeID">
 		<input type="hidden" name="start_s" id="start_s">
 		<input type="hidden" name="end_s" id="end_s"> 
+		
 		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : 
 		<input type="text" id="start_hh" maxlength="2" size="2"> 시 
 		<input type="text" id="start_mm" maxlength="2" size="2"> 분 
@@ -464,18 +482,18 @@ img {
 			videoId = id;
 			videoTitle = title;
 			videoDuration = duration;
-			document.getElementById("player_info").innerHTML = '<h2> Title: '
-					+ videoTitle + '</h2> <p> Duration: ' + videoDuration
-					+ ' </p>';
+			document.getElementById("player_info").innerHTML = '<h3 class="videoTitle">' + videoTitle + '</h3>';
 			tag = document.createElement('script');
 			tag.src = "https://www.youtube.com/iframe_api";
 			firstScriptTag = document.getElementsByTagName('script')[0];
 			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+			
 			var regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
 	        var regex_result = regex.exec(duration); //Can be anything like PT2M23S / PT2M / PT28S / PT5H22M31S / PT3H/ PT1H6M /PT1H6S
 	        var hours = parseInt(regex_result[1] || 0);
 	        var minutes = parseInt(regex_result[2] || 0);
 	        var seconds = parseInt(regex_result[3] || 0) - 1;
+	        
 	        document.getElementById("end_hh").value = hours;
 	        document.getElementById("end_mm").value = minutes;
         	document.getElementById("end_ss").value = seconds;
@@ -505,6 +523,7 @@ img {
 		function onPlayerReady() {
 			player.playVideo();
 		}
+		
 		// (jw) 여기서 부터 구간 설정 자바스크립트 
 		
 		// 영상 검색과 함께 영상 구간 설정을 위한 form (원래 숨겨있던 것) 보여주기:
