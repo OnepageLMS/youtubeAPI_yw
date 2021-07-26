@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mycom.myapp.playlist.PlaylistService;
 import com.mycom.myapp.playlist.PlaylistVO;
+import com.mycom.myapp.video.VideoService;
+import com.mycom.myapp.video.VideoVO;
 import com.mycom.myapp.youtube.youtubeProvider;
 
 /**
@@ -43,6 +46,8 @@ public class HomeController {
 	private youtubeProvider service;
 	@Autowired
 	PlaylistService playlistService;
+	@Autowired
+	VideoService videoService;
 	
 
 	/**
@@ -183,6 +188,16 @@ public class HomeController {
 		else
 			System.out.println("playlist 순서 변경 실패! ");
 		return "ok";
+	}
+	
+	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
+	public String addPostOK(@ModelAttribute VideoVO vo) {
+
+		if(videoService.insertVideo(vo) == 0) 
+			System.out.println("데이터 추가 실패 ");
+		else 
+			System.out.println("데이터 추가 성공!! ");
+		return "home";
 	}
 
 }
