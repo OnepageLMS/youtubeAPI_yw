@@ -80,10 +80,10 @@ img {
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-<!-- 아래 script는 youtube-search, video API 사용해서 original video 가져오기. 변경할 때 예원에게 말해주세요!!! -->
+<!-- 아래 script는 youtube-search, video API 사용해서 video 검색결과 가져오기. 변경할 때 예원에게 말해주세요!!! -->
 <script>
 	var maxResults = "20";
-	var idList = [ maxResults ]; //youtube Search 결과 저장
+	var idList = [ maxResults ]; //youtube Search 결과 저장 array
 	var titleList = [ maxResults ];
 	var dateList = [ maxResults ];
 	var viewCount = [ maxResults ];
@@ -92,7 +92,7 @@ img {
 	var durationCount = [ maxResults ];
 	var count = 0;
 
-	function fnGetList(sGetToken) {
+	function fnGetList(sGetToken) { // youtube api로 검색결과 가져오기 
 		count = 0;
 		var $getval = $("#search_box").val();
 		var $getorder = $("#opt").val();
@@ -134,7 +134,7 @@ img {
 						$(jdata.items)
 								.each(
 										function(i) {
-											setList(i, this.id.videoId,
+											setAPIResultToList(i, this.id.videoId,
 													this.snippet.title,
 													this.snippet.publishedAt);
 										})
@@ -156,7 +156,7 @@ img {
 																		dataType : "jsonp",
 																		success : function(jdata2) {
 																			//console.log(jdata2);
-																			setDetails(
+																			setAPIResultDetails(
 																					i,
 																					jdata2.items[0].statistics.viewCount,
 																					jdata2.items[0].statistics.likeCount,
@@ -173,10 +173,10 @@ img {
 														}));
 
 						if (jdata.prevPageToken) {
-							lastandnext(jdata.prevPageToken, " <-이전 ");
+							lastAndNext(jdata.prevPageToken, " <-이전 ");
 						}
 						if (jdata.nextPageToken) {
-							lastandnext(jdata.nextPageToken, " 다음-> ");
+							lastAndNext(jdata.nextPageToken, " 다음-> ");
 						}
 
 					},
@@ -188,8 +188,8 @@ img {
 					}
 				});
 	}
-
-	function getView() { //페이지별로 video 정보가 다 가져와지면 이 함수를 통해 결과 list 출력
+	//displayResultList()
+	function displayResultList() { //페이지별로 video 정보가 다 가져와지면 이 함수를 통해 결과 list 출력
 		for (var i = 0; i < maxResults; i++) {
 			var id = idList[i];
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
@@ -208,26 +208,26 @@ img {
 		}
 	}
 
-	function lastandnext(token, direction) { // 검색결과 이전/다음 페이지 이동
+	function lastAndNext(token, direction) { // 검색결과 이전/다음 페이지 이동
 		$("#nav_view").append(
 				'<a href="javascript:fnGetList(\'' + token + '\');"> '
 						+ direction + ' </a>');
 	}
 
-	function setList(i, id, title, date) { // search api사용할 때 데이터 저장
+	function setAPIResultToList(i, id, title, date) { // search api사용할 때 데이터 저장
 		idList[i] = id;
 		titleList[i] = title;
 		dateList[i] = date.substring(0, 10);
 	}
 
-	function setDetails(i, view, like, dislike, duration) { // videos api 사용할 때 디테일 데이터 저장 
+	function setAPIResultDetails(i, view, like, dislike, duration) { // videos api 사용할 때 디테일 데이터 저장 
 		viewCount[i] = convertNotation(view);
 		likeCount[i] = convertNotation(like);
 		dislikeCount[i] = convertNotation(dislike);
 		durationCount[i] = duration;
 		count += 1;
 		if (count == 20)
-			getView();
+			displayResultList();
 	}
 
 	function convertNotation(value) { //조회수 등 단위 변환
@@ -245,9 +245,9 @@ img {
 <body>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<!-- 부트스트랩 3.x를 사용한다. -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+<!-- playlist CRUD -->
 <script>
 	$(function() { //페이지 처음 불러올때 playlist 띄우기
 	 	getAllPlaylist();
@@ -262,7 +262,7 @@ img {
 	    success : function(result) {
 		    if(result.code == "ok"){
 		    	$('#allPlaylist').empty();
-			    values = result.allPlaylist; //order seq desc 로 가져온다. 
+			    values = result.allPlaylist; //order seq desc 로 가져온다.
 			    total = 0;
 			    $.each(values, function( index, value ){ //여기서 index는 playlistID가 아님! 
 					var html = '<div class = "playlistSeq card text-white bg-info mb-10" >' 
@@ -277,10 +277,10 @@ img {
 				document.getElementById("allPlaylist").setAttribute("total", total);
 			}
 		    else
-			    alert('playlist 불러오기 실패! ')
+			    alert('playlist 불러오기 실패! ');
 	      
 	    },error:function(json){
-	 		alert('ajax 실패! ');
+	 		console.log("ajax로 youtube api 부르기 실패 ");
 	    }
 	  }); 
 	}
@@ -323,7 +323,7 @@ img {
 		});
 	}
 
-	function changeAllList(deletedID){ // playlist 추가, 삭제 뒤 재정렬
+	function changeAllList(deletedID){ // playlist 추가, 삭제 뒤 전체 list order 재정렬
 		var idList = new Array();
 		
 		$(".card-header").each(function(index){
@@ -337,9 +337,9 @@ img {
 		});
 
 		$.ajax({
-		      type: "POST",
-		      url: "http://localhost:8080/myapp/changeItemsOrder",   // 서버단 메소드 url 
-		      data : {changedList : idList},
+		      type: "post",
+		      url: "http://localhost:8080/myapp/changeItemsOrder", 
+		      data : { changedList : idList },
 		      dataType  : "json", 
 		      success  : function(data) {
 		  	  		getAllPlaylist(); 
@@ -351,7 +351,7 @@ img {
 		    });
 	}
 
-	$(function() { // playlist 순서변경
+	$(function() { // playlist drag&drop으로 순서변경
 		$("#allPlaylist").sortable({
 			connectWith: "#allPlaylist", // 드래그 앤 드롭 단위 css 선택자
 			handle: ".card-header", // 움직이는 css 선택자
@@ -378,15 +378,11 @@ img {
 		
 		<!-- playlist 출력 -->
 		 <div class="container-fluid">
-			<div class="row">
-				<div id="allPlaylist" class="col-sm-8" >
-					<!-- 각 카드 리스트 박스 추가되는 공간-->
-				</div>
+			<div id="allPlaylist" class="col-sm-8" >
+				<!-- 각 카드 리스트 박스 추가되는 공간-->
 			</div>
 		</div>
 	</div>
-	
-	
 
 	<form name="form1" method="post" onsubmit="return false;">
 		<select name="opt" id="opt">
@@ -402,6 +398,7 @@ img {
 	<div id="player_info"></div>
 	<div id="player"></div>
 
+	<!-- Youtube video player -->
 	<script>
 		// 각 video를 클릭했을 때 함수 parameter로 넘어오는 정보들
 		var videoId;
