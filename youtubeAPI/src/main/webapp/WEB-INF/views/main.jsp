@@ -197,9 +197,9 @@ img {
 			//var url = '<a href="https://youtu.be/' + id + '">';
 			$("#get_view").append(
 					//'<div class="video" onclick="viewVideo(\'' + id.toString() + '\')" >' 
-					'<div class="video" onclick="viewVideo(\'' + id.toString()
+					'<div class="video" onclick="showForm(); viewVideo(\'' + id.toString()
 							+ '\'' + ',\'' + titleList[i].toString() + '\''
-							+ ',\'' + durationCount[i] + '\')" >' + thumbnail
+							+ ',\'' + durationCount[i] + '\');" >' + thumbnail
 							+ titleList[i] + '</p>'
 							+ '<p class="info"> publised: <b>' + dateList[i]
 							+ '</b> view: <b>' + viewCount[i]
@@ -241,6 +241,29 @@ img {
 			return (parseInt(num / 1000) + "k");
 		else
 			return value;
+	}
+
+	// (jw) video 저장 
+	function savePlaylist(event){		
+		event.preventDefault(); // avoid to execute the actual submit of the form.
+
+		var form = $('#savePlaylistForm');
+		var url = form.attr('action');
+
+		
+		$.ajax({
+			'type': "POST",
+			'url': "http://localhost:8080/myapp/addVideo",
+			'data': form.serialize(),
+			success: function(data) {
+				alert("saved successfully!");
+				console.log("saved succes");
+			},
+			error: function(error) {
+				alert(error);
+			},
+		});
+		return false;
 	}
 </script>
 
@@ -385,20 +408,32 @@ img {
 			<option value="title">문자순</option>
 			<option value="rating">평가순</option>
 		</select> <input type="text" id="search_box">
-		<button onclick="fnGetList(); showForm();">검색</button>
+		<button onclick="fnGetList();">검색</button>
 	</form>
 
 	<div id="player_info"></div>
 	<div id="player"></div>
 	
-	<!-- 구간 설정 부분  -->
+	<!-- (jw) 영상 구간 설정 부분  -->
 	<br>
 	<form id="savePlaylistForm" onsubmit="return validation(event)" style="display: none">
 		<input type="hidden" name="youtubeID" id="youtubeID">
 		<input type="hidden" name="start_s" id="start_s">
 		<input type="hidden" name="end_s" id="end_s"> 
-		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : <input type="text" id="start_hh" maxlength="2" size="2"> 시 <input type="text" id="start_mm" maxlength="2" size="2"> 분 <input type="text" id="start_ss" maxlength="5" size="5"> 초 <button onclick="seekTo1()" type="button"> 위치이동 </button><span id=warning1 style="color:red;"></span> <br>
-		<button onclick="getCurrentPlayTime2()" type="button"> end time </button> : <input type="text" id="end_hh" max="" maxlength="2" size="2"> 시 <input type="text" id="end_mm" max="" maxlength="2" size="2"> 분 <input type="text" id="end_ss" maxlength="5" size="5"> 초 <button onclick="seekTo2()" type="button"> 위치이동 </button> <span id=warning2 style="color:red;"></span> <br>
+		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : 
+		<input type="text" id="start_hh" maxlength="2" size="2"> 시 
+		<input type="text" id="start_mm" maxlength="2" size="2"> 분 
+		<input type="text" id="start_ss" maxlength="5" size="5"> 초 
+		<button onclick="seekTo1()" type="button"> 위치이동 </button>
+		<span id=warning1 style="color:red;"></span> <br>
+		
+		<button onclick="getCurrentPlayTime2()" type="button"> end time </button> : 
+		<input type="text" id="end_hh" max="" maxlength="2" size="2"> 시 
+		<input type="text" id="end_mm" max="" maxlength="2" size="2"> 분 
+		<input type="text" id="end_ss" maxlength="5" size="5"> 초 
+		<button onclick="seekTo2()" type="button"> 위치이동 </button> 
+		<span id=warning2 style="color:red;"></span> <br>
+		
 		playlist num: <input type="text" name="playlistID" required>
 		
 		<button type="submit" > submit </button>
@@ -446,10 +481,12 @@ img {
 	        var total_seconds = hours * 60 * 60 + minutes * 60 + seconds;
 			// validty check: 
 	        limit = parseInt(total_seconds);
+
+	        // 클릭한 영상의 videoId form에다가 지정. 
+	        document.getElementById("youtubeID").value = id;
 	        
 			//이미 다른 영상이 player로 띄워져 있을 때
 			player.loadVideoById(videoId, 0, "large");
-			
 		}
 
 		// 3. This function creates an <iframe> (and YouTube player)
@@ -470,7 +507,7 @@ img {
 			player.playVideo();
 		}
 
-		// 여기서 부터 구간 설정 자바스크립트 
+		// (jw) 여기서 부터 구간 설정 자바스크립트 
 		
 		// 영상 검색과 함께 영상 구간 설정을 위한 form (원래 숨겨있던 것) 보여주기:
 		function showForm(){
