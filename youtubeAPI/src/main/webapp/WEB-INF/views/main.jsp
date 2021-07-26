@@ -227,6 +227,7 @@ img {
 		dislikeCount[i] = convertNotation(dislike);
 		durationCount[i] = duration;
 		count += 1;
+		console.log("check here!!" + durationCount[i]);
 		if (count == 20)
 			getView();
 	}
@@ -384,12 +385,27 @@ img {
 			<option value="title">문자순</option>
 			<option value="rating">평가순</option>
 		</select> <input type="text" id="search_box">
-		<button onclick="fnGetList();">검색</button>
+		<button onclick="fnGetList(); showForm();">검색</button>
 	</form>
 
 	<div id="player_info"></div>
 	<div id="player"></div>
-
+	
+	<!-- 구간 설정 부분  -->
+	<br>
+	<form id="savePlaylistForm" onsubmit="return validation(event)" style="display: none">
+		<input type="hidden" name="youtubeID" id="youtubeID">
+		<input type="hidden" name="start_s" id="start_s">
+		<input type="hidden" name="end_s" id="end_s"> 
+		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : <input type="text" id="start_hh" maxlength="2" size="2"> 시 <input type="text" id="start_mm" maxlength="2" size="2"> 분 <input type="text" id="start_ss" maxlength="5" size="5"> 초 <button onclick="seekTo1()" type="button"> 위치이동 </button><span id=warning1 style="color:red;"></span> <br>
+		<button onclick="getCurrentPlayTime2()" type="button"> end time </button> : <input type="text" id="end_hh" max="" maxlength="2" size="2"> 시 <input type="text" id="end_mm" max="" maxlength="2" size="2"> 분 <input type="text" id="end_ss" maxlength="5" size="5"> 초 <button onclick="seekTo2()" type="button"> 위치이동 </button> <span id=warning2 style="color:red;"></span> <br>
+		playlist num: <input type="text" name="playlistID" required>
+		
+		<button type="submit" > submit </button>
+		<!-- id="btn-submit" disabled="disabled" -->
+	</form>
+	
+	
 	<script>
 		// 각 video를 클릭했을 때 함수 parameter로 넘어오는 정보들
 		var videoId;
@@ -401,6 +417,9 @@ img {
 		var firstScriptTag;
 		var player;
 
+		// (jw) 구간 설정: 유효성 검사시 필요 
+		var limit;
+		
 		function viewVideo(id, title, duration) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
 			videoId = id;
 			videoTitle = title;
@@ -415,9 +434,22 @@ img {
 			firstScriptTag = document.getElementsByTagName('script')[0];
 			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+			var regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+	        var regex_result = regex.exec(duration); //Can be anything like PT2M23S / PT2M / PT28S / PT5H22M31S / PT3H/ PT1H6M /PT1H6S
+	        var hours = parseInt(regex_result[1] || 0);
+	        var minutes = parseInt(regex_result[2] || 0);
+	        var seconds = parseInt(regex_result[3] || 0) - 1;
+	        document.getElementById("end_hh").value = hours;
+	        document.getElementById("end_mm").value = minutes;
+        	document.getElementById("end_ss").value = seconds;
+        	
+	        var total_seconds = hours * 60 * 60 + minutes * 60 + seconds;
+			// validty check: 
+	        limit = parseInt(total_seconds);
+	        
 			//이미 다른 영상이 player로 띄워져 있을 때
 			player.loadVideoById(videoId, 0, "large");
-
+			
 		}
 
 		// 3. This function creates an <iframe> (and YouTube player)
@@ -437,10 +469,99 @@ img {
 		function onPlayerReady() {
 			player.playVideo();
 		}
+
+		// 여기서 부터 구간 설정 자바스크립트 
+		
+		// 영상 검색과 함께 영상 구간 설정을 위한 form (원래 숨겨있던 것) 보여주기:
+		function showForm(){
+			var saveForm = document.getElementById("savePlaylistForm");
+			saveForm.style.display = "block";
+		} 
+		// Youtube player 특정 위치로 재생 위치 이동 : 
+		function seekTo1(){
+			// 사용자가 input에서 수기로 시간을 변경했을 시에 필요. 
+			var start_hh = $('#start_hh').val();
+			var start_mm = $('#start_mm').val();
+			var start_ss = $('#start_ss').val();
+			start_time = start_hh * 3600.00 + start_mm * 60.00 + start_ss * 1.00;
+			player.seekTo(start_time);	
+		}	
+		function seekTo2(){
+			var end_hh = $('#end_hh').val();
+			var end_mm = $('#end_mm').val();
+			var end_ss = $('#end_ss').val();
+			
+			end_time = end_hh * 3600.00 + end_mm * 60.00 + end_ss * 1.00;
+			player.seekTo(end_time);	
+		}	
+
+		// 현재 재생위치를 시작,끝 시간에 지정 
+		function getCurrentPlayTime1(){	
+			var d = Number(player.getCurrentTime());
+			var h = Math.floor(d / 3600);
+			var m = Math.floor(d % 3600 / 60);
+			var s = d % 3600 % 60;
+		
+			document.getElementById("start_ss").value = parseFloat(s).toFixed(2);
+			document.getElementById("start_hh").value = h;/* .toFixed(2); */
+			document.getElementById("start_mm").value = m;/* .toFixed(2); */
+			document.getElementById("start_s").value = parseFloat(d).toFixed(2);
+			start_time = parseFloat(d).toFixed(2);
+			start_time *= 1.00;
+			console.log("check:", typeof start_time);
+		}
+		function getCurrentPlayTime2(){
+			var d = Number(player.getCurrentTime());
+			var h = Math.floor(d / 3600);
+			var m = Math.floor(d % 3600 / 60);
+			var s = d % 3600 % 60;
+		
+			document.getElementById("end_ss").value = parseFloat(s).toFixed(2);
+			document.getElementById("end_hh").value = h;/* .toFixed(2); */
+			document.getElementById("end_mm").value = m;/* .toFixed(2); */
+			document.getElementById("end_s").value = parseFloat(d).toFixed(2);
+			end_time = parseFloat(d).toFixed(2);
+			end_time *= 1.00;
+			console.log("check", typeof end_time);
+		}
+		
+		// 재생 구간 유효성 검사: 
+		function validation(event){
+			document.getElementById("warning1").innerHTML = "";
+			document.getElementById("warning2").innerHTML = "";	
+			// 사용자가 input에서 수기로 시간을 변경했을 시에 필요. 
+			var start_hh = $('#start_hh').val();
+			var start_mm = $('#start_mm').val();
+			var start_ss = $('#start_ss').val();
+			start_time = start_hh * 3600.00 + start_mm * 60.00 + start_ss * 1.00;
+			$('#start_s').val(start_time); 
+			var end_hh = $('#end_hh').val();
+			var end_mm = $('#end_mm').val();
+			var end_ss = $('#end_ss').val();
+			
+			end_time = end_hh * 3600.00 + end_mm * 60.00 + end_ss * 1.00;
+			$('#end_s').val(end_time);
+			console.log("start= ", start_time);
+			console.log("end= ", end_time);
+			
+			if(start_time > end_time) {
+				document.getElementById("warning1").innerHTML = "start time cannot exceed end time";
+				document.getElementById("start_ss").focus();
+				return false;
+			}
+			if(end_time > limit){
+				//console.log("value of x: "+ x);
+				document.getElementById("warning2").innerHTML = "Please insert again";
+				document.getElementById("end_ss").focus();
+				return false;
+			}
+			else {
+				return savePlaylist(event);
+			}
+		}
 	</script>
 
 	<div id="get_view"></div>
-
 	<div id="nav_view"></div>
 
 
