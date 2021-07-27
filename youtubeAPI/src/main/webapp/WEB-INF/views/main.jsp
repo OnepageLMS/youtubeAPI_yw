@@ -183,22 +183,23 @@ img {
 	function displayResultList() { //페이지별로 video 정보가 다 가져와지면 이 함수를 통해 결과 list 출력
 		for (var i = 0; i < maxResults; i++) {
 			var id = idList[i];
+			var view = viewCount[i];
+			
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
 			//var url = '<a href="https://youtu.be/' + id + '">';
 			$("#get_view").append(
 					//'<div class="video" onclick="viewVideo(\'' + id.toString() + '\')" >' 
-					'<div class="video" onclick="showForm(); viewVideo(\'' + id.toString()
-							+ '\'' + ',\'' + titleList[i].toString() + '\''
+					'<div class="searchedVideo" onclick="showForm(); viewVideo(\'' + id.toString()
+							+ '\'' + ',\'' + titleList[i] + '\''
 							+ ',\'' + durationCount[i] + '\');" >' + thumbnail
 							+ titleList[i] + '</p>'
 							+ '<p class="info"> publised: <b>' + dateList[i]
-							+ '</b> view: <b>' + viewCount[i]
+							+ '</b> view: <b>' + view
 							+ '</b> like: <b>' + likeCount[i]
 							+ '</b> dislike: <b>' + dislikeCount[i]
 							+ '</b> </p></div>');
 		}
 	}
-
 	function lastAndNext(token, direction) { // 검색결과 이전/다음 페이지 이동
 		$("#nav_view").append(
 				'<a href="javascript:fnGetList(\'' + token + '\');"> '
@@ -207,7 +208,7 @@ img {
 
 	function setAPIResultToList(i, id, title, date) { // search api사용할 때 데이터 저장
 		idList[i] = id;
-		titleList[i] = title;
+		titleList[i] = title.replace("'", "\\'").replace("\"","\\\""); // 싱글따옴표나 슬래시 들어갼것 따로 처리해줘야함!!!!
 		dateList[i] = date.substring(0, 10);
 	}
 
@@ -228,28 +229,10 @@ img {
 			return (parseInt(num / 1000000) + "m");
 		else if (num >= 1000)
 			return (parseInt(num / 1000) + "k");
+		else if (value === undefined)
+			return 0;
 		else
 			return value;
-	}
-
-	function savePlaylist(event){ // video 저장 		
-		event.preventDefault(); // avoid to execute the actual submit of the form.
-		var passData = $('#savePlaylistForm').serialize();
-		var videoTitle = document.getElementsByClassName('videoTitle');
-		passData.push({name:'title', value=videoTitle});
-		
-		$.ajax({
-			'type': "POST",
-			'url': "http://localhost:8080/myapp/addVideo",
-			'data': passData,
-			success: function(data) {
-				console.log("saved succes");
-			},
-			error: function(error) {
-				alert(error);
-			},
-		});
-		return false;
 	}
 </script>
 
@@ -303,11 +286,12 @@ img {
 							    var endp_s = value2.end_s;
 							    var seq = value2.seq;
 
-								var html2 = '<div class="videos" ' + '> ' + title + '</div>';
+								var html2 = '<div class="videos" videoID="' + value2.id + '"> ' + title + '</div>';
+								
 								$(document.getElementsByClassName("card-body")[index]).append(html2);
 							    total2 += 1;
+							    
 							});
-							
 						    document.getElementsByClassName("card-body")[index].setAttribute("videoTotal", total2);
 						}
 					});
@@ -405,10 +389,39 @@ img {
 			$( "#allPlaylist .card" ).disableSelection(); //해당 클래스 하위의 텍스트는 변경x
 	
 	});
+
+	function createVideo(event){ // video 저장 		
+		event.preventDefault(); // avoid to execute the actual submit of the form.
+		var seq = $("#playlistSeq").val() - 1;
+		var total = $(".card-body")[seq].getAttribute('videoTotal');
+		
+		document.getElementById("youtubeSeq").value = total;
+		
+		var playlistID = $(".card-header")[seq].getAttribute('listid');
+		document.getElementById("playlistSeq").value = playlistID;
+		
+		console.log("seq: " + seq + " total: " + total + " playlistID: " + playlistID);
+		
+		var passData = $('#createVideoForm').serialize();
+		
+		$.ajax({
+			'type': "POST",
+			'url': "http://localhost:8080/myapp/addVideo",
+			'data': passData,
+			success: function(data) {
+				console.log("saved succes");
+				getAllPlaylist();
+			},
+			error: function(error) {
+				alert(error);
+			},
+		});
+		return false;
+	}
 	</script>
 	
 	
-	 <div class="container-fluid"> <!-- Playlist CRUD -->
+	 <div class="container-fluid playlist"> <!-- Playlist CRUD -->
 	 	<h3>Playlist</h3>
 	 	
 		<div id="addPlaylist">
@@ -437,10 +450,11 @@ img {
 	
 	<!-- (jw) 영상 구간 설정 부분  -->
 	<br>
-	<form id="savePlaylistForm" onsubmit="return validation(event)" style="display: none">
+	<form id="createVideoForm" onsubmit="return validation(event)" style="display: none">
 		<input type="hidden" name="youtubeID" id="youtubeID">
 		<input type="hidden" name="start_s" id="start_s">
 		<input type="hidden" name="end_s" id="end_s"> 
+		<input type="hidden" name="title" id="youtubeTitle"> 
 		
 		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : 
 		<input type="text" id="start_hh" maxlength="2" size="2"> 시 
@@ -456,7 +470,8 @@ img {
 		<button onclick="seekTo2()" type="button"> 위치이동 </button> 
 		<span id=warning2 style="color:red;"></span> <br>
 		
-		playlist num: <input type="text" name="playlistID" required>
+		playlist num: <input type="text" name="playlistID" id="playlistSeq" required>
+		<input type="hidden" name="seq" id="youtubeSeq">
 		
 		<button type="submit" > submit </button>
 		<!-- id="btn-submit" disabled="disabled" -->
@@ -503,6 +518,7 @@ img {
 	        limit = parseInt(total_seconds);
 	        // 클릭한 영상의 videoId form에다가 지정. 
 	        document.getElementById("youtubeID").value = id;
+	        document.getElementById("youtubeTitle").value = videoTitle;
 	        
 			//이미 다른 영상이 player로 띄워져 있을 때
 			player.loadVideoById(videoId, 0, "large");
@@ -528,7 +544,7 @@ img {
 		
 		// 영상 검색과 함께 영상 구간 설정을 위한 form (원래 숨겨있던 것) 보여주기:
 		function showForm(){
-			var saveForm = document.getElementById("savePlaylistForm");
+			var saveForm = document.getElementById("createVideoForm");
 			saveForm.style.display = "block";
 		} 
 		// Youtube player 특정 위치로 재생 위치 이동 : 
@@ -561,7 +577,7 @@ img {
 			document.getElementById("start_s").value = parseFloat(d).toFixed(2);
 			start_time = parseFloat(d).toFixed(2);
 			start_time *= 1.00;
-			console.log("check:", typeof start_time);
+			//console.log("check:", typeof start_time);
 		}
 		function getCurrentPlayTime2(){
 			var d = Number(player.getCurrentTime());
@@ -575,7 +591,7 @@ img {
 			document.getElementById("end_s").value = parseFloat(d).toFixed(2);
 			end_time = parseFloat(d).toFixed(2);
 			end_time *= 1.00;
-			console.log("check", typeof end_time);
+			//console.log("check", typeof end_time);
 		}
 		
 		// 재생 구간 유효성 검사: 
@@ -594,8 +610,8 @@ img {
 			
 			end_time = end_hh * 3600.00 + end_mm * 60.00 + end_ss * 1.00;
 			$('#end_s').val(end_time);
-			console.log("start= ", start_time);
-			console.log("end= ", end_time);
+			//console.log("start= ", start_time);
+			//console.log("end= ", end_time);
 			
 			if(start_time > end_time) {
 				document.getElementById("warning1").innerHTML = "start time cannot exceed end time";
@@ -609,7 +625,7 @@ img {
 				return false;
 			}
 			else {
-				return savePlaylist(event);
+				return createVideo(event);
 			}
 		}
 	</script>
