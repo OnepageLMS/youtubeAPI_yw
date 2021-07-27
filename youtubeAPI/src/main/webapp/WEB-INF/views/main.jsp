@@ -263,7 +263,7 @@ img {
 
 					var html = '<div class = "playlistSeq card text-white bg-info mb-10" >' 
 						+ '<div class="card-header" listID="' + playlistID + '" >' 
-						+ (value.seq+1) + ' : ' + value.playlistName 
+						+ (total+1) + ' : ' + value.playlistName 
 						+ '<a href="#" onclick="deletePlaylist(\'' + playlistID + '\')"> 삭제 </a></div>'
 						+ '<div class="card-body" videoTotal="0"></div>'
 						+ '</div>';
@@ -399,6 +399,7 @@ img {
 		var total = $(".card-body")[seq].getAttribute('videoTotal');
 		
 		document.getElementById("youtubeSeq").value = total;
+		console.log(document.getElementById("youtubeSeq").value);
 		
 		var playlistID = $(".card-header")[seq].getAttribute('listid');
 		document.getElementById("playlistSeq").value = playlistID;
