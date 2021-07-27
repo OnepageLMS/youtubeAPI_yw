@@ -283,10 +283,13 @@ img {
 							    var title = value2.title;
 							    var youtubeID = value2.youtubeID;
 							    var start_s = value2.start_s;
-							    var endp_s = value2.end_s;
+							    var end_s = value2.end_s;
 							    var seq = value2.seq;
 
-								var html2 = '<div class="videos" videoID="' + value2.id + '"> ' + title + '</div>';
+								var html2 = '<div class="videos" videoID="' + value2.id 
+								+ '" youtubeID="' + youtubeID + '" start_s="' + start_s
+								+ '" end_s="' + end_s + '" > ' + title + '</div>';
+								
 								
 								$(document.getElementsByClassName("card-body")[index]).append(html2);
 							    total2 += 1;
