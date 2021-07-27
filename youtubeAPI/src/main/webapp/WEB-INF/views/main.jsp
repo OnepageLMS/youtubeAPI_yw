@@ -188,8 +188,8 @@ img {
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
 			//var url = '<a href="https://youtu.be/' + id + '">';
 			$("#get_view").append(
-					//'<div class="video" onclick="viewVideo(\'' + id.toString() + '\')" >' 
-					'<div class="searchedVideo" onclick="showForm(); viewVideo(\'' + id.toString()
+					//'<div class="video" onclick="selectVideo(\'' + id.toString() + '\')" >' 
+					'<div class="searchedVideo" onclick="showForm(); selectVideo(\'' + id.toString()
 							+ '\'' + ',\'' + titleList[i] + '\''
 							+ ',\'' + durationCount[i] + '\');" >' + thumbnail
 							+ titleList[i] + '</p>'
@@ -285,8 +285,11 @@ img {
 							    var start_s = value2.start_s;
 							    var end_s = value2.end_s;
 							    var seq = value2.seq;
-
-								var html2 = '<div class="videos" onclick=openSavedVideo(this); videoID="' + value2.id 
+							    console.log(value2.playlistID);
+							
+								var html2 = '<div class="videos" onclick=openSavedVideo(this);'
+								+ ' playlistID="' + playlistID + 
+								+ '" videoID="' + value2.id 
 								+ '" youtubeID="' + youtubeID + '" start_s="' + start_s
 								+ '" end_s="' + end_s + '" > ' + title + '</div>';
 								
@@ -399,12 +402,9 @@ img {
 		var total = $(".card-body")[seq].getAttribute('videoTotal');
 		
 		document.getElementById("youtubeSeq").value = total;
-		console.log(document.getElementById("youtubeSeq").value);
 		
 		var playlistID = $(".card-header")[seq].getAttribute('listid');
 		document.getElementById("playlistSeq").value = playlistID;
-		
-		console.log("seq: " + seq + " total: " + total + " playlistID: " + playlistID);
 		
 		var passData = $('#createVideoForm').serialize();
 		
@@ -497,17 +497,24 @@ img {
 
 		// (jw) 구간 설정: 유효성 검사시 필요 
 		var limit;
+		var start_s;
+		var end_s;
 
-		function viewVideo(id, title, duration) { // 선택한 비디오 아이디를 가지고 플레이어 띄우기
+		function showYoutubePlayer(id, title){
 			videoId = id;
 			videoTitle = title;
-			videoDuration = duration;
+			
 			document.getElementById("player_info").innerHTML = '<h3 class="videoTitle">' + videoTitle + '</h3>';
 			tag = document.createElement('script');
 			tag.src = "https://www.youtube.com/iframe_api";
 			firstScriptTag = document.getElementsByTagName('script')[0];
 			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-			
+		}
+
+		function selectVideo(id, title, duration) { // 유튜브 검색결과에서 영상 아이디를 가지고 플레이어 띄우기
+			showYoutubePlayer(id, title);
+
+			videoDuration = duration;
 			var regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
 	        var regex_result = regex.exec(duration); //Can be anything like PT2M23S / PT2M / PT28S / PT5H22M31S / PT3H/ PT1H6M /PT1H6S
 	        var hours = parseInt(regex_result[1] || 0);
@@ -525,7 +532,7 @@ img {
 	        document.getElementById("youtubeID").value = id;
 	        document.getElementById("youtubeTitle").value = videoTitle;
 	        
-			//이미 다른 영상이 player로 띄워져 있을 때
+			//이미 다른 영상이 player로 띄워져 있을 때 새로운 id로 띄우기
 			player.loadVideoById(videoId, 0, "large");
 	
 			document.getElementById("start_hh").value = 0;
@@ -542,25 +549,30 @@ img {
 				events : {
 					'onReady' : onPlayerReady,
 				}
+				
 			});
 		}
 		// 4. The API will call this function when the video player is ready.
 		function onPlayerReady() {
 			player.playVideo();
 		}
-		// (jw) 저장된 영상 구간 불러오기 부분 (2021/07/27: 화요일 저녁)
+		
+		// (jw) playlist 저장된 영상 (구간) 불러오기 (2021/07/27: 화요일 저녁)
 		function openSavedVideo(item) {
-			console.log(item.getAttribute('videoID'));
+			var text = item.innerText;
+			showYoutubePlayer(item.getAttribute('youtubeID'), text);
+						
+			start_s = item.getAttribute('start_s');
+			end_s = item.getAttribute('end_s');
+
 			showForm();
-			var start_s = item.getAttribute('start_s');
-			var end_s = item.getAttribute('end_s');
-			
+
 			player.loadVideoById({
 				'videoId': item.getAttribute('youtubeID'), 
 				'startSeconds': start_s, 
 				'endSeconds':end_s
 			});
-			
+
 			var start_hh = Math.floor(start_s / 3600);
 			var start_mm = Math.floor(start_s % 3600 / 60);
 			var start_ss = start_s % 3600 % 60;
@@ -577,13 +589,10 @@ img {
 			document.getElementById("end_mm").value = end_mm;
 			document.getElementById("end_ss").value = end_ss;
 
-			
+			document.getElementById("playlistSeq").value = item.getAttribute('playlistID');
 		}
 
 
-
-
-		
 		// (jw) 여기서 부터 구간 설정 자바스크립트 
 		
 		// 영상 검색과 함께 영상 구간 설정을 위한 form (원래 숨겨있던 것) 보여주기:
