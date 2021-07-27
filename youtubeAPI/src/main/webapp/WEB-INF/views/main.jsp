@@ -589,7 +589,7 @@ img {
 			document.getElementById("end_mm").value = end_mm;
 			document.getElementById("end_ss").value = end_ss;
 
-			document.getElementById("playlistSeq").value = item.getAttribute('playlistID');
+			document.getElementById("playlistSeq").value = item.getAttribute('playlistID'); //이부분 수정 
 		}
 
 
