@@ -286,7 +286,7 @@ img {
 							    var end_s = value2.end_s;
 							    var seq = value2.seq;
 
-								var html2 = '<div class="videos" videoID="' + value2.id 
+								var html2 = '<div class="videos" onclick=openSavedVideo(this); videoID="' + value2.id 
 								+ '" youtubeID="' + youtubeID + '" start_s="' + start_s
 								+ '" end_s="' + end_s + '" > ' + title + '</div>';
 								
@@ -484,6 +484,7 @@ img {
 
 	<!-- Youtube video player -->
 	<script>
+	
 		// 각 video를 클릭했을 때 함수 parameter로 넘어오는 정보들
 		var videoId;
 		var videoTitle;
@@ -526,6 +527,10 @@ img {
 	        
 			//이미 다른 영상이 player로 띄워져 있을 때
 			player.loadVideoById(videoId, 0, "large");
+	
+			document.getElementById("start_hh").value = 0;
+	        document.getElementById("start_mm").value = 0;
+        	document.getElementById("start_ss").value = 0;
 		}
 		// 3. This function creates an <iframe> (and YouTube player)
 		//    after the API code downloads. 
@@ -543,6 +548,41 @@ img {
 		function onPlayerReady() {
 			player.playVideo();
 		}
+		// (jw) 저장된 영상 구간 불러오기 부분 (2021/07/27: 화요일 저녁)
+		function openSavedVideo(item) {
+			console.log(item.getAttribute('videoID'));
+			showForm();
+			var start_s = item.getAttribute('start_s');
+			var end_s = item.getAttribute('end_s');
+			
+			player.loadVideoById({
+				'videoId': item.getAttribute('youtubeID'), 
+				'startSeconds': start_s, 
+				'endSeconds':end_s
+			});
+			
+			var start_hh = Math.floor(start_s / 3600);
+			var start_mm = Math.floor(start_s % 3600 / 60);
+			var start_ss = start_s % 3600 % 60;
+
+			document.getElementById("start_hh").value = start_hh;
+			document.getElementById("start_mm").value = start_mm;
+			document.getElementById("start_ss").value = start_ss;
+
+			var end_hh = Math.floor(end_s / 3600);
+			var end_mm = Math.floor(end_s % 3600 / 60);
+			var end_ss = end_s % 3600 % 60;
+
+			document.getElementById("end_hh").value = end_hh;
+			document.getElementById("end_mm").value = end_mm;
+			document.getElementById("end_ss").value = end_ss;
+
+			
+		}
+
+
+
+
 		
 		// (jw) 여기서 부터 구간 설정 자바스크립트 
 		
