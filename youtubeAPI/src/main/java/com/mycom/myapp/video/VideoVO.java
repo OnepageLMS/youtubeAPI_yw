@@ -3,8 +3,8 @@ package com.mycom.myapp.video;
 import java.util.Date;
 
 public class VideoVO {
-	private int id;
-	private String youtubeID;
+	private int id;	//video id 
+	private String youtubeID; 
 	private String title;
 	private double start_s;
 	private double end_s;

@@ -190,16 +190,6 @@ public class HomeController {
 		return "ok";
 	}
 	
-	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
-	public String addPostOK(@ModelAttribute VideoVO vo) {
-
-		if(videoService.insertVideo(vo) == 0) 
-			System.out.println("데이터 추가 실패 ");
-		else 
-			System.out.println("데이터 추가 성공!! ");
-		return "home";
-	}
-
 	@RequestMapping(value = "/getOnePlaylist", method = RequestMethod.POST)
 	@ResponseBody
 	public Object getOnePlaylist(@RequestParam(value = "id") String id) {
@@ -212,4 +202,51 @@ public class HomeController {
 		
 		return map;
 	}
+	
+	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
+	public String addPostOK(@ModelAttribute VideoVO vo) {
+
+		if(videoService.insertVideo(vo) == 0) 
+			System.out.println("비디오 추가 실패 ");
+		else 
+			System.out.println("비디오 추가 성공!! ");
+		return "home";
+	}
+	
+	@RequestMapping(value = "/deleteVideo", method = RequestMethod.POST)
+	@ResponseBody
+	public void deletePVideo(HttpServletRequest request) {
+		int videoID = Integer.parseInt(request.getParameter("id"));
+		
+		if( videoService.deleteVideo(videoID) != 0) {
+			System.out.println("video 삭제 성공! ");
+		}
+		else
+			System.out.println("video 삭제 실패! ");
+	}
+	
+	@RequestMapping(value = "/changeVideosOrder", method = RequestMethod.POST) //video 순서 변경될때
+	@ResponseBody
+	public String changeVideosOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
+		int size = changedList.size()-1;
+		
+		for(String order : changedList) {
+			VideoVO vo = new VideoVO();
+			vo.setId(Integer.parseInt(order));
+			vo.setSeq(size);
+			
+			if (videoService.changeSeq(vo) != 0)
+				size-=1;
+		}
+
+		if (size == -1)
+			System.out.println("video 순서 변경 성공! ");
+		else
+			System.out.println("video 순서 변경 실패! ");
+		return "ok";
+	}
+	
+	
+	
+	
 }

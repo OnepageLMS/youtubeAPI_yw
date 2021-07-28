@@ -20,6 +20,12 @@ public class VideoDAO {
 		int result = sqlSession.update("Video.updateVideo", vo);
 		return result;
 	}
+	
+	public int changeSeq(VideoVO vo) {
+		int result = sqlSession.update("Video.changeSeq", vo);
+		return result;
+	}
+	
 	public int deleteVideo(int id) {
 		int result = sqlSession.delete("Video.deleteVideo", id);
 		return result;

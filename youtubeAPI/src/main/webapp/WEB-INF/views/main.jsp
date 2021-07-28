@@ -179,7 +179,7 @@ img {
 					}
 				});
 	}
-	//displayResultList()
+
 	function displayResultList() { //페이지별로 video 정보가 다 가져와지면 이 함수를 통해 결과 list 출력
 		for (var i = 0; i < maxResults; i++) {
 			var id = idList[i];
@@ -270,40 +270,10 @@ img {
 					
 					$('#allPlaylist').append(html);
 					total += 1;
-					 
-					$.ajax({
-						type:'post',
-					    url : 'http://localhost:8080/myapp/getOnePlaylist',
-					    data : {id : playlistID},
-					    success : function(result){
-						    videos = result.allVideo;
-						    total2 = 0;
-						   
-						    $.each(videos, function( index2, value2 ){ 
-							    var title = value2.title;
-							    var youtubeID = value2.youtubeID;
-							    var start_s = value2.start_s;
-							    var end_s = value2.end_s;
-							    var seq = value2.seq;
-							    console.log(value2.playlistID);
-							
-								var html2 = '<div class="videos" onclick=openSavedVideo(this);'
-								+ ' playlistID="' + playlistID + 
-								+ '" videoID="' + value2.id 
-								+ '" youtubeID="' + youtubeID + '" start_s="' + start_s
-								+ '" end_s="' + end_s + '" > ' + title + '</div>';
-								
-								
-								$(document.getElementsByClassName("card-body")[index]).append(html2);
-							    total2 += 1;
-							    
-							});
-						    document.getElementsByClassName("card-body")[index].setAttribute("videoTotal", total2);
-						}
-					});
+					getAllVideo(playlistID, index);
 					
 				});
-				document.getElementById("allPlaylist").setAttribute("total", total);
+				document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
 			}
 		    else
 			    alert('playlist 불러오기 실패! ');
@@ -367,7 +337,7 @@ img {
 
 		$.ajax({
 		      type: "post",
-		      url: "http://localhost:8080/myapp/changeItemsOrder", 
+		      url: "http://localhost:8080/myapp/changeItemsOrder", //새로 바뀐 순서대로 db update
 		      data : { changedList : idList },
 		      dataType  : "json", 
 		      success  : function(data) {
@@ -396,31 +366,104 @@ img {
 	
 	});
 
-	function createVideo(event){ // video 저장 		
+	function getAllVideo(playlistSeq){ //해당 playlistID에 해당하는 비디오들을 가져온다
+		var playlistID = $(".card-header")[0].getAttribute('listid');
+		
+		$.ajax({
+			type:'post',
+		    url : 'http://localhost:8080/myapp/getOnePlaylist',
+		    data : {id : playlistID},
+		    success : function(result){
+			    videos = result.allVideo;
+			    total = 0;
+			   
+			    $.each(videos, function( index, value ){ 
+					var html2 = '<div class="videos" onclick=openSavedVideo(this) '
+					+ ' playlistSeq="' + playlistSeq
+					//+ '" videoSeq="' + (value.seq+1)
+					+ '" videoID="' + value.id 
+					+ '" youtubeID="' + value.youtubeID 
+					+ '" start_s="' + value.start_s
+					+ '" end_s="' + value.end_s + '" > ' + value.title
+					+ '<a href="#" onclick="deleteVideo(\'' + value.id + '\')"> 삭제 </a>'
+					+ '</div>';
+					
+					$(document.getElementsByClassName("card-body")[playlistSeq]).append(html2);
+				    total += 1;
+				    
+				});
+			    document.getElementsByClassName("card-body")[playlistSeq].setAttribute("videoTotal", total); //해당하는 playlist에 속한 video 전체 갯수 저장
+			}
+		});
+	}
+
+	function createVideo(){ // video 저장 		
 		event.preventDefault(); // avoid to execute the actual submit of the form.
-		var seq = $("#playlistSeq").val() - 1;
-		var total = $(".card-body")[seq].getAttribute('videoTotal');
+		var seq = $("#inputPlaylistSeq").val() - 1; //1. 사용자가 입력한 playlist의 실제 인덱스(윗쪽에서 0부터 차례로 시작하는)를 가져온다 
 		
-		document.getElementById("youtubeSeq").value = total;
+		var total = $(".card-body")[seq].getAttribute('videoTotal'); //2. 해당하는 playlist에서 새로운 video의 순서가 될 숫자를 가져와서 저장한다
+		document.getElementById("inputYoutubeSeq").value = total; 
 		
-		var playlistID = $(".card-header")[seq].getAttribute('listid');
-		document.getElementById("playlistSeq").value = playlistID;
+		var playlistID = $(".card-header")[seq].getAttribute('listid'); //3. 해당하는 playlist의 실제 playlistID를 가져와서 새로운 video정보를 업데이트 할 때 같이 저장할 용도
+		document.getElementById("inputPlaylistID").value = playlistID; 
 		
-		var passData = $('#createVideoForm').serialize();
+		var passData = $('#createVideoForm').serialize(); //4. form에 있는 데이터들을 전송하기 위한 처리과정 
 		
 		$.ajax({
 			'type': "POST",
 			'url': "http://localhost:8080/myapp/addVideo",
 			'data': passData,
 			success: function(data) {
-				console.log("saved succes");
-				getAllPlaylist();
+				getAllPlaylist(); // 해당 playlist만 불러오도록 변경필요!!
 			},
 			error: function(error) {
 				alert(error);
 			},
 		});
 		return false;
+	}
+
+	function deleteVideo(playlistSeq, videoID){ // video 삭제		
+		$.ajax({
+			'type' : "post",
+			'url' : "http://localhost:8080/myapp/deleteVideo",
+			'data' : {id : videoID},
+			success : function(data){
+				changeAllVideo(playlistSeq, videoID); //삭제한 videoID도 넘겨줘야 함.
+		
+			}, error : function(err){
+				alert("video 삭제 실패! : ", err.responseText);
+			}
+
+		});
+	}
+
+	function changeAllVideo(playlistSeq, deletedID){ // video 추가, 삭제, 순서변경 뒤 해당 playlist의 전체 video order 재정렬
+		var idList = new Array();
+
+		$(".card-body")[playlistSeq].each(function(index){ //삭제한 video에 해당하는 playlist 전체 재정렬
+			var videoID = $(this).attr('videoID');
+			if (deletedID != null){ // 이 함수가 playlist 삭제 뒤에 실행됐을 땐 삭제된 playlistID	 제외하고 재정렬 (db에서 delete하는것보다 더 빨리 실행되서 이렇게 해줘야함)
+				if (deletedID != videoID)
+					idList.push(videoID);
+			}
+			else
+				idList.push(videoID);
+		});
+
+		$.ajax({
+		      type: "post",
+		      url: "http://localhost:8080/myapp/changeVideosOrder", //새로 바뀐 순서대로 db update
+		      data : { changedList : idList },
+		      dataType  : "json", 
+		      success  : function(data) {
+		  	  		getAllVideo(playlistSeq); 
+		    	  
+		      }, error:function(request,status,error){
+		          //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		    	  getAllVideo(playlistSeq); 
+		       }
+		    });
 	}
 	</script>
 	
@@ -455,10 +498,10 @@ img {
 	<!-- (jw) 영상 구간 설정 부분  -->
 	<br>
 	<form id="createVideoForm" onsubmit="return validation(event)" style="display: none">
-		<input type="hidden" name="youtubeID" id="youtubeID">
+		<input type="hidden" name="youtubeID" id="inputYoutubeID">
 		<input type="hidden" name="start_s" id="start_s">
 		<input type="hidden" name="end_s" id="end_s"> 
-		<input type="hidden" name="title" id="youtubeTitle"> 
+		<input type="hidden" name="title" id="inputYoutubeTitle"> 
 		
 		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : 
 		<input type="text" id="start_hh" maxlength="2" size="2"> 시 
@@ -474,8 +517,9 @@ img {
 		<button onclick="seekTo2()" type="button"> 위치이동 </button> 
 		<span id=warning2 style="color:red;"></span> <br>
 		
-		playlist num: <input type="text" name="playlistID" id="playlistSeq" required>
-		<input type="hidden" name="seq" id="youtubeSeq">
+		playlist : <input type="text" id="inputPlaylistSeq" required>
+		<input type="hidden" name="playlistID" id="inputPlaylistID"> <!-- 실제 저장되는 플레이리스트 -->
+		<input type="hidden" name="seq" id="inputYoutubeSeq"> <!-- 실제 저장되는 비디오 seq -->
 		
 		<button type="submit" > submit </button>
 		<!-- id="btn-submit" disabled="disabled" -->
@@ -529,8 +573,8 @@ img {
 			// validty check: 
 	        limit = parseInt(total_seconds);
 	        // 클릭한 영상의 videoId form에다가 지정. 
-	        document.getElementById("youtubeID").value = id;
-	        document.getElementById("youtubeTitle").value = videoTitle;
+	        document.getElementById("inputYoutubeID").value = id;
+	        document.getElementById("inputYoutubeTitle").value = videoTitle;
 	        
 			//이미 다른 영상이 player로 띄워져 있을 때 새로운 id로 띄우기
 			player.loadVideoById(videoId, 0, "large");
@@ -539,6 +583,7 @@ img {
 	        document.getElementById("start_mm").value = 0;
         	document.getElementById("start_ss").value = 0;
 		}
+		
 		// 3. This function creates an <iframe> (and YouTube player)
 		//    after the API code downloads. 
 		function onYouTubeIframeAPIReady() {
@@ -559,8 +604,9 @@ img {
 		
 		// (jw) playlist 저장된 영상 (구간) 불러오기 (2021/07/27: 화요일 저녁)
 		function openSavedVideo(item) {
-			var text = item.innerText;
-			showYoutubePlayer(item.getAttribute('youtubeID'), text);
+			var youtubeTitle = item.innerText; //youtubeTitle 영상제목
+			var youtubeID = item.getAttribute('youtubeID');
+			showYoutubePlayer(youtubeID, youtubeTitle);
 						
 			start_s = item.getAttribute('start_s');
 			end_s = item.getAttribute('end_s');
@@ -568,7 +614,7 @@ img {
 			showForm();
 
 			player.loadVideoById({
-				'videoId': item.getAttribute('youtubeID'), 
+				'videoId': youtubeID, 
 				'startSeconds': start_s, 
 				'endSeconds':end_s
 			});
@@ -589,7 +635,12 @@ img {
 			document.getElementById("end_mm").value = end_mm;
 			document.getElementById("end_ss").value = end_ss;
 
-			document.getElementById("playlistSeq").value = item.getAttribute('playlistID'); //이부분 수정 
+			var index = item.getAttribute('playlistSeq');
+			document.getElementById("inputPlaylistSeq").value = (parseInt(index) + 1); //사용자에게 playlist 순서를 1부터 시작하도록 보이기
+			document.getElementById("inputPlaylistID").value = $(".card-header")[index].getAttribute('listid');
+
+			document.getElementById("inputYoutubeID").value = youtubeID;
+	        document.getElementById("inputYoutubeTitle").value = youtubeTitle;
 		}
 
 

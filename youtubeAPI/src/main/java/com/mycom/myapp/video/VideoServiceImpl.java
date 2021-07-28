@@ -25,6 +25,11 @@ public class VideoServiceImpl implements VideoService{
 	public int updateVideo(VideoVO vo) {
 		return videoDAO.updateVideo(vo);
 	}
+	
+	@Override
+	public int changeSeq(VideoVO vo) {
+		return videoDAO.changeSeq(vo);
+	}
 
 //	@Override
 //	public VideoVO getVideo(int playlistID) {
