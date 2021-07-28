@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/eclipse,macos,java-web
 # Edit at https://www.toptal.com/developers/gitignore?templates=eclipse,macos,java-web
 
+## 내가 추가한 것
+.DS_Store
+
 ### Eclipse ###
 .metadata
 bin/

@@ -270,7 +270,6 @@ img {
 					
 					$('#allPlaylist').append(html);
 					total += 1;
-					console.log(playlistID, total-1)
 					getAllVideo(total-1);
 					
 				});
@@ -368,7 +367,6 @@ img {
 	});
 
 	function getAllVideo(playlistSeq){ //해당 playlistID에 해당하는 비디오들을 가져온다
-		console.log(playlistSeq);
 		var playlistID = $(".card-header")[playlistSeq].getAttribute('listid');
 		
 		$.ajax({
@@ -426,8 +424,10 @@ img {
 		return false;
 	}
 
-	function deleteVideo(playlistSeq, videoID){ // video 삭제		
-		console.log(videoID)
+	function deleteVideo(playlistSeq, videoID){ // video 삭제	
+		changeAllVideo(playlistSeq, videoID);
+		console.log("deletedVideo: " + videoID);
+		/*
 		$.ajax({
 			'type' : "post",
 			'url' : "http://localhost:8080/myapp/deleteVideo",
@@ -440,21 +440,27 @@ img {
 			}
 
 		});
+*/
 	}
 
 	function changeAllVideo(playlistSeq, deletedID){ // video 추가, 삭제, 순서변경 뒤 해당 playlist의 전체 video order 재정렬
 		var idList = new Array();
+		var childs = $(".card-body")[playlistSeq].childNodes;
 
-		$(".card-body")[playlistSeq].each(function(index){ //삭제한 video에 해당하는 playlist 전체 재정렬
-			var videoID = $(this).attr('videoID');
+		for (var i in childs) {
+			var id = childs[i]['videoID'];
+			console.log(childs[i]);
+			console.log(id);
+			
 			if (deletedID != null){ // 이 함수가 playlist 삭제 뒤에 실행됐을 땐 삭제된 playlistID	 제외하고 재정렬 (db에서 delete하는것보다 더 빨리 실행되서 이렇게 해줘야함)
-				if (deletedID != videoID)
-					idList.push(videoID);
+				if (deletedID != id)
+					idList.push(id);
 			}
 			else
 				idList.push(videoID);
-		});
-
+		}
+		console.log(idList);
+		
 		$.ajax({
 		      type: "post",
 		      url: "http://localhost:8080/myapp/changeVideosOrder", //새로 바뀐 순서대로 db update

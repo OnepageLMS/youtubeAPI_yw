@@ -219,10 +219,10 @@ public class HomeController {
 		int videoID = Integer.parseInt(request.getParameter("id"));
 		
 		if( videoService.deleteVideo(videoID) != 0) {
-			System.out.println("video 삭제 성공! ");
+			System.out.println("controller video 삭제 성공! ");
 		}
 		else
-			System.out.println("video 삭제 실패! ");
+			System.out.println("controller video 삭제 실패! ");
 	}
 	
 	@RequestMapping(value = "/changeVideosOrder", method = RequestMethod.POST) //video 순서 변경될때
