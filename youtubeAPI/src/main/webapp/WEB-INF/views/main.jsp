@@ -251,7 +251,7 @@ img {
 	  $.ajax({
 	    type:'post',
 	    url : 'http://localhost:8080/myapp/getAllPlaylist',
-	    global : false,
+	    async : false,
 	    success : function(result) {
 		    if(result.code == "ok"){
 		    	$('#allPlaylist').empty();
@@ -270,7 +270,8 @@ img {
 					
 					$('#allPlaylist').append(html);
 					total += 1;
-					getAllVideo(playlistID, index);
+					console.log(playlistID, total-1)
+					getAllVideo(total-1);
 					
 				});
 				document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
@@ -367,7 +368,8 @@ img {
 	});
 
 	function getAllVideo(playlistSeq){ //해당 playlistID에 해당하는 비디오들을 가져온다
-		var playlistID = $(".card-header")[0].getAttribute('listid');
+		console.log(playlistSeq);
+		var playlistID = $(".card-header")[playlistSeq].getAttribute('listid');
 		
 		$.ajax({
 			type:'post',
@@ -385,7 +387,8 @@ img {
 					+ '" youtubeID="' + value.youtubeID 
 					+ '" start_s="' + value.start_s
 					+ '" end_s="' + value.end_s + '" > ' + value.title
-					+ '<a href="#" onclick="deleteVideo(\'' + value.id + '\')"> 삭제 </a>'
+					+ '<a href="#" onclick="deleteVideo(' + playlistSeq + ',' 
+						+ value.id + ')"> 삭제 </a>'
 					+ '</div>';
 					
 					$(document.getElementsByClassName("card-body")[playlistSeq]).append(html2);
@@ -424,6 +427,7 @@ img {
 	}
 
 	function deleteVideo(playlistSeq, videoID){ // video 삭제		
+		console.log(videoID)
 		$.ajax({
 			'type' : "post",
 			'url' : "http://localhost:8080/myapp/deleteVideo",
@@ -613,11 +617,7 @@ img {
 
 			showForm();
 
-			player.loadVideoById({
-				'videoId': youtubeID, 
-				'startSeconds': start_s, 
-				'endSeconds':end_s
-			});
+			
 
 			var start_hh = Math.floor(start_s / 3600);
 			var start_mm = Math.floor(start_s % 3600 / 60);
@@ -641,6 +641,12 @@ img {
 
 			document.getElementById("inputYoutubeID").value = youtubeID;
 	        document.getElementById("inputYoutubeTitle").value = youtubeTitle;
+
+	        player.loadVideoById({
+				'videoId': youtubeID, 
+				'startSeconds': start_s, 
+				'endSeconds':end_s
+			});
 		}
 
 
