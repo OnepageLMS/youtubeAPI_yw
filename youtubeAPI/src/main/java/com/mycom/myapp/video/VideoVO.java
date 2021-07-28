@@ -10,6 +10,7 @@ public class VideoVO {
 	private double end_s;
 	private int playlistID;
 	private int seq;
+	private String tag;
 	private Date regdate;
 
 	public int getId() {
@@ -53,6 +54,12 @@ public class VideoVO {
 	}
 	public void setSeq(int seq) {
 		this.seq = seq;
+	}
+	public String getTag() {
+		return tag;
+	}
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 	public Date getRegdate() {
 		return regdate;

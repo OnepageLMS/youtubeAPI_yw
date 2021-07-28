@@ -3,9 +3,9 @@
 <mapper namespace="Video">
 
 	<insert id="insertVideo">
-		insert into Video(youtubeID, start_s, end_s, playlistID, title, seq)
+		insert into Video(youtubeID, start_s, end_s, playlistID, title, seq, tag)
 		values
-		(#{youtubeID}, #{start_s}, #{end_s}, #{playlistID}, #{title}, #{seq})
+		(#{youtubeID}, #{start_s}, #{end_s}, #{playlistID}, #{title}, #{seq}, #{tag})
 	</insert>
 	
 	<update id="changeSeq">

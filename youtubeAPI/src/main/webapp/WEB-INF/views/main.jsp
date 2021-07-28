@@ -384,7 +384,8 @@ img {
 					+ '" videoID="' + value.id 
 					+ '" youtubeID="' + value.youtubeID 
 					+ '" start_s="' + value.start_s
-					+ '" end_s="' + value.end_s + '" > ' + value.title
+					+ '" end_s="' + value.end_s 
+					+ '" tag="' + value.tag + '" > ' + value.title
 					+ '<a href="#" onclick="deleteVideo(\'' + value.id + '\')"> 삭제 </a>'
 					+ '</div>';
 					
@@ -518,6 +519,7 @@ img {
 		<span id=warning2 style="color:red;"></span> <br>
 		
 		playlist : <input type="text" id="inputPlaylistSeq" required>
+		tag: <input type="text" id="tag" name="tag" required>
 		<input type="hidden" name="playlistID" id="inputPlaylistID"> <!-- 실제 저장되는 플레이리스트 -->
 		<input type="hidden" name="seq" id="inputYoutubeSeq"> <!-- 실제 저장되는 비디오 seq -->
 		
@@ -641,6 +643,9 @@ img {
 
 			document.getElementById("inputYoutubeID").value = youtubeID;
 	        document.getElementById("inputYoutubeTitle").value = youtubeTitle;
+
+	        // (jw) tag 추가
+	        document.getElementById("tag").value = item.getAttribute('tag');
 		}
 
 
