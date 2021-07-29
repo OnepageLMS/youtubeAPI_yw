@@ -251,7 +251,7 @@ img {
 	  $.ajax({
 	    type:'post',
 	    url : 'http://localhost:8080/myapp/getAllPlaylist',
-	    global : false,
+	    async : false,
 	    success : function(result) {
 		    if(result.code == "ok"){
 		    	$('#allPlaylist').empty();
@@ -270,10 +270,10 @@ img {
 					
 					$('#allPlaylist').append(html);
 					total += 1;
-					getAllVideo(playlistID, index);
+					getAllVideo(total-1);
 					
 				});
-				document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
+				//document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
 			}
 		    else
 			    alert('playlist 불러오기 실패! ');
@@ -287,7 +287,7 @@ img {
 	function createPlaylist(){ //playlist 추가
 		var playlistName = $("#playlistName").val();
 		var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
-		var total = $("#allPlaylist").attr("total"); //저장되야 할 seq 순서
+		//var total = $("#allPlaylist").attr("total"); //저장되야 할 seq 순서
 
 		$.ajax({
 			'type' : "post",
@@ -295,7 +295,7 @@ img {
 			'data' : {
 						name : playlistName,
 						creator : creatorEmail,
-						total : total
+						//total : total
 			},
 			success : function(data){
 				getAllPlaylist();
@@ -424,7 +424,11 @@ img {
 		return false;
 	}
 
-	function deleteVideo(playlistSeq, videoID){ // video 삭제		
+	function deleteVideo(playlistSeq, videoID){ // video 삭제	
+		changeAllVideo(playlistSeq, videoID);
+		console.log("deletedVideo: " + videoID);
+		
+		/*
 		$.ajax({
 			'type' : "post",
 			'url' : "http://localhost:8080/myapp/deleteVideo",
@@ -437,21 +441,27 @@ img {
 			}
 
 		});
+*/
 	}
 
 	function changeAllVideo(playlistSeq, deletedID){ // video 추가, 삭제, 순서변경 뒤 해당 playlist의 전체 video order 재정렬
 		var idList = new Array();
+		var childs = $(".card-body")[playlistSeq].childNodes;
 
-		$(".card-body")[playlistSeq].each(function(index){ //삭제한 video에 해당하는 playlist 전체 재정렬
-			var videoID = $(this).attr('videoID');
+		for (var i in childs) {
+			var id = childs[i]['videoID'];
+			console.log(childs[i]);
+			console.log(id);
+			
 			if (deletedID != null){ // 이 함수가 playlist 삭제 뒤에 실행됐을 땐 삭제된 playlistID	 제외하고 재정렬 (db에서 delete하는것보다 더 빨리 실행되서 이렇게 해줘야함)
-				if (deletedID != videoID)
-					idList.push(videoID);
+				if (deletedID != id)
+					idList.push(id);
 			}
 			else
 				idList.push(videoID);
-		});
-
+		}
+		console.log(idList);
+		
 		$.ajax({
 		      type: "post",
 		      url: "http://localhost:8080/myapp/changeVideosOrder", //새로 바뀐 순서대로 db update
@@ -551,6 +561,8 @@ img {
 			videoTitle = title;
 			
 			document.getElementById("player_info").innerHTML = '<h3 class="videoTitle">' + videoTitle + '</h3>';
+
+			//아래는 youtube-API 공식 문서에서 iframe 사용방법으로 나온 코드.
 			tag = document.createElement('script');
 			tag.src = "https://www.youtube.com/iframe_api";
 			firstScriptTag = document.getElementsByTagName('script')[0];
@@ -615,12 +627,6 @@ img {
 
 			showForm();
 
-			player.loadVideoById({
-				'videoId': youtubeID, 
-				'startSeconds': start_s, 
-				'endSeconds':end_s
-			});
-
 			var start_hh = Math.floor(start_s / 3600);
 			var start_mm = Math.floor(start_s % 3600 / 60);
 			var start_ss = start_s % 3600 % 60;
@@ -646,6 +652,12 @@ img {
 
 	        // (jw) tag 추가
 	        document.getElementById("tag").value = item.getAttribute('tag');
+
+	        player.loadVideoById({
+				'videoId': youtubeID, 
+				'startSeconds': start_s, 
+				'endSeconds':end_s
+			});
 		}
 
 

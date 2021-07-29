@@ -23,4 +23,13 @@
 	<select id="getAllPlaylist" resultType="playlist">
 		select * from lms_playlist order by seq desc
 	</select>
+	
+	<select id="getCount" resultType="int">
+		select count(*) from lms_playlist
+	</select>
+	
+	<update id="updateCount">
+		update lms_playlist
+		set totalVideo=#{totalVideo} where playlistID=#{playlistID}
+	</update>
 </mapper>

@@ -33,4 +33,14 @@ public class PlaylistServiceImpl implements PlaylistService{
 	public List<PlaylistVO> getAllPlaylist() {
 		return playlistDAO.getAllPlaylist();
 	}
+	
+	@Override
+	public int getCount() {
+		return playlistDAO.getCount();
+	}
+	
+	@Override
+	public int updateCount(PlaylistVO vo) {
+		return playlistDAO.updateCount(vo);
+	}
 }

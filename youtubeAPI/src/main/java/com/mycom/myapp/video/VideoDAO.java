@@ -16,6 +16,7 @@ public class VideoDAO {
 		int result = sqlSession.insert("Video.insertVideo", vo);
 		return result;
 	}
+	
 	public int updateVideo(VideoVO vo) {
 		int result = sqlSession.update("Video.updateVideo", vo);
 		return result;
@@ -30,13 +31,21 @@ public class VideoDAO {
 		int result = sqlSession.delete("Video.deleteVideo", id);
 		return result;
 	}
+	
 	public VideoVO getVideo(int playlistID) {
 		return sqlSession.selectOne("Video.getVideo", playlistID);
 	}
+	
 	public List<VideoVO> getVideoList(int playlistID) {
 		List<VideoVO> result = sqlSession.selectList("Video.getVideoList", playlistID);
 		return result;
 	}
+	
+	public int getCount(int playlistID) {
+		int result = sqlSession.selectOne("Video.getCount", playlistID);
+		return result;
+	}
+	
 //	public PlaylistVO getPlaylist (int id) {
 //		return sqlSession.selectOne("Playlist.getPlaylist", id);
 //	}
