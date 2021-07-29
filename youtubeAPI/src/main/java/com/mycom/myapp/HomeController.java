@@ -129,7 +129,8 @@ public class HomeController {
 	public void addPlaylist(HttpServletRequest request) {
 		String playlistName = request.getParameter("name");
 		String creatorEmail = request.getParameter("creator");
-		int total = playlistService.getCount();
+		int total = Integer.parseInt(request.getParameter("total"));
+		//int total = playlistService.getCount(); //새로운 playlist의 seq가 될 숫자 구하기
 		
 		PlaylistVO vo = new PlaylistVO();
 		
@@ -150,7 +151,7 @@ public class HomeController {
 		
 		if( playlistService.deletePlaylist(playlistID) != 0) {
 			System.out.println("playlist 삭제 성공! ");
-			//playlist 내에 video들도 삭제? 
+			//playlist 내에 video들도 삭제 해야하지 않을까? 
 		}
 		else
 			System.out.println("playlist 삭제 실패! ");
@@ -206,13 +207,14 @@ public class HomeController {
 	
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
 	public String addVideo(@ModelAttribute VideoVO vo) {
-		//int seq = videoService.getCount(playlistID);
+		int playlistID = vo.getPlaylistID();
+		//int seq = videoService.getTotalCount(playlistID); //새로운 video의 seq 구하기
 		//vo.setSeq(seq);
 		
-		if(videoService.insertVideo(vo) == 0) {
+		if(videoService.insertVideo(vo) != 0) {
 			System.out.println("비디오 추가 성공!! ");
-			int playlistID = vo.getPlaylistID();
-			updateTotalVideo(playlistID); //playlist의 totalVideo 갯수 업데이트
+			int total = vo.getSeq()+1;
+			updateTotalVideo(playlistID, total); //playlist의 totalVideo 갯수 업데이트
 		}
 		else 
 			System.out.println("비디오 추가 실패 ");
@@ -234,14 +236,13 @@ public class HomeController {
 			System.out.println("controller video 삭제 실패! ");
 	}
 	
-	public void updateTotalVideo(int playlistID) { //이부분 procedure에서 해야하나...?
-		int totalVideo = videoService.getCount(playlistID); //playlistID에 해당하는 totalVideo 갯수 가져오기
+	public void updateTotalVideo(int playlistID, int totalVideo) { //이부분 procedure에서 해야하나...?
+		//int totalVideo = videoService.getTotalCount(playlistID); //playlistID에 해당하는 totalVideo 갯수 가져오기\
+		PlaylistVO vo = new PlaylistVO();
+		vo.setPlaylistID(playlistID);
+		vo.setTotalVideo(totalVideo);
 		
-		PlaylistVO p_vo = new PlaylistVO();
-		p_vo.setPlaylistID(playlistID);
-		p_vo.setTotalVideo(totalVideo);
-		
-		if (playlistService.updateCount(p_vo)==0) 
+		if (playlistService.updateCount(vo) == 0) 
 			System.out.println("totalVideo 갯수 update 실패! ");
 		else
 			System.out.println("totalVideo 갯수 update 성공! ");

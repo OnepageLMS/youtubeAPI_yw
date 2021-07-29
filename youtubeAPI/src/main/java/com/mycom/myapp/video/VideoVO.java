@@ -10,7 +10,6 @@ public class VideoVO {
 	private double end_s;
 	private int playlistID;
 	private int seq;
-	private Date regdate;
 
 	public int getId() {
 		return id;
@@ -54,12 +53,5 @@ public class VideoVO {
 	public void setSeq(int seq) {
 		this.seq = seq;
 	}
-	public Date getRegdate() {
-		return regdate;
-	}
-	public void setRegdate(Date regdate) {
-		this.regdate = regdate;
-	}
-
 
 }

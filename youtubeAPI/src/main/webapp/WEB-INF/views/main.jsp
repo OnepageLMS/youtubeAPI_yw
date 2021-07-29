@@ -95,15 +95,15 @@ img {
 		$("#get_view").empty();
 		$("#nav_view").empty();
 
-		//var key = "AIzaSyAAwiwQmW9kVJT5y-_no-A5lGJwk4B2QK8"; //AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c
+		var key = "AIzaSyAAwiwQmW9kVJT5y-_no-A5lGJwk4B2QK8"; //AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c
 		var accessToken = "${accessToken}";
 		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
 				+ $getorder
 				+ "&q="
 				+ encodeURIComponent($getval) //encoding
-				//+ "&key=" + key
-				+ "&access_token="
-				+ accessToken
+				+ "&key=" + key
+				//+ "&access_token="
+				//+ accessToken
 				+ "&maxResults="
 				+ maxResults
 				+ "&type=video";
@@ -137,9 +137,9 @@ img {
 															var id = idList[i];
 															var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id="
 																	+ id
-																	//+ "&key=" + key;
-																	+ "&access_token="
-																	+ accessToken;
+																	+ "&key=" + key;
+																	//+ "&access_token="
+																	//+ accessToken;
 
 															$.ajax({
 																		type : "GET",
@@ -273,7 +273,7 @@ img {
 					getAllVideo(total-1);
 					
 				});
-				//document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
+				document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
 			}
 		    else
 			    alert('playlist 불러오기 실패! ');
@@ -287,7 +287,7 @@ img {
 	function createPlaylist(){ //playlist 추가
 		var playlistName = $("#playlistName").val();
 		var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
-		//var total = $("#allPlaylist").attr("total"); //저장되야 할 seq 순서
+		var total = $("#allPlaylist").attr("total"); //저장되야 할 seq 순서
 
 		$.ajax({
 			'type' : "post",
@@ -295,7 +295,7 @@ img {
 			'data' : {
 						name : playlistName,
 						creator : creatorEmail,
-						//total : total
+						total : total
 			},
 			success : function(data){
 				getAllPlaylist();
@@ -307,19 +307,21 @@ img {
 		});
 	}
 
-	function deletePlaylist(id){ // playlist 삭제		
-		$.ajax({
-			'type' : "post",
-			'url' : "http://localhost:8080/myapp/deletePlaylist",
-			'data' : {id : id},
-			success : function(data){
-				changeAllList(id); // 삭제된 playlistID를 넘겨줘야한다. 
-		
-			}, error : function(err){
-				alert("playlist 삭제 실패! : ", err.responseText);
-			}
+	function deletePlaylist(id){ // playlist 삭제
+		if (confirm("playlist에 속한 비디오들까지 삭제됩니다. 정말 삭제하시겠습니까? " == true)){
+			$.ajax({
+				'type' : "post",
+				'url' : "http://localhost:8080/myapp/deletePlaylist",
+				'data' : {id : id},
+				success : function(data){
+					changeAllList(id); // 삭제된 playlistID를 넘겨줘야한다. 
+			
+				}, error : function(err){
+					alert("playlist 삭제 실패! : ", err.responseText);
+				}
 
-		});
+			});
+		}
 	}
 
 	function changeAllList(deletedID){ // playlist 추가, 삭제 뒤 전체 list order 재정렬
@@ -384,7 +386,7 @@ img {
 					+ '" videoID="' + value.id 
 					+ '" youtubeID="' + value.youtubeID 
 					+ '" start_s="' + value.start_s
-					+ '" end_s="' + value.end_s + '" > ' + value.title
+					+ '" end_s="' + value.end_s + '" > ' + value.seq + value.title
 					+ '<a href="#" onclick="deleteVideo(' + playlistSeq + ',' 
 						+ value.id + ')"> 삭제 </a>'
 					+ '</div>';
@@ -409,59 +411,70 @@ img {
 		document.getElementById("inputPlaylistID").value = playlistID; 
 		
 		var passData = $('#createVideoForm').serialize(); //4. form에 있는 데이터들을 전송하기 위한 처리과정 
-		
+
 		$.ajax({
 			'type': "POST",
 			'url': "http://localhost:8080/myapp/addVideo",
 			'data': passData,
 			success: function(data) {
-				getAllPlaylist(); // 해당 playlist만 불러오도록 변경필요!!
+				console.log("ajax video저장 완료!");
+				getAllPlaylist(); 
+				// 해당 playlist만 불러오도록 변경필요!!
 			},
 			error: function(error) {
-				alert(error);
-			},
+				getAllPlaylist(); 
+				console.log("ajax video저장 실패!" + error);
+			}
+
 		});
 		return false;
 	}
 
-	function deleteVideo(playlistSeq, videoID){ // video 삭제	
+	function deleteVideo(playlistSeq, videoID){ // video 삭제
+					
+		/*
+		if (confirm("정말 삭제하시겠습니까?" == true)){
+			$.ajax({
+				'type' : "post",
+				'url' : "http://localhost:8080/myapp/deleteVideo",
+				'data' : {id : videoID},
+				success : function(data){
+					changeAllVideo(playlistSeq, videoID); //삭제한 videoID도 넘겨줘야 함.
+			
+				}, error : function(err){
+					alert("video 삭제 실패! : ", err.responseText);
+				}
+
+			});
+		}else
+			return false;
+		
+		*/
 		changeAllVideo(playlistSeq, videoID);
 		console.log("deletedVideo: " + videoID);
-		
-		/*
-		$.ajax({
-			'type' : "post",
-			'url' : "http://localhost:8080/myapp/deleteVideo",
-			'data' : {id : videoID},
-			success : function(data){
-				changeAllVideo(playlistSeq, videoID); //삭제한 videoID도 넘겨줘야 함.
-		
-			}, error : function(err){
-				alert("video 삭제 실패! : ", err.responseText);
-			}
 
-		});
-*/
 	}
 
 	function changeAllVideo(playlistSeq, deletedID){ // video 추가, 삭제, 순서변경 뒤 해당 playlist의 전체 video order 재정렬
 		var idList = new Array();
 		var childs = $(".card-body")[playlistSeq].childNodes;
+		console.log(childs[0].attributes);
 
 		for (var i in childs) {
-			var id = childs[i]['videoID'];
-			console.log(childs[i]);
-			console.log(id);
+			var videoID = childs[i].attributes.videoid.value;
+			console.log(videoID);
 			
 			if (deletedID != null){ // 이 함수가 playlist 삭제 뒤에 실행됐을 땐 삭제된 playlistID	 제외하고 재정렬 (db에서 delete하는것보다 더 빨리 실행되서 이렇게 해줘야함)
-				if (deletedID != id)
-					idList.push(id);
+				if (deletedID != videoID)
+					idList.push(videoID);
 			}
 			else
 				idList.push(videoID);
 		}
 		console.log(idList);
+
 		
+		/*
 		$.ajax({
 		      type: "post",
 		      url: "http://localhost:8080/myapp/changeVideosOrder", //새로 바뀐 순서대로 db update
@@ -475,6 +488,7 @@ img {
 		    	  getAllVideo(playlistSeq); 
 		       }
 		    });
+	    */
 	}
 	</script>
 	
