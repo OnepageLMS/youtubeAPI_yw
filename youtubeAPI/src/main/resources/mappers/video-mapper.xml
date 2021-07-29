@@ -21,5 +21,10 @@
 		select * from Video where
 		playlistID=#{playlistID} order by seq desc
 	</select>
+	
+	<select id="getCount" resultType="int">
+		select count(*) from Video 
+		where playlistID=#{playlistID}
+	</select>
 
 </mapper>

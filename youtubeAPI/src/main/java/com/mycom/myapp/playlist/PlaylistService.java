@@ -8,4 +8,6 @@ public interface PlaylistService {
 	public int deletePlaylist(int playlistID);
 	public PlaylistVO getPlaylist(int playlistID);
 	public List<PlaylistVO> getAllPlaylist();
+	public int getCount();
+	public int updateCount(PlaylistVO vo);
 }

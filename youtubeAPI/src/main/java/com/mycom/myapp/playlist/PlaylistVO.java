@@ -5,6 +5,7 @@ public class PlaylistVO {
 	private String playlistName;
 	private String creatorEmail;
 	private int seq;
+	private int totalVideo;
 	//private boolean allow; //public 이름 바꿔야함
 	
 	public int getPlaylistID() { 
@@ -30,5 +31,11 @@ public class PlaylistVO {
 	}
 	public void setSeq(int seq) {
 		this.seq = seq;
+	}
+	public int getTotalVideo() {
+		return totalVideo;
+	}
+	public void setTotalVideo(int totalVideo) {
+		this.totalVideo = totalVideo;
 	}
 }

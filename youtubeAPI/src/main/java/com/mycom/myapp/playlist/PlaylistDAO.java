@@ -36,4 +36,14 @@ public class PlaylistDAO {
 		List<PlaylistVO> result = sqlSession.selectList("Playlist.getAllPlaylist");
 		return result;
 	}
+	
+	public int getCount() {
+		int result = sqlSession.selectOne("Playlist.getCount");
+		return result;
+	}
+	
+	public int updateCount(PlaylistVO vo) {
+		int result = sqlSession.update("Playlist.updateCount", vo);
+		return result;
+	}
 }

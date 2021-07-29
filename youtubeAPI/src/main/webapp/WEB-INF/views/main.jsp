@@ -273,7 +273,7 @@ img {
 					getAllVideo(total-1);
 					
 				});
-				document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
+				//document.getElementById("allPlaylist").setAttribute("total", total); //전체 playlist 갯수 저장
 			}
 		    else
 			    alert('playlist 불러오기 실패! ');
@@ -287,7 +287,7 @@ img {
 	function createPlaylist(){ //playlist 추가
 		var playlistName = $("#playlistName").val();
 		var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
-		var total = $("#allPlaylist").attr("total"); //저장되야 할 seq 순서
+		//var total = $("#allPlaylist").attr("total"); //저장되야 할 seq 순서
 
 		$.ajax({
 			'type' : "post",
@@ -295,7 +295,7 @@ img {
 			'data' : {
 						name : playlistName,
 						creator : creatorEmail,
-						total : total
+						//total : total
 			},
 			success : function(data){
 				getAllPlaylist();
@@ -427,6 +427,7 @@ img {
 	function deleteVideo(playlistSeq, videoID){ // video 삭제	
 		changeAllVideo(playlistSeq, videoID);
 		console.log("deletedVideo: " + videoID);
+		
 		/*
 		$.ajax({
 			'type' : "post",
@@ -559,6 +560,8 @@ img {
 			videoTitle = title;
 			
 			document.getElementById("player_info").innerHTML = '<h3 class="videoTitle">' + videoTitle + '</h3>';
+
+			//아래는 youtube-API 공식 문서에서 iframe 사용방법으로 나온 코드.
 			tag = document.createElement('script');
 			tag.src = "https://www.youtube.com/iframe_api";
 			firstScriptTag = document.getElementsByTagName('script')[0];
@@ -622,8 +625,6 @@ img {
 			end_s = item.getAttribute('end_s');
 
 			showForm();
-
-			
 
 			var start_hh = Math.floor(start_s / 3600);
 			var start_mm = Math.floor(start_s % 3600 / 60);
