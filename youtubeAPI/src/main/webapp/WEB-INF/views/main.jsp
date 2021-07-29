@@ -367,7 +367,7 @@ img {
 	});
 
 	function getAllVideo(playlistSeq){ //해당 playlistID에 해당하는 비디오들을 가져온다
-		var playlistID = $(".card-header")[0].getAttribute('listid');
+		var playlistID = $(".card-header")[playlistSeq].getAttribute('listid');
 		
 		$.ajax({
 			type:'post',
