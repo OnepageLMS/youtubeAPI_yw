@@ -555,6 +555,7 @@ img {
 		var limit;
 		var start_s;
 		var end_s;
+		var youtubeID;
 
 		function showYoutubePlayer(id, title){
 			videoId = id;
@@ -607,19 +608,40 @@ img {
 				videoId : videoId,
 				events : {
 					'onReady' : onPlayerReady,
+					'onStateChange' : onPlayerStateChange
 				}
 				
 			});
 		}
 		// 4. The API will call this function when the video player is ready.
-		function onPlayerReady() {
-			player.playVideo();
+		function onPlayerReady() { 
+			//player.playVideo();
+			player.loadVideoById({
+				'videoId': youtubeID, 
+				'startSeconds': start_s, 
+				'endSeconds':end_s
+			});
 		}
+
+		// (jw) player가 끝시간을 넘지 못하게 만들기 : 일단 임의로 시작 시간으로 되돌리기 했는데, 하영이거에서 마지막 재생 위치에서 부터 다시 재생되게 하면 될듯. 
+		function onPlayerStateChange(state) {
+		    if (player.getCurrentTime() >= end_s) {
+		      
+		      player.pauseVideo();
+		      //player.seekTo(start_s);
+		      player.loadVideoById({
+					'videoId': youtubeID, 
+					'startSeconds': start_s, 
+					'endSeconds':end_s
+				});
+		    }
+		  }
+				
 		
 		// (jw) playlist 저장된 영상 (구간) 불러오기 (2021/07/27: 화요일 저녁)
 		function openSavedVideo(item) {
 			var youtubeTitle = item.innerText; //youtubeTitle 영상제목
-			var youtubeID = item.getAttribute('youtubeID');
+			youtubeID = item.getAttribute('youtubeID');
 			showYoutubePlayer(youtubeID, youtubeTitle);
 						
 			start_s = item.getAttribute('start_s');
