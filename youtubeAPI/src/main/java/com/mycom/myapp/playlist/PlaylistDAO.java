@@ -42,8 +42,8 @@ public class PlaylistDAO {
 		return result;
 	}
 	
-	public int updateCount(PlaylistVO vo) { //totalVideo 업데이트
-		int result = sqlSession.update("Playlist.updateCount", vo);
+	public int updateCount(int playlistID) { //totalVideo 업데이트
+		int result = sqlSession.update("Playlist.updateCount", playlistID);
 		return result;
 	}
 }

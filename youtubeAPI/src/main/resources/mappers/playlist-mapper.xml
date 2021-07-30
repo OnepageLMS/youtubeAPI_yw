@@ -3,8 +3,7 @@
 <mapper namespace="Playlist">
 	<insert id="addPlaylist">
 		insert into lms_playlist (playlistName, creatorEmail, seq)
-		values
-		(#{playlistName}, #{creatorEmail}, #{seq})
+		values (#{playlistName}, #{creatorEmail}, #{seq})
 	</insert>
 	
 	<delete id="deletePlaylist">
@@ -30,6 +29,9 @@
 	
 	<update id="updateCount">
 		update lms_playlist
-		set totalVideo=#{totalVideo} where playlistID=#{playlistID}
+		set totalVideo = ( select count(*)
+			from Video
+			where playlistID=#{playlistID} )
 	</update>
+	
 </mapper>

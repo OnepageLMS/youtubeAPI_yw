@@ -9,5 +9,5 @@ public interface PlaylistService {
 	public PlaylistVO getPlaylist(int playlistID);
 	public List<PlaylistVO> getAllPlaylist();
 	public int getCount();
-	public int updateCount(PlaylistVO vo);
+	public int updateCount(int playlistID);
 }

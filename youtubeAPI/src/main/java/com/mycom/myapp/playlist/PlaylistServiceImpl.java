@@ -40,7 +40,7 @@ public class PlaylistServiceImpl implements PlaylistService{
 	}
 	
 	@Override
-	public int updateCount(PlaylistVO vo) {
-		return playlistDAO.updateCount(vo);
+	public int updateCount(int playlistID) {
+		return playlistDAO.updateCount(playlistID);
 	}
 }

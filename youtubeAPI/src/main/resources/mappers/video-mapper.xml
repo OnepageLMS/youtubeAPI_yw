@@ -19,7 +19,7 @@
 	
 	<select id="getVideoList" resultType="video">
 		select * from Video where
-		playlistID=#{playlistID} order by seq desc
+		playlistID=#{playlistID} order by seq
 	</select>
 	
 	<select id="getTotalCount" resultType="int">

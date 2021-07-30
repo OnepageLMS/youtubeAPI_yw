@@ -132,16 +132,11 @@ public class HomeController {
 	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
 	@ResponseBody
 	public void addPlaylist(HttpServletRequest request) {
-		String playlistName = request.getParameter("name");
-		String creatorEmail = request.getParameter("creator");
-		int total = Integer.parseInt(request.getParameter("total"));
-		//int total = playlistService.getCount(); //새로운 playlist의 seq가 될 숫자 구하기
 		
 		PlaylistVO vo = new PlaylistVO();
-		
-		vo.setCreatorEmail(creatorEmail);
-		vo.setPlaylistName(playlistName);
-		vo.setSeq(total);
+		vo.setCreatorEmail(request.getParameter("creator"));
+		vo.setPlaylistName(request.getParameter("name"));
+		vo.setSeq(playlistService.getCount()); //새로운 playlist의 seq가 될 숫자 구하기
 
 		if(playlistService.addPlaylist(vo) != 0) 
 			System.out.println("playlist 추가 성공! ");
@@ -213,13 +208,15 @@ public class HomeController {
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
 	public String addVideo(@ModelAttribute VideoVO vo) {
 		int playlistID = vo.getPlaylistID();
-		//int seq = videoService.getTotalCount(playlistID); //새로운 video의 seq 구하기
-		//vo.setSeq(seq);
+		vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
 		
 		if(videoService.insertVideo(vo) != 0) {
 			System.out.println("비디오 추가 성공!! ");
-			int total = vo.getSeq()+1;
-			updateTotalVideo(playlistID, total); //playlist의 totalVideo 갯수 업데이트
+			
+			if (playlistService.updateCount(playlistID) != 0)
+				System.out.println("playlist totalVideo 업데이트 성공! ");
+			else
+				System.out.println("playlist totalVideo 업데이트 실패! ");
 		}
 		else 
 			System.out.println("비디오 추가 실패 ");
@@ -230,27 +227,19 @@ public class HomeController {
 	@RequestMapping(value = "/deleteVideo", method = RequestMethod.POST)
 	@ResponseBody
 	public void deleteVideo(HttpServletRequest request) {
-		int videoID = Integer.parseInt(request.getParameter("id"));
+		int videoID = Integer.parseInt(request.getParameter("video"));
+		int playlistID = Integer.parseInt(request.getParameter("playlist"));
 		
 		if( videoService.deleteVideo(videoID) != 0) {
-			System.out.println("controller video 삭제 성공! ");
-			//int playlistID = 
-			//updateTotalVideo(playlistID); //playlist의 totalVideo 갯수 업데이트
+			System.out.println("controller video 삭제 성공! "); 
+			
+			if (playlistService.updateCount(playlistID) != 0)
+				System.out.println("playlist totalVideo 업데이트 성공! ");
+			else
+				System.out.println("playlist totalVideo 업데이트 실패! ");
 		}
 		else
 			System.out.println("controller video 삭제 실패! ");
-	}
-	
-	public void updateTotalVideo(int playlistID, int totalVideo) { //이부분 procedure에서 해야하나...?
-		//int totalVideo = videoService.getTotalCount(playlistID); //playlistID에 해당하는 totalVideo 갯수 가져오기\
-		PlaylistVO vo = new PlaylistVO();
-		vo.setPlaylistID(playlistID);
-		vo.setTotalVideo(totalVideo);
-		
-		if (playlistService.updateCount(vo) == 0) 
-			System.out.println("totalVideo 갯수 update 실패! ");
-		else
-			System.out.println("totalVideo 갯수 update 성공! ");
 	}
 	
 	@RequestMapping(value = "/changeVideosOrder", method = RequestMethod.POST) //video 순서 변경될때
