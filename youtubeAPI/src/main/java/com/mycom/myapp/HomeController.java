@@ -124,6 +124,11 @@ public class HomeController {
 		return "main";
 	}
 	
+	@RequestMapping(value="/test2", method=RequestMethod.GET)
+	public String test() {
+		return "test2";
+	}
+	
 	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
 	@ResponseBody
 	public void addPlaylist(HttpServletRequest request) {
@@ -171,7 +176,7 @@ public class HomeController {
 		return map;
 	}
 	
-	@RequestMapping(value = "/changeItemsOrder", method = RequestMethod.POST) //playlist 순서 변경될때
+	@RequestMapping(value = "/changePlaylistOrder", method = RequestMethod.POST) //playlist 순서 변경될때
 	@ResponseBody
 	public String changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
 		int size = changedList.size()-1;
