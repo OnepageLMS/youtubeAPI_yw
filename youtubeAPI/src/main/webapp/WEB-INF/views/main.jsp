@@ -430,7 +430,9 @@ img {
 				},
 			success: function(data) {
 				console.log("ajax video저장 완료!");
-				getAllPlaylist(); //allVideo로 수정
+				for(var i=0; i<checkBoxArr.size(); i++){
+					getAllVideo(checkBoxArr[i]);
+				}
 			},
 			error: function(error) {
 				getAllPlaylist(); 
@@ -489,9 +491,6 @@ img {
 
 			});
 		}
-
-		changeAllVideo(playlistSeq, videoID);
-		console.log("deletedVideo: " + videoID);
 
 	}
 
@@ -617,7 +616,7 @@ img {
 		}
 
 		function selectVideo(id, title, duration) { // 유튜브 검색결과에서 영상 아이디를 가지고 플레이어 띄우기
-			document.getElementById("inputVideoID").value = null; //updateVideo()가 아닌 createVideo()가 실행되도록 초기화!
+			document.getElementById("inputVideoID").value = -1; //updateVideo()가 아닌 createVideo()가 실행되도록 초기화!
 			showYoutubePlayer(id, title);
 
 			videoDuration = duration;
@@ -800,7 +799,7 @@ img {
 				return false;
 			}
 			else {
-				if($('#inputVideoID').val() != null)
+				if($('#inputVideoID').val() > -1)
 					return updateVideo(event);
 				return createVideo(event);
 			}
