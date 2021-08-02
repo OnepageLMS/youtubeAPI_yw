@@ -10,7 +10,6 @@ public class VideoVO {
 	private double end_s;
 	private int playlistID;
 	private int seq;
-	
 	private List<Integer> playlistArr;
 	
 	public List<Integer> getPlaylistArr() {

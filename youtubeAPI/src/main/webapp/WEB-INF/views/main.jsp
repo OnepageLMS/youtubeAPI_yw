@@ -187,13 +187,15 @@ img {
 		for (var i = 0; i < maxResults; i++) {
 			var id = idList[i];
 			var view = viewCount[i];
+			var title = titleList[i].replace("'", "\\'").replace("\"","\\\"");
+			console.log("display: " + title);
 			
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
 			//var url = '<a href="https://youtu.be/' + id + '">';
 			$("#get_view").append(
 					//'<div class="video" onclick="selectVideo(\'' + id.toString() + '\')" >' 
 					'<div class="searchedVideo" onclick="showForm(); selectVideo(\'' + id.toString()
-							+ '\'' + ',\'' + titleList[i] + '\''
+							+ '\'' + ',\'' + title + '\''
 							+ ',\'' + durationCount[i] + '\');" >' + thumbnail
 							+ titleList[i] + '</p>'
 							+ '<p class="info"> publised: <b>' + dateList[i]
@@ -211,7 +213,8 @@ img {
 
 	function setAPIResultToList(i, id, title, date) { // search api사용할 때 데이터 저장
 		idList[i] = id;
-		titleList[i] = title.replace("'", "\\'").replace("\"","\\\""); // 싱글따옴표나 슬래시 들어갼것 따로 처리해줘야함!!!!
+		titleList[i] = title.replace("'", "\\'").replace("\"","\\\""); // 싱글따옴표나 슬래시 들어갼것 따로 처리해줘야함!
+		console.log(titleList[i]);
 		dateList[i] = date.substring(0, 10);
 	}
 
@@ -268,7 +271,8 @@ img {
 						+ '<div class="card-header" listID="' + playlistID + '" >' 
 						+ '<input type="checkbox" value="' + playlistID + '" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;">'
 						+ (index+1) + ' : ' + value.playlistName 
-						+ '<a href="#" onclick="deletePlaylist(\'' + playlistID + '\')"> 삭제 </a></div>'
+						+ '<a href="#" class="aUpdatePlaylist" onclick="updatePlaylist(\'' + playlistID + '\')" style="display:none;"> 수정 </a>'
+						+ '<a href="#" class="aDeletePlaylist" onclick="deletePlaylist(\'' + playlistID + '\')" style="display:none;"> 삭제 </a></div>'
 						+ '<div class="card-body"></div>'
 						+ '</div>';
 					
@@ -369,6 +373,30 @@ img {
 	
 	});
 
+	function updateAllPlaylist(){ //playlist 전체 수정모드로 변환
+		if( $(".changeMode").html() == '수정'){ //수정모드 진입
+			$(".changeMode").html('수정완료');
+			
+			$(".aUpdatePlaylist").css("display","inline");
+			$(".aDeletePlaylist").css("display","inline");
+			$(".aDeleteVideo").css("display","inline");
+		}
+		else {
+			$(".changeMode").html('수정'); //수정모드 탈출
+			
+			$(".aUpdatePlaylist").css("display","none");
+			$(".aDeletePlaylist").css("display","none");
+			$(".aDeleteVideo").css("display","none");
+		}
+		
+
+		
+	}
+
+	function updatePlaylist(playlistID){ //선택한 playlist 이름, 포함된 video들 순서 바꾸기
+		
+	}
+
 	function getAllVideo(playlistSeq){ //해당 playlistID에 해당하는 비디오들을 가져온다
 		var playlistID = $(".card-header")[playlistSeq].getAttribute('listid');
 		
@@ -392,8 +420,8 @@ img {
 					+ '" youtubeID="' + value.youtubeID 
 					+ '" start_s="' + value.start_s
 					+ '" end_s="' + value.end_s + '" > ' + (value.seq) + ". " + title
-					+ '<a href="#" onclick="deleteVideo(' + playlistSeq + ',' 
-						+ value.id + ')"> 삭제</a>'
+					+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' + playlistSeq + ',' 
+						+ value.id + ')" style="display:none;"> 삭제</a>'
 					+ '</div>';
 					
 					$('.card-body:eq(' + playlistSeq + ')').append(html2); 
@@ -527,7 +555,8 @@ img {
 	
 	
 	 <div class="container-fluid playlist"> <!-- Playlist CRUD -->
-	 	<h3>Playlist</h3>
+	 	<h3>Playlist <a href="#" class="changeMode" onclick="updateAllPlaylist()" style="font-size: 14px;">수정</a></h3>
+	 	
 	 	
 		<div id="addPlaylist">
 			<input type="text" id="playlistName" />
@@ -575,7 +604,7 @@ img {
 		<button onclick="seekTo2()" type="button"> 위치이동 </button> 
 		<span id=warning2 style="color:red;"></span> <br>
 
-		<button type="submit" > 추가 </button>
+		<button type="submit" class="submitBtn" > 추가 </button>
 		
 		<!-- 아래는 기존 playlist에서 video를 수정할 때 사용 -->
 		<!--  <input type="hidden" name="playlistID" id="inputPlaylistID"> -->
@@ -603,6 +632,8 @@ img {
 		var end_s;
 
 		function showYoutubePlayer(id, title){
+			$('html, body').animate({scrollTop: 0 }, 'slow'); //화면 상단으로 이동
+
 			videoId = id;
 			videoTitle = title;
 			
@@ -616,7 +647,11 @@ img {
 		}
 
 		function selectVideo(id, title, duration) { // 유튜브 검색결과에서 영상 아이디를 가지고 플레이어 띄우기
+			$('.videos').css({'fontWeight' : 'normal'});
+			$('input:checkbox').prop("checked", false); //youtube 검색결과에서 비디오 선택하면 playlist 체크된것 다 초기화 
+			$('.submitBtn').html('추가');
 			document.getElementById("inputVideoID").value = -1; //updateVideo()가 아닌 createVideo()가 실행되도록 초기화!
+			
 			showYoutubePlayer(id, title);
 
 			videoDuration = duration;
@@ -666,6 +701,7 @@ img {
 		// (jw) playlist 저장된 영상 (구간) 불러오기 (2021/07/27: 화요일 저녁)
 		function openSavedVideo(item) {
 			$('.videos').css({'fontWeight' : 'normal'});
+			$('.submitBtn').html('수정');
 			 
 			var youtubeTitle = item.innerText.replace('삭제', ''); //youtubeTitle 영상제목
 			item.style.fontWeight = 'bold';
