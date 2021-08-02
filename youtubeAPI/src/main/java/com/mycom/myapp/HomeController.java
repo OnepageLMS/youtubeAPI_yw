@@ -206,21 +206,27 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
-	public String addVideo(@ModelAttribute VideoVO vo) {
-		int playlistID = vo.getPlaylistID();
-		vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
-		
-		if(videoService.insertVideo(vo) != 0) {
-			System.out.println("비디오 추가 성공!! ");
+	public String addVideo(@ModelAttribute("vo") VideoVO vo, @RequestParam(value="playlist[]") List<Integer> playlistArr) {
+		//int playlistID = vo.getPlaylistID();
+		for(int i=0; i<playlistArr.size(); i++) {
+			int playlistID = playlistArr.get(i);
+			System.out.println(playlistID);
+			System.out.println(vo.getTitle());
+			vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
+			vo.setPlaylistID(playlistID);
 			
-			if (playlistService.updateCount(playlistID) != 0)
-				System.out.println("playlist totalVideo 업데이트 성공! ");
-			else
-				System.out.println("playlist totalVideo 업데이트 실패! ");
+			if(videoService.insertVideo(vo) != 0) {
+				System.out.println(playlistID + "번 비디오 추가 성공!! ");
+				
+				if (playlistService.updateCount(playlistID) != 0)
+					System.out.println("playlist totalVideo 업데이트 성공! ");
+				else
+					System.out.println("playlist totalVideo 업데이트 실패! ");
+			}
+			else 
+				System.out.println("비디오 추가 실패 ");
 		}
-		else 
-			System.out.println("비디오 추가 실패 ");
-
+		
 		return "home";
 	}
 	

@@ -263,7 +263,7 @@ img {
 
 					var html = '<div class = "playlistSeq card text-white bg-info mb-10" >' 
 						+ '<div class="card-header" listID="' + playlistID + '" >' 
-						+ '<input type="checkbox" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;">'
+						+ '<input type="checkbox" value="' + playlistID + '" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;">'
 						+ (index+1) + ' : ' + value.playlistName 
 						+ '<a href="#" onclick="deletePlaylist(\'' + playlistID + '\')"> 삭제 </a></div>'
 						+ '<div class="card-body"></div>'
@@ -401,20 +401,28 @@ img {
 		event.preventDefault(); // avoid to execute the actual submit of the form.
 		var seq = $("#inputPlaylistSeq").val() - 1; //1. 사용자가 입력한 playlist의 실제 인덱스(윗쪽에서 0부터 차례로 시작하는)를 가져온다 
 		
-		var playlistID = $(".card-header")[seq].getAttribute('listid'); //2. 해당하는 playlist의 실제 playlistID를 가져와서 새로운 video정보를 업데이트 할 때 같이 저장할 용도
-		document.getElementById("inputPlaylistID").value = playlistID; 
+		//var playlistID = $(".card-header")[seq].getAttribute('listid'); //2. 해당하는 playlist의 실제 playlistID를 가져와서 새로운 video정보를 업데이트 할 때 같이 저장할 용도
+		//document.getElementById("inputPlaylistID").value = playlistID; 
 
-		var title = $("#inputYoutubeTitle").val();
-		if (title.length > 50){
-			document.getElementById("inputYoutubeTitle").value = title.substring(49) + "..."; 
-		}
+		var checkBoxArr = []; //새로운 영상이 추가될 playlist들 저장
+		$('input:checkbox:checked').each(function(i){
+			checkBoxArr.push($(this).val());
+		});
+
+		//if (title.length > 50){
+			//document.getElementById("inputYoutubeTitle").value = title.substring(49) + "..."; 
+		//}
 		
 		var passData = $('#createVideoForm').serialize(); //4. form에 있는 데이터들을 전송하기 위한 처리과정 
+		console.log(passData);
 
 		$.ajax({
 			'type': "POST",
 			'url': "http://localhost:8080/myapp/addVideo",
-			'data': passData,
+			'data': {
+					vo : passData,
+					playlist : checkBoxArr
+				},
 			success: function(data) {
 				console.log("ajax video저장 완료!");
 				getAllPlaylist(); 
@@ -518,7 +526,7 @@ img {
 		<input type="hidden" name="youtubeID" id="inputYoutubeID">
 		<input type="hidden" name="start_s" id="start_s">
 		<input type="hidden" name="end_s" id="end_s"> 
-		<input type="hidden" name="title" id="inputYoutubeTitle"> 
+	 	<input type="hidden" name="title" id="inputYoutubeTitle">
 		
 		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : 
 		<input type="text" id="start_hh" maxlength="2" size="2"> 시 
@@ -534,8 +542,8 @@ img {
 		<button onclick="seekTo2()" type="button"> 위치이동 </button> 
 		<span id=warning2 style="color:red;"></span> <br>
 		
-		playlist : <input type="text" id="inputPlaylistSeq" required>
-		<input type="hidden" name="playlistID" id="inputPlaylistID"> <!-- 실제 저장되는 플레이리스트 -->
+		<!-- playlist : <input type="text" id="inputPlaylistSeq" required>-->
+		<!--  <input type="hidden" name="playlistID" id="inputPlaylistID">--> <!-- 실제 저장되는 플레이리스트 -->
 		
 		<button type="submit" > submit </button>
 		<!-- id="btn-submit" disabled="disabled" -->
@@ -647,8 +655,8 @@ img {
 			document.getElementById("end_mm").value = end_mm;
 			document.getElementById("end_ss").value = end_ss;
 
-			var index = item.getAttribute('playlistSeq');
-			document.getElementById("inputPlaylistID").value = $(".card-header")[index].getAttribute('listid');
+			//var index = item.getAttribute('playlistSeq');
+			//document.getElementById("inputPlaylistID").value = $(".card-header")[index].getAttribute('listid');
 
 			document.getElementById("inputYoutubeID").value = youtubeID;
 	        document.getElementById("inputYoutubeTitle").value = youtubeTitle;
@@ -668,9 +676,7 @@ img {
 			var saveForm = document.getElementById("createVideoForm");
 			saveForm.style.display = "block";
 
-			var selectPlaylists = document.getElementsByClassName("selectPlaylists");
-			for (var i; i<selectPlaylists.length; i++)
-				selectPlaylists[i].style.display = "block";
+			$(".selectPlaylists").css("display","inline"); //영상 추가할 기존 playlist 중 선택
 		} 
 		// Youtube player 특정 위치로 재생 위치 이동 : 
 		function seekTo1(){
@@ -720,7 +726,7 @@ img {
 		}
 		
 		// 재생 구간 유효성 검사: 
-		function validation(event){
+		function validation(event){ //video 추가 form 제출하면 실행되는 함수
 			document.getElementById("warning1").innerHTML = "";
 			document.getElementById("warning2").innerHTML = "";	
 			// 사용자가 input에서 수기로 시간을 변경했을 시에 필요. 
