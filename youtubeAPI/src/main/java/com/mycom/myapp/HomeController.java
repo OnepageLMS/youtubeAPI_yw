@@ -206,12 +206,12 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
-	public String addVideo(@ModelAttribute("vo") VideoVO vo, @RequestParam(value="playlist[]") List<Integer> playlistArr) {
-		//int playlistID = vo.getPlaylistID();
+	public String addVideo(@ModelAttribute VideoVO vo) {
+		List<Integer> playlistArr = vo.getPlaylistArr();
+		
 		for(int i=0; i<playlistArr.size(); i++) {
 			int playlistID = playlistArr.get(i);
-			System.out.println(playlistID);
-			System.out.println(vo.getTitle());
+			
 			vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
 			vo.setPlaylistID(playlistID);
 			
@@ -230,9 +230,20 @@ public class HomeController {
 		return "home";
 	}
 	
+	@RequestMapping(value = "/updateVideo", method = RequestMethod.POST)
+	@ResponseBody
+	public String updateVideo(@ModelAttribute VideoVO vo){
+		if(videoService.updateVideo(vo) != 0)
+			System.out.println("controller update video 성공! "); 
+		else
+			System.out.println("controller update video 실패! "); 
+		
+		return "home";
+	}
+	
 	@RequestMapping(value = "/deleteVideo", method = RequestMethod.POST)
 	@ResponseBody
-	public void deleteVideo(HttpServletRequest request) {
+	public String deleteVideo(HttpServletRequest request) {
 		int videoID = Integer.parseInt(request.getParameter("video"));
 		int playlistID = Integer.parseInt(request.getParameter("playlist"));
 		
@@ -246,6 +257,8 @@ public class HomeController {
 		}
 		else
 			System.out.println("controller video 삭제 실패! ");
+		
+		return "home";
 	}
 	
 	@RequestMapping(value = "/changeVideosOrder", method = RequestMethod.POST) //video 순서 변경될때

@@ -32,6 +32,7 @@
 		set totalVideo = ( select count(*)
 			from Video
 			where playlistID=#{playlistID} )
+		where playlistID=#{playlistID}
 	</update>
 	
 </mapper>

@@ -8,6 +8,12 @@
 		(#{youtubeID}, #{start_s}, #{end_s}, #{playlistID}, #{title}, #{seq})
 	</insert>
 	
+	<update id="updateVideo">
+		update Video
+		set start_s=#{start_s}, end_s=#{end_s}
+		where id=#{id}
+	</update>
+	
 	<update id="changeSeq">
 		update Video
 		set seq=#{seq} where id=#{id}
