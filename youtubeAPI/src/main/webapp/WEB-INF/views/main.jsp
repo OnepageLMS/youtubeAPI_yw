@@ -187,6 +187,8 @@ img {
 			
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
 			//var url = '<a href="https://youtu.be/' + id + '">';
+			titleList[i] = titleList[i].replace(/'/g, '\'');
+			
 			$("#get_view").append(
 					//'<div class="video" onclick="selectVideo(\'' + id.toString() + '\')" >' 
 					'<div class="searchedVideo" onclick="showForm(); selectVideo(\'' + id.toString()
@@ -476,6 +478,28 @@ img {
 		       }
 		    });
 	}
+
+	// tag로 playlist 및 영상 찾기:
+	var tag;
+	
+ 	function searchTag(){
+ 		$("[tag*='"+ tag + "']").css("background-color", "#d9edf7;"); 
+ 		
+ 	 	tag = $("#tagName").val();
+ 	 	tag = tag.replace(/ /g, '').split(",");
+ 	 	
+ 	 	//var tag = document.getElementById("")
+ 	 	console.log(tag);
+
+ 	 	tag.forEach(function(element){
+ 	 	 	//console.log(element);
+ 	 		$("[tag*='"+ element + "']").css("background-color", "yellow");
+ 	 	});
+ 	 	//$("[tag*='"+ tag + "']").css("background-color", "yellow");
+
+ 	 	//console.log(tag);
+ 	 	//$("[tag*='"+ tag + "']").css("background-color", "yellow");
+ 	}
 	</script>
 	
 	
@@ -486,7 +510,10 @@ img {
 			<input type="text" id="playlistName" />
 			<button onclick="createPlaylist()">생성</button>
 		</div>
-		
+		<div>
+			<input type="text" id="tagName" />
+			<button onclick="searchTag()">태그로 영상 찾기</button>
+		</div>
 		<div id="allPlaylist" class="" >
 			<!-- 각 카드 리스트 박스 추가되는 공간-->
 		</div>
@@ -574,11 +601,15 @@ img {
 			showYoutubePlayer(id, title);
 
 			videoDuration = duration;
+			// console.log(duration); // 직접찍어본 결과 희한하게 영상에 따라 총 영상 길이가 보통 1초가 다 긴데, 어떤건 정확하게 영상 길이만큼 나온다. 
 			var regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
 	        var regex_result = regex.exec(duration); //Can be anything like PT2M23S / PT2M / PT28S / PT5H22M31S / PT3H/ PT1H6M /PT1H6S
 	        var hours = parseInt(regex_result[1] || 0);
 	        var minutes = parseInt(regex_result[2] || 0);
-	        var seconds = parseInt(regex_result[3] || 0) - 1;
+	        var seconds = parseInt(regex_result[3] || 0);
+	        if(seconds != "00") {
+	        	seconds = seconds - 1;  // 어떤건 1초 적게 나올 수 있음 이게 영상 마다 정의된 총 길이시간이 1초가 더해지기도 안더해지기도 해서 . 
+		    }	         
 	        
 	        document.getElementById("end_hh").value = hours;
 	        document.getElementById("end_mm").value = minutes;
@@ -610,17 +641,23 @@ img {
 					'onReady' : onPlayerReady,
 					'onStateChange' : onPlayerStateChange
 				}
-				
 			});
 		}
 		// 4. The API will call this function when the video player is ready.
 		function onPlayerReady() { 
 			//player.playVideo();
-			player.loadVideoById({
-				'videoId': youtubeID, 
-				'startSeconds': start_s, 
-				'endSeconds':end_s
-			});
+			
+			if(youtubeID == null){
+				player.playVideo();
+			}
+			// 플레이리스트에서 영상 선택시 player가 바로 뜰 수 있도록 함. 
+			else { 
+				player.loadVideoById({
+					'videoId': youtubeID, 
+					'startSeconds': start_s, 
+					'endSeconds':end_s
+				});
+			}
 		}
 
 		// (jw) player가 끝시간을 넘지 못하게 만들기 : 일단 임의로 시작 시간으로 되돌리기 했는데, 하영이거에서 마지막 재생 위치에서 부터 다시 재생되게 하면 될듯. 
