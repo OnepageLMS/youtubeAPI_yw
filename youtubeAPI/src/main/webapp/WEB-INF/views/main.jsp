@@ -487,18 +487,10 @@ img {
  		
  	 	tag = $("#tagName").val();
  	 	tag = tag.replace(/ /g, '').split(",");
- 	 	
- 	 	//var tag = document.getElementById("")
- 	 	console.log(tag);
 
  	 	tag.forEach(function(element){
- 	 	 	//console.log(element);
  	 		$("[tag*='"+ element + "']").css("background-color", "yellow");
  	 	});
- 	 	//$("[tag*='"+ tag + "']").css("background-color", "yellow");
-
- 	 	//console.log(tag);
- 	 	//$("[tag*='"+ tag + "']").css("background-color", "yellow");
  	}
 	</script>
 	
