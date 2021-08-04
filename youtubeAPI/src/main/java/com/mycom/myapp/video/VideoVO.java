@@ -14,13 +14,9 @@ public class VideoVO {
 	private String tag;
 	private Date regdate;
 	private List<Integer> playlistArr;
+	private int maxLength;
+	private int duration;
 	
-	public List<Integer> getPlaylistArr() {
-		return playlistArr;
-	}
-	public void setPlaylistArr(List<Integer> playlistArr) {
-		this.playlistArr = playlistArr;
-	}
 	public int getId() {
 		return id;
 	}
@@ -75,6 +71,23 @@ public class VideoVO {
 	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
-
+	public List<Integer> getPlaylistArr() {
+		return playlistArr;
+	}
+	public void setPlaylistArr(List<Integer> playlistArr) {
+		this.playlistArr = playlistArr;
+	}
+	public int getmaxLength() {
+		return maxLength;
+	}
+	public void setmaxLength(int maxLength) {
+		this.maxLength = maxLength;
+	}
+	public int getDuration() {
+		return duration;
+	}
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
 
 }

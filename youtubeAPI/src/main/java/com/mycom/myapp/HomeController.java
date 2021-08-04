@@ -203,6 +203,7 @@ public class HomeController {
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
 	public String addVideo(@ModelAttribute VideoVO vo) {
 		List<Integer> playlistArr = vo.getPlaylistArr();
+		System.out.println("controller: maxLength!!->" + vo.getmaxLength());
 		
 		for(int i=0; i<playlistArr.size(); i++) {
 			int playlistID = playlistArr.get(i);
@@ -211,6 +212,8 @@ public class HomeController {
 			vo.setPlaylistID(playlistID);
 			
 			if(videoService.insertVideo(vo) != 0) {
+				System.out.println("title: " + vo.getTitle());
+				
 				System.out.println(playlistID + "번 비디오 추가 성공!! ");
 				
 				if (playlistService.updateCount(playlistID) != 0)

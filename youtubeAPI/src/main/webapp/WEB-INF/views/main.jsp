@@ -11,21 +11,17 @@
 body {
 	padding: 10px;
 }
-
 .video {
 	padding: 7px;
 }
-
 .info {
 	font-size: 12px;
 }
-
 img {
 	width: 128px;
 	height: 80px;
 	padding: 5px;
 }
-
 .playlistSeq{
 	background-color: #cecece;
 	padding: 10px;
@@ -33,7 +29,7 @@ img {
 }
 .container-fluid{
 	margin : 7px;
-	width: 400px;
+	width: 500px;
 	float: right;
 }
 /* 이동 타켓 */
@@ -49,7 +45,6 @@ img {
 .card:not(.no-move) .card-header{
 	cursor: pointer;
 }
-
 .card{
 	border-radius: 5px;
 }
@@ -350,7 +345,6 @@ img {
 		      dataType  : "json", 
 		      success  : function(data) {
 		  	  		getAllPlaylist(); 
-		    	  
 		      }, error:function(request,status,error){
 		          //alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 		    	  getAllPlaylist(); 
@@ -438,12 +432,13 @@ img {
 		$('input:checkbox:checked').each(function(i){
 			checkBoxArr.push($(this).val());
 		});
-
 		var title = $("#inputYoutubeTitle").val();
 		var start_s = $("#start_s").val();
 		var end_s = $("#end_s").val();
 		var youtubeID = $("#inputYoutubeID").val();
-
+		var maxLength = $("#maxLength").val();
+		var duration = $('#duration').val();
+		
 		$.ajax({
 			'type': "POST",
 			'url': "http://localhost:8080/myapp/addVideo",
@@ -452,11 +447,13 @@ img {
 					title : title,
 					start_s : start_s,
 					end_s : end_s,
-					youtubeID : youtubeID
+					youtubeID : youtubeID,
+					maxLength : maxLength,
+					duration : duration
 				},
 			success: function(data) {
 				console.log("ajax video저장 완료!");
-				for(var i=0; i<checkBoxArr.size(); i++){
+				for(var i=0; i<checkBoxArr.length; i++){
 					getAllVideo(checkBoxArr[i]);
 				}
 			},
@@ -464,7 +461,6 @@ img {
 				getAllPlaylist(); 
 				console.log("ajax video저장 실패!" + error);
 			}
-
 		});
 		return false;
 	}
@@ -604,6 +600,8 @@ img {
 		<input type="hidden" name="start_s" id="start_s">
 		<input type="hidden" name="end_s" id="end_s"> 
 	 	<input type="hidden" name="title" id="inputYoutubeTitle">
+	 	<input type="hidden" name="maxLength" id="maxLength">
+	 	<input type="hidden" name="duration" id="duration">
 		
 		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : 
 		<input type="text" id="start_hh" maxlength="2" size="2"> 시 
@@ -621,7 +619,7 @@ img {
 
 		<button type="submit" class="submitBtn" > 추가 </button>
 		
-		tag: <input type="text" id="tag" name="tag" required>
+		tag: <input type="text" id="tag" name="tag">
 		<!-- 아래는 기존 playlist에서 video를 수정할 때 사용 -->
 		<!--  <input type="hidden" name="playlistID" id="inputPlaylistID"> -->
 		<input type="hidden" name="videoID" id="inputVideoID">
@@ -670,24 +668,30 @@ img {
 			
 			showYoutubePlayer(id, title);
 
-			videoDuration = duration;
-			// console.log(duration); // 직접찍어본 결과 희한하게 영상에 따라 총 영상 길이가 보통 1초가 다 긴데, 어떤건 정확하게 영상 길이만큼 나온다. 
+			//console.log("check duration", duration); // 직접찍어본 결과 희한하게 영상에 따라 총 영상 길이가 보통 1초가 다 긴데, 어떤건 정확하게 영상 길이만큼 나온다. 
+
 			var regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
 	        var regex_result = regex.exec(duration); //Can be anything like PT2M23S / PT2M / PT28S / PT5H22M31S / PT3H/ PT1H6M /PT1H6S
 	        var hours = parseInt(regex_result[1] || 0);
 	        var minutes = parseInt(regex_result[2] || 0);
 	        var seconds = parseInt(regex_result[3] || 0);
-	        if(seconds != "00") {
-	        	seconds = seconds - 1;  // 어떤건 1초 적게 나올 수 있음 이게 영상 마다 정의된 총 길이시간이 1초가 더해지기도 안더해지기도 해서 . 
-		    }	         
+			
+	        /* if(seconds != "00") {
+	        	seconds = parseInt(seconds) - 1;  // 어떤건 1초 적게 나올 수 있음 이게 영상 마다 정의된 총 길이시간이 1초가 더해지기도 안더해지기도 해서 . 
+		    }	  */        
 	        
 	        document.getElementById("end_hh").value = hours;
 	        document.getElementById("end_mm").value = minutes;
         	document.getElementById("end_ss").value = seconds;
         	
 	        var total_seconds = hours * 60 * 60 + minutes * 60 + seconds;
+
+	        //console("check here!!"+ total_seconds);
 			// validty check: 
 	        limit = parseInt(total_seconds);
+	        console.log("check here!!"+ limit);
+			document.getElementById("maxLength").value = limit;
+	        
 	        // 클릭한 영상의 videoId form에다가 지정. 
 	        document.getElementById("inputYoutubeID").value = id;
 	        document.getElementById("inputYoutubeTitle").value = videoTitle;
@@ -758,6 +762,8 @@ img {
 						
 			start_s = item.getAttribute('start_s');
 			end_s = item.getAttribute('end_s');
+
+			limit = item.getAttribute('maxLength');
 
 			var seq = item.getAttribute('playlistseq');
 			$('input:checkbox').prop("checked", false);
@@ -870,8 +876,9 @@ img {
 			
 			end_time = end_hh * 3600.00 + end_mm * 60.00 + end_ss * 1.00;
 			$('#end_s').val(end_time);
-			//console.log("start= ", start_time);
-			//console.log("end= ", end_time);
+
+			//console.log(end_time - start_time);
+			$('#duration').val(end_time-start_time);
 			
 			if(start_time > end_time) {
 				document.getElementById("warning1").innerHTML = "start time cannot exceed end time";
@@ -879,7 +886,6 @@ img {
 				return false;
 			}
 			if(end_time > limit){
-				//console.log("value of x: "+ x);
 				document.getElementById("warning2").innerHTML = "Please insert again";
 				document.getElementById("end_ss").focus();
 				return false;
