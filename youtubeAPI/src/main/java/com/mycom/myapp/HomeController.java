@@ -124,11 +124,6 @@ public class HomeController {
 		return "main";
 	}
 	
-	@RequestMapping(value="/test2", method=RequestMethod.GET)
-	public String test() {
-		return "test2";
-	}
-	
 	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
 	@ResponseBody
 	public void addPlaylist(HttpServletRequest request) {
@@ -151,7 +146,7 @@ public class HomeController {
 		
 		if( playlistService.deletePlaylist(playlistID) != 0) {
 			System.out.println("playlist 삭제 성공! ");
-			//playlist 내에 video들도 삭제 해야하지 않을까? 
+			//playlist 내에 video들도 삭제? 
 		}
 		else
 			System.out.println("playlist 삭제 실패! ");
@@ -208,6 +203,7 @@ public class HomeController {
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
 	public String addVideo(@ModelAttribute VideoVO vo) {
 		List<Integer> playlistArr = vo.getPlaylistArr();
+		System.out.println("controller: maxLength!!->" + vo.getmaxLength());
 		
 		for(int i=0; i<playlistArr.size(); i++) {
 			int playlistID = playlistArr.get(i);
@@ -216,6 +212,8 @@ public class HomeController {
 			vo.setPlaylistID(playlistID);
 			
 			if(videoService.insertVideo(vo) != 0) {
+				System.out.println("title: " + vo.getTitle());
+				
 				System.out.println(playlistID + "번 비디오 추가 성공!! ");
 				
 				if (playlistService.updateCount(playlistID) != 0)

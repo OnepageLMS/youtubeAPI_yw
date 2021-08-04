@@ -1,5 +1,6 @@
 package com.mycom.myapp.video;
 
+import java.util.Date;
 import java.util.List;
 
 public class VideoVO {
@@ -10,14 +11,11 @@ public class VideoVO {
 	private double end_s;
 	private int playlistID;
 	private int seq;
+	private String tag;
+	private Date regdate;
 	private List<Integer> playlistArr;
-	
-	public List<Integer> getPlaylistArr() {
-		return playlistArr;
-	}
-	public void setPlaylistArr(List<Integer> playlistArr) {
-		this.playlistArr = playlistArr;
-	}
+	private int maxLength;
+	private int duration;
 	
 	public int getId() {
 		return id;
@@ -60,6 +58,36 @@ public class VideoVO {
 	}
 	public void setSeq(int seq) {
 		this.seq = seq;
+	}
+	public String getTag() {
+		return tag;
+	}
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	public Date getRegdate() {
+		return regdate;
+	}
+	public void setRegdate(Date regdate) {
+		this.regdate = regdate;
+	}
+	public List<Integer> getPlaylistArr() {
+		return playlistArr;
+	}
+	public void setPlaylistArr(List<Integer> playlistArr) {
+		this.playlistArr = playlistArr;
+	}
+	public int getmaxLength() {
+		return maxLength;
+	}
+	public void setmaxLength(int maxLength) {
+		this.maxLength = maxLength;
+	}
+	public int getDuration() {
+		return duration;
+	}
+	public void setDuration(int duration) {
+		this.duration = duration;
 	}
 
 }
