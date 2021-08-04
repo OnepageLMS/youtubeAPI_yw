@@ -38,12 +38,12 @@ public class PlaylistDAO {
 	}
 	
 	public int getCount() {
-		int result = sqlSession.selectOne("Playlist.getCount");
+		int result = sqlSession.selectOne("Playlist.getPlaylistCount");
 		return result;
 	}
 	
-	public int updateCount(PlaylistVO vo) {
-		int result = sqlSession.update("Playlist.updateCount", vo);
+	public int updateCount(int playlistID) { //totalVideo 업데이트
+		int result = sqlSession.update("Playlist.updateCount", playlistID);
 		return result;
 	}
 }

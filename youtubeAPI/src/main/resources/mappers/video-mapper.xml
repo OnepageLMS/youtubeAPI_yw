@@ -8,6 +8,12 @@
 		(#{youtubeID}, #{start_s}, #{end_s}, #{playlistID}, #{title}, #{seq}, #{tag})
 	</insert>
 	
+	<update id="updateVideo">
+		update Video
+		set start_s=#{start_s}, end_s=#{end_s}
+		where id=#{id}
+	</update>
+	
 	<update id="changeSeq">
 		update Video
 		set seq=#{seq} where id=#{id}
@@ -19,12 +25,11 @@
 	
 	<select id="getVideoList" resultType="video">
 		select * from Video where
-		playlistID=#{playlistID} order by seq desc
+		playlistID=#{playlistID} order by seq
 	</select>
 	
-	<select id="getCount" resultType="int">
-		select count(*) from Video 
-		where playlistID=#{playlistID}
+	<select id="getTotalCount" resultType="int">
+		select count(*) from Video where playlistID=#{playlistID}
 	</select>
 
 </mapper>

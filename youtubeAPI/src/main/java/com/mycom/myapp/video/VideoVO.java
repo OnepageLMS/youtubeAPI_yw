@@ -1,6 +1,7 @@
 package com.mycom.myapp.video;
 
 import java.util.Date;
+import java.util.List;
 
 public class VideoVO {
 	private int id;	//video id 
@@ -12,7 +13,14 @@ public class VideoVO {
 	private int seq;
 	private String tag;
 	private Date regdate;
-
+	private List<Integer> playlistArr;
+	
+	public List<Integer> getPlaylistArr() {
+		return playlistArr;
+	}
+	public void setPlaylistArr(List<Integer> playlistArr) {
+		this.playlistArr = playlistArr;
+	}
 	public int getId() {
 		return id;
 	}

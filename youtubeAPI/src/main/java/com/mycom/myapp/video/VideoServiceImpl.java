@@ -42,7 +42,7 @@ public class VideoServiceImpl implements VideoService{
 	}
 	
 	@Override
-	public int getCount(int playlistID) {
-		return videoDAO.getCount(playlistID);
+	public int getTotalCount(int playlistID) {
+		return videoDAO.getTotalCount(playlistID);
 	}
 }

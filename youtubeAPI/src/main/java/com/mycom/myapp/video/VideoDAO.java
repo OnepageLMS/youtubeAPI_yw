@@ -41,8 +41,8 @@ public class VideoDAO {
 		return result;
 	}
 	
-	public int getCount(int playlistID) {
-		int result = sqlSession.selectOne("Video.getCount", playlistID);
+	public int getTotalCount(int playlistID) {
+		int result = sqlSession.selectOne("Video.getTotalCount", playlistID);
 		return result;
 	}
 	

@@ -9,5 +9,5 @@ public interface VideoService {
 	public int changeSeq(VideoVO vo);
 //	public VideoVO getVideo(int playlistID);
 	public List<VideoVO> getVideoList(int playlistID);
-	public int getCount(int playlistID);
+	public int getTotalCount(int playlistID);
 }
