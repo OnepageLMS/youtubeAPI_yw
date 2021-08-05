@@ -12,6 +12,11 @@
 		where classID=#{classID} and week=#{week} and day=#{day}
 	</select>
 	
+	<select id="getAllClassContents" resultType="classContents">
+		select * from lms_classPlaylist
+		where classID=#{classID}
+	</select>
+	
 	<delete id="deleteContent">
 		delete from lms_classPlaylist where playlistID=#{playlistID}
 	</delete>

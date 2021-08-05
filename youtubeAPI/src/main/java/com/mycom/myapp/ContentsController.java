@@ -11,6 +11,8 @@ import com.mycom.myapp.classContent.ClassContentsService;
 import com.mycom.myapp.classContent.ClassContentsVO;
 import com.mycom.myapp.classes.ClassesService;
 
+import net.sf.json.JSONArray;
+
 @Controller
 @RequestMapping(value="/class")
 public class ContentsController {
@@ -25,6 +27,7 @@ public class ContentsController {
 		classID = 1;//임의로 1번 class 설정
 
 		model.addAttribute("classInfo", classService.getClass(classID)); 
+		model.addAttribute("allContents", JSONArray.fromObject(classContentsService.getAllClassContents(classID)));
 		return "contentsList";
 	}
 	

@@ -18,6 +18,8 @@
   crossorigin="anonymous"></script>
 <script>
 	$(document).ready(function(){
+
+		//아래부분 마감일 설정때 나오도록...?
 		var timezoneOffset = new Date().getTimezoneOffset() * 60000;
 		var date = new Date(Date.now() - timezoneOffset).toISOString().split("T")[0]; //set local timezone
 		endDate.min = date;

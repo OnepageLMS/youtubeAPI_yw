@@ -1,5 +1,7 @@
 package com.mycom.myapp.classContent;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +17,18 @@ public class ClassContentsServiceImpl implements ClassContentsService{
 	}
 	
 	@Override
-	public int getDaySeq(ClassContentsVO vo) {
-		return classContentsDAO.getDaySeq(vo);
+	public int deleteContent(ClassContentsVO vo) {
+		return classContentsDAO.deleteContent(vo);
 	}
 	
 	@Override
-	public int deleteContent(ClassContentsVO vo) {
-		return classContentsDAO.deleteContent(vo);
+	public List<ClassContentsVO> getAllClassContents(int classID){
+		return classContentsDAO.getAllClassContents(classID);
+	}
+	
+	@Override
+	public int getDaySeq(ClassContentsVO vo) {
+		return classContentsDAO.getDaySeq(vo);
 	}
 	
 }
