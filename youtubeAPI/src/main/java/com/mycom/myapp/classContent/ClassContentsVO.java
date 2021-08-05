@@ -7,13 +7,14 @@ public class ClassContentsVO {
 	private String title;
 	private String description;
 	private int classID;
-	private int playlistID;
+	private int playlistID; //null값은 int에 저장안됨
 	private int week;
 	private int day;
 	private int daySeq;
 	private boolean published;
 	private Date startDate;
 	private Date endDate;
+	private Date modDate;
 	
 	public int getId() {
 		return id;
@@ -80,6 +81,12 @@ public class ClassContentsVO {
 	}
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	public Date getModDate() {
+		return modDate;
+	}
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
 	}
 	
 }

@@ -3,13 +3,16 @@ package com.mycom.myapp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mycom.myapp.classContent.ClassContentsService;
+import com.mycom.myapp.classContent.ClassContentsVO;
 import com.mycom.myapp.classes.ClassesService;
 
 @Controller
+@RequestMapping(value="/class")
 public class ContentsController {
 	
 	@Autowired
@@ -17,12 +20,38 @@ public class ContentsController {
 	@Autowired
 	private ClassContentsService classContentsService;
 	
-	@RequestMapping(value = "/contentList", method = RequestMethod.GET)
-	public String contentList(Model model) {
-		
-		model.addAttribute("classInfo", classService.getClass(1));
+	@RequestMapping(value = "/contentList/{classID}", method = RequestMethod.GET)
+	public String contentList(@PathVariable("classID") int classID, Model model) {
+		classID = 1;//임의로 1번 class 설정
 
+		model.addAttribute("classInfo", classService.getClass(classID)); 
 		return "contentsList";
+	}
+	
+	@RequestMapping(value = "/addContent/{classID}/{week}/{day}", method = RequestMethod.GET)
+	public String addContent(@PathVariable("classID") int classID, @PathVariable("week") int week, 
+			@PathVariable("day") int day, Model model) {
+		
+		ClassContentsVO vo = new ClassContentsVO();
+		vo.setClassID(classID);
+		vo.setWeek(week);
+		vo.setDay(day);
+		model.addAttribute("content", vo);
+		
+		return "addContent";
+	}
+	
+	@RequestMapping(value = "/addContentOK", method = RequestMethod.POST)
+	public String addContentOK(ClassContentsVO vo) {
+		int classID = vo.getClassID();
+		vo.setDaySeq(classContentsService.getDaySeq(vo));
+		
+		if (classContentsService.insertContent(vo) == 0)
+			System.out.println("classContents 추가 실패!");
+		else
+			System.out.println("classContents 추가 성공!");
+		
+		return "redirect:contentList/" + classID;
 	}
 
 }

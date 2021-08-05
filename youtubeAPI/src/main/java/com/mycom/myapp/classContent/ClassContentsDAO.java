@@ -10,12 +10,17 @@ public class ClassContentsDAO {
 	SqlSession sqlSession;
 	
 	public int insertContent(ClassContentsVO vo) {
-		int result = sqlSession.insert("ClassContent.insertContent");
+		int result = sqlSession.insert("ClassContents.insertContent", vo);
+		return result;
+	}
+	
+	public int getDaySeq(ClassContentsVO vo) {
+		int result = sqlSession.selectOne("ClassContents.getDaySeq", vo);
 		return result;
 	}
 	
 	public int deleteContent(ClassContentsVO vo) {
-		int result = sqlSession.delete("ClassContent.deleteContent");
+		int result = sqlSession.delete("ClassContents.deleteContent", vo);
 		return result;
 	}
 }

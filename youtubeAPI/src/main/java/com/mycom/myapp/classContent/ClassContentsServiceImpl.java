@@ -15,6 +15,11 @@ public class ClassContentsServiceImpl implements ClassContentsService{
 	}
 	
 	@Override
+	public int getDaySeq(ClassContentsVO vo) {
+		return classContentsDAO.getDaySeq(vo);
+	}
+	
+	@Override
 	public int deleteContent(ClassContentsVO vo) {
 		return classContentsDAO.deleteContent(vo);
 	}

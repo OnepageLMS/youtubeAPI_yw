@@ -7,15 +7,22 @@
 <head>
 <meta charset="UTF-8">
 <title>contentsList</title>
+<style>
+	.contents{
+		padding: 10px;
+	}
+</style>
 </head>
 <body>
-	<div class="contents">
-		<c:forEach items="${classInfo}" var="u1" begin="0" end="${u.weeks}" varStatus="status">
-			<div class="week" week="${status.index}">
-				<h2>${status.index}</h2>
-				<c:forEach var="u2" items="${classInfo}" begin="0" end="${u2.days}" varStatus=""/>
-					<p class="day">${status2.index}</p>
-				
+	<div class="contents" classID="${classInfo.id}">
+		<c:forEach var="i" begin="1" end="${classInfo.weeks}">
+			<div class="week" week="${i}">
+				<h3>${i}주차</h3>
+				<c:forEach var="j" begin="1" end="${classInfo.days}">
+					<div class="day" day="${j}">${j} 차시
+						<a href="../addContent/${classInfo.id}/${i}/${j}">+내용추가</a>
+					</div>
+				</c:forEach>
 			</div>
 		</c:forEach>
 

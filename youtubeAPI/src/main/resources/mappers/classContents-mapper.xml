@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="ClassContent">
+<mapper namespace="ClassContents">
 	<insert id="insertContent">
-		insert into lms_classPlaylist (playlistName, creatorEmail, seq)
-		values (#{playlistName}, #{creatorEmail}, #{seq})
+		insert into lms_classPlaylist (title, description, classID, playlistID, week, day, daySeq, startDate, endDate)
+		values (#{title}, #{description}, #{classID}, #{playlistID}, #{week}, #{day}, 
+			#{daySeq}, #{startDate}, #{endDate})
 	</insert>
+	
+	<select id="getDaySeq" resultType="int">
+		select count(*) from lms_classPlaylist 
+		where classID=#{classID} and week=#{week} and day=#{day}
+	</select>
 	
 	<delete id="deleteContent">
 		delete from lms_classPlaylist where playlistID=#{playlistID}
