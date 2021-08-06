@@ -31,6 +31,14 @@ public class ContentsController {
 		return "contentsList";
 	}
 	
+	@RequestMapping(value = "/contentDetail/{id}", method = RequestMethod.GET)
+	public String contentDetail(@PathVariable("id") int id, Model model) {
+		ClassContentsVO vo = classContentsService.getOneContent(id);
+		model.addAttribute("vo", vo);
+		return "contentDetail";
+	}
+	
+	
 	@RequestMapping(value = "/addContent/{classID}/{week}/{day}", method = RequestMethod.GET)
 	public String addContent(@PathVariable("classID") int classID, @PathVariable("week") int week, 
 			@PathVariable("day") int day, Model model) {
@@ -55,6 +63,35 @@ public class ContentsController {
 			System.out.println("classContents 추가 성공!");
 		
 		return "redirect:contentList/" + classID;
+	}
+	
+	@RequestMapping(value = "/editContent/{id}", method = RequestMethod.GET)
+	public String editContent(@PathVariable("id") int id, Model model) {
+		ClassContentsVO vo = classContentsService.getOneContent(id);
+		model.addAttribute("vo", vo);
+		return "editContent";
+	}
+	
+	@RequestMapping(value = "/editContentOK", method = RequestMethod.POST)
+	public String editContentOK(ClassContentsVO vo) {
+		int classID = vo.getClassID();
+		
+		if (classContentsService.updateContent(vo) == 0)
+			System.out.println("classContents 수정 실패!");
+		else
+			System.out.println("classContents 수정 성공!");
+		
+		return "redirect:contentList/" + classID;
+	}
+	
+	@RequestMapping(value = "/deleteContent/{classID}/{id}", method = RequestMethod.GET)
+	public String deleteContent(@PathVariable("classID") int classID, @PathVariable("id") int id) {
+		if (classContentsService.deleteContent(id) == 0)
+			System.out.println("classContents 삭제 실패!");
+		else
+			System.out.println("classContents 삭제 성공!");
+		
+		return "redirect:../../contentList/" + classID;
 	}
 
 }

@@ -16,8 +16,18 @@ public class ClassContentsDAO {
 		return result;
 	}
 	
-	public int deleteContent(ClassContentsVO vo) {
-		int result = sqlSession.delete("ClassContents.deleteContent", vo);
+	public int updateContent(ClassContentsVO vo) {
+		int result = sqlSession.update("ClassContents.updateContent", vo);
+		return result;
+	}
+	
+	public int deleteContent(int id) {
+		int result = sqlSession.delete("ClassContents.deleteContent", id);
+		return result;
+	}
+	
+	public ClassContentsVO getOneContent(int id) {
+		ClassContentsVO result = sqlSession.selectOne("ClassContents.getOneContent", id);
 		return result;
 	}
 	

@@ -12,12 +12,23 @@
 		where classID=#{classID} and week=#{week} and day=#{day}
 	</select>
 	
-	<select id="getAllClassContents" resultType="classContents">
-		select * from lms_classPlaylist
-		where classID=#{classID}
-	</select>
+	<update id="updateContent">
+		update lms_classPlaylist
+		set title=#{title}, description=#{description}, startDate=#{startDate}, endDate=#{endDate}
+		where id=#{id}
+	</update>
 	
 	<delete id="deleteContent">
-		delete from lms_classPlaylist where playlistID=#{playlistID}
+		delete from lms_classPlaylist where id=#{id}
 	</delete>
+	
+	<select id="getOneContent" resultType="classContents">
+		select * from lms_classPlaylist
+		where id=#{id}
+	</select>
+	
+	<select id="getAllClassContents" resultType="classContents">
+		select * from lms_classPlaylist
+		where classID=#{classID} order by week and day and daySeq
+	</select>
 </mapper>

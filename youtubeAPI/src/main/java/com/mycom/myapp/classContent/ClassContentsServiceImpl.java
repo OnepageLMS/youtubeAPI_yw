@@ -17,10 +17,19 @@ public class ClassContentsServiceImpl implements ClassContentsService{
 	}
 	
 	@Override
-	public int deleteContent(ClassContentsVO vo) {
-		return classContentsDAO.deleteContent(vo);
+	public int updateContent(ClassContentsVO vo) {
+		return classContentsDAO.updateContent(vo);
 	}
 	
+	@Override
+	public int deleteContent(int id) {
+		return classContentsDAO.deleteContent(id);
+	}
+	
+	@Override
+	public ClassContentsVO getOneContent(int id) {
+		return classContentsDAO.getOneContent(id);
+	}
 	@Override
 	public List<ClassContentsVO> getAllClassContents(int classID){
 		return classContentsDAO.getAllClassContents(classID);

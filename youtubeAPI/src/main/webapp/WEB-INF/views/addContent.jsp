@@ -23,23 +23,27 @@
 		var timezoneOffset = new Date().getTimezoneOffset() * 60000;
 		var date = new Date(Date.now() - timezoneOffset).toISOString().split("T")[0]; //set local timezone
 		endDate.min = date;
-		endDate.value = date;
+		//endDate.value = date;
 		startDate.min = date;
 		startDate.value = date;
 		
 	    $("#addContent").submit(function(){ //when submit the form, check the validation
-	        //$("#inputData").append('<p>' + '이름: '+ name + '</p>');
 	          
 	        var date = $('#startDate').val().split("-");
 	        var hour = $('.start_h').val();
 	        var min = $('.start_m').val();
 	        var startDate = new Date(date[0], date[1]-1, date[2], hour, min, 00);
 
+	        if ($('#endDate').val() == null){
+				alert("마감일을 설정해주세요!");
+				$('#endDate').focus();
+		    }
+
 	        var e_date = $('#endDate').val().split("-");
 	        var e_hour = $('.end_h').val();
 	        var e_min = $('.end_m').val();
 	        var endDate = new Date(e_date[0], e_date[1]-1, e_date[2], e_hour, e_min, 00);
-			console.log(endDate);
+
 	        if(startDate.getTime() >= endDate.getTime()) {
 	            alert("컨텐츠 마감일보다 게시일이 빨라야 합니다.");
 		        $('#startDate').focus();
@@ -57,10 +61,13 @@
 				$('input[name=startDate]').val(startDate);
 		    }
 	    }); 
-	    return false;
 	}); // end ready()
 
 	function getCurrentTime(){
+		var timezoneOffset = new Date().getTimezoneOffset() * 60000;
+		var date = new Date(Date.now() - timezoneOffset).toISOString().split("T")[0]; //set local timezone
+		startDate.value = date;
+		
 		var hour = new Date().getHours();
 		var min = new Date().getMinutes();
 		$('.start_h').val(hour);
@@ -69,18 +76,15 @@
 	}
 
 	function addCancel(id) {
-	
-	var a = confirm("등록을 취소하시겠습니까?");
-	if (a)
-		location.href = '../../../contentList/' + id;
+		var a = confirm("등록을 취소하시겠습니까?");
+		if (a)
+			location.href = '../../../contentList/' + id;
 	}
 </script>
 </head>
 
 <body>
-	<div id="selectedContent">
-		<p>playlist 정보 여기에</p>
-	</div>
+	
 	
 	<form id="addContent" action="../../../addContentOK" method="post">
 		<input type="hidden" name="classID" value="${content.classID}"/>
@@ -88,6 +92,9 @@
 		<input type="hidden" name="day" value="${content.day}"/>
 		
 		<div class="selectContent">
+			<div id="selectedContent">
+				<p>playlist 정보 여기에</p>
+			</div>
 			<button type="button" onclick="">playlist가져오기</button>
 			<input type="hidden" name="playlistID" value="1">
 		</div>

@@ -16,12 +16,21 @@
 		border: 2px solid lightslategrey;
 		padding: 5px;
 		margin: 5px;
-		width: 40%;
+		width: 50%;
 	}
 	
 	.content{
 		border: 1px solid lightslategrey;
 		margin: 3px;
+		padding-left: 5px;
+	}
+	
+	.title {
+		font-size: 16px;
+	}
+	
+	a{
+		text-decoration: none;
 	}
 </style>
 </head>
@@ -41,13 +50,24 @@ $(document).ready(function(){
 		var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
 
 		var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');
-		content.append("<div class='content' seq='" + allContents[i].daySeq + "'>" 
-				+ '<h4 class="title">' +  (allContents[i].daySeq+1) + " " + allContents[i].title + '</h4>'
-				+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
-			 	+ '<p class="published">' + "공개: " + allContents[i].published + '</p>'
-				+ "</div>");
+		var onclickDetail = "location.href='../contentDetail/" + allContents[i].id + "'";
+		
+		content.append("<div class='content' seq='" + allContents[i].daySeq + "' onclick=" + onclickDetail + " style='cursor: pointer;'>"
+						+ '<p class="title"> <b>' +  (allContents[i].daySeq+1) + " " + allContents[i].title 
+							+ '</b><a href="../editContent/' + allContents[i].id + '"> 수정</a>'
+							+ '<a href="javascript:deleteCheck(' + allContents[i].classID +","+ allContents[i].id + ')"> 삭제</a>'
+						+ '</p>'
+						+ '<p class="startDate">' + "시작일: " + startDate + '</p>'
+					 	+ '<p class="published">' + "공개: " + allContents[i].published + '</p>'
+					+ "</div>");
 	}
 });
+
+function deleteCheck(classID, id){
+	var a = confirm("정말 삭제하시겠습니까?");
+	if (a)
+		location.href = '../deleteContent/' + classID + "/" + id;
+}
 	
 
 </script>
@@ -58,7 +78,7 @@ $(document).ready(function(){
 				<h3>${i}주차</h3>
 				<c:forEach var="j" begin="1" end="${classInfo.days}">
 					<div class="day" day="${j}">${j} 차시
-						<a href="../addContent/${classInfo.id}/${i}/${j}">+내용추가</a>
+						<a href="../addContent/${classInfo.id}/${i}/${j}">+페이지추가</a>
 					</div>
 				</c:forEach>
 			</div>
