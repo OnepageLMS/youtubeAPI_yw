@@ -6,7 +6,7 @@ public class PlaylistVO {
 	private String creatorEmail;
 	private int seq;
 	private int totalVideo;
-	//private boolean allow; //public 이름 바꿔야함
+	private boolean exposed; //public 이름 바꿔야함
 	
 	public int getPlaylistID() { 
 		return playlistID;
@@ -37,5 +37,11 @@ public class PlaylistVO {
 	}
 	public void setTotalVideo(int totalVideo) {
 		this.totalVideo = totalVideo;
+	}
+	public boolean isExposed() {
+		return exposed;
+	}
+	public void setExposed(boolean exposed) {
+		this.exposed = exposed;
 	}
 }
