@@ -55,9 +55,8 @@ public class ContentsController {
 		return "addContent";
 	}
 	
-	@RequestMapping(value = "/myPlaylist", method = RequestMethod.GET)
-	public String selectPlaylist(Model model) {
-		String creatorEmail = "";
+	@RequestMapping(value = "/myPlaylist/{creatorEmail}", method = RequestMethod.GET)
+	public String selectPlaylist(@PathVariable("creatorEmail") String creatorEmail, Model model) {
 		model.addAttribute("playlist", playlistService.getAllMyPlaylist(creatorEmail));
 		return "myPlaylist";
 	}

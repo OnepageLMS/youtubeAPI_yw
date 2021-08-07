@@ -26,7 +26,7 @@
 	<select id="getAllMyPlaylist" resultType="playlist"> <!-- 내가만든것들만 볼 수 있도록니 -->
 		select * from lms_playlist 
 		where creatorEmail=#{creatorEmail}
-		order by seq desc
+		order by seq
 	</select>
 	
 	<select id="getPlaylistCount" resultType="int">
