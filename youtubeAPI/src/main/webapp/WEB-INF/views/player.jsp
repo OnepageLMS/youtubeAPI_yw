@@ -106,7 +106,7 @@ img {
 					$('#allPlaylist').append(html);
 					getAllVideo(index);
 					
-				});
+				}); 
 			    if ($("#createVideoForm").css('display') === 'block') //video 추가할 Playlist 선택칸 보여주기
 					$(".selectPlaylists").css("display","inline");
 			}
