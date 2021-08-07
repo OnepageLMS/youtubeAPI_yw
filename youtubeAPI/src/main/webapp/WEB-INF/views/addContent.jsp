@@ -82,7 +82,7 @@
 	}
 
 	function popupOpen(){
-		var myEmail = "yewon.lee@onpage.edu"; //이부분 나중에 로그인 구현하면 로그인한 정보 가져오기
+		var myEmail = "yewon.lee@onepage.edu"; //이부분 나중에 로그인 구현하면 로그인한 정보 가져오기
 		var url = "${pageContext.request.contextPath}/class/myPlaylist/" + myEmail;
 		var popOption = "width=500, height=600";
 		var p = window.open(url, "myPlaylist", popOption);

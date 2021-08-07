@@ -1,16 +1,25 @@
 package com.mycom.myapp;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mycom.myapp.classContent.ClassContentsService;
 import com.mycom.myapp.classContent.ClassContentsVO;
 import com.mycom.myapp.classes.ClassesService;
 import com.mycom.myapp.playlist.PlaylistService;
+import com.mycom.myapp.video.VideoService;
+import com.mycom.myapp.video.VideoVO;
 
 import net.sf.json.JSONArray;
 
@@ -24,6 +33,8 @@ public class ContentsController {
 	private ClassContentsService classContentsService;
 	@Autowired
 	private PlaylistService playlistService;
+	@Autowired
+	private VideoService videoService;
 	
 	@RequestMapping(value = "/contentList/{classID}", method = RequestMethod.GET)
 	public String contentList(@PathVariable("classID") int classID, Model model) {
@@ -59,6 +70,19 @@ public class ContentsController {
 	public String selectPlaylist(@PathVariable("creatorEmail") String creatorEmail, Model model) {
 		model.addAttribute("playlist", playlistService.getAllMyPlaylist(creatorEmail));
 		return "myPlaylist";
+	}
+	
+	@RequestMapping(value = "/getOnePlaylist", method = RequestMethod.POST) //homecontroller에 있는것
+	@ResponseBody
+	public Object getOnePlaylist(@RequestParam(value = "id") String id) {
+		List<VideoVO> videos = new ArrayList<VideoVO>();
+		videos = videoService.getVideoList(Integer.parseInt(id));
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("allVideo", videos);
+		map.put("code", "ok");
+		
+		return map;
 	}
 	
 	@RequestMapping(value = "/addContentOK", method = RequestMethod.POST)
