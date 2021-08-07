@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.mycom.myapp.classContent.ClassContentsService;
 import com.mycom.myapp.classContent.ClassContentsVO;
 import com.mycom.myapp.classes.ClassesService;
+import com.mycom.myapp.playlist.PlaylistService;
 
 import net.sf.json.JSONArray;
 
@@ -21,6 +22,8 @@ public class ContentsController {
 	private ClassesService classService;
 	@Autowired
 	private ClassContentsService classContentsService;
+	@Autowired
+	private PlaylistService playlistService;
 	
 	@RequestMapping(value = "/contentList/{classID}", method = RequestMethod.GET)
 	public String contentList(@PathVariable("classID") int classID, Model model) {
@@ -50,6 +53,13 @@ public class ContentsController {
 		model.addAttribute("content", vo);
 		
 		return "addContent";
+	}
+	
+	@RequestMapping(value = "/myPlaylist", method = RequestMethod.GET)
+	public String selectPlaylist(Model model) {
+		String creatorEmail = "";
+		model.addAttribute("playlist", playlistService.getAllMyPlaylist(creatorEmail));
+		return "myPlaylist";
 	}
 	
 	@RequestMapping(value = "/addContentOK", method = RequestMethod.POST)

@@ -1,12 +1,15 @@
 package com.mycom.myapp.playlist;
 
+import java.util.Date;
+
 public class PlaylistVO {
 	private int playlistID;
 	private String playlistName;
 	private String creatorEmail;
 	private int seq;
 	private int totalVideo;
-	//private boolean allow; //public 이름 바꿔야함
+	//private boolean public; //public 이름 바꿔야함
+	private Date modDate;
 	
 	public int getPlaylistID() { 
 		return playlistID;
@@ -37,5 +40,11 @@ public class PlaylistVO {
 	}
 	public void setTotalVideo(int totalVideo) {
 		this.totalVideo = totalVideo;
+	}
+	public Date getModDate() {
+		return modDate;
+	}
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
 	}
 }

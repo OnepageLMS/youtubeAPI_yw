@@ -35,6 +35,11 @@ public class PlaylistServiceImpl implements PlaylistService{
 	}
 	
 	@Override
+	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail){
+		return playlistDAO.getAllMyPlaylist(creatorEmail);
+	}
+	
+	@Override
 	public int getCount() {
 		return playlistDAO.getCount();
 	}

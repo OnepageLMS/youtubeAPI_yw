@@ -8,6 +8,7 @@ public interface PlaylistService {
 	public int deletePlaylist(int playlistID);
 	public PlaylistVO getPlaylist(int playlistID);
 	public List<PlaylistVO> getAllPlaylist();
+	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail);
 	public int getCount();
 	public int updateCount(int playlistID);
 }

@@ -80,6 +80,13 @@
 		if (a)
 			location.href = '../../../contentList/' + id;
 	}
+
+	function popupOpen(){
+		var url = "${pageContext.request.contextPath}/class/myPlaylist";
+		var popOption = "width=500, height=600";
+		var p = window.open(url, "myPlaylist", popOption);
+		p.focus();
+	}
 </script>
 </head>
 
@@ -95,7 +102,7 @@
 			<div id="selectedContent">
 				<p>playlist 정보 여기에</p>
 			</div>
-			<button type="button" onclick="">playlist가져오기</button>
+			<button type="button" onclick="popupOpen();">playlist가져오기</button>
 			<input type="hidden" name="playlistID" value="1">
 		</div>
 		

@@ -31,4 +31,5 @@
 		select * from lms_classPlaylist
 		where classID=#{classID} order by week and day and daySeq
 	</select>
+
 </mapper>

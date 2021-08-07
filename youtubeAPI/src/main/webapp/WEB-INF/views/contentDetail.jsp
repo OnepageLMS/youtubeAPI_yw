@@ -57,7 +57,7 @@
 		
 		<div class="description">
 			<p>설명</p>
-			<textarea name="description" cols="50" rows="10">${vo.description}</textarea>
+			<p>${vo.description}</p>
 		</div>
 		
 		<div class="endDate">
