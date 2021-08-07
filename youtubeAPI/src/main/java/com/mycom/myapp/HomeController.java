@@ -124,6 +124,56 @@ public class HomeController {
 		return "main";
 	}
 	
+	@RequestMapping(value = "/youtube", method = RequestMethod.GET)
+	public String youtube(Model model, String keyword) {
+		//String order = "relevance";
+		//String maxResults = "50";
+		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
+		
+		model.addAttribute("accessToken", accessToken);
+		
+		// String requestURL =
+		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
+
+		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
+		//model.addAttribute("videos", videos);																
+
+		return "youtube";
+	}
+	
+	@RequestMapping(value = "/player", method = RequestMethod.POST)
+	public String player(Model model,
+			@RequestParam(required = false) String playerId,
+			@RequestParam(required = false) String playerTitle,
+			@RequestParam(required = false) String playerDuration,
+			@RequestParam(required = false) String keyword) throws Exception{
+		
+		System.out.println(playerId);
+		
+		//String order = "relevance";
+		//String maxResults = "50";
+		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
+		
+		//model.addAttribute("accessToken", accessToken);
+		
+		// String requestURL =
+		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
+
+		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
+		//model.addAttribute("videos", videos);			
+		
+//		Map<String, Object> map  = new HashMap<String, Object>();
+//		map.put("id", id);
+//		map.put("title",title);
+//		map.put("duration", duration);
+		
+		model.addAttribute("id", playerId);
+		model.addAttribute("title", playerTitle);
+		model.addAttribute("duration", playerDuration);
+		
+		return "player";
+	}
+	
 	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
 	@ResponseBody
 	public void addPlaylist(HttpServletRequest request) {

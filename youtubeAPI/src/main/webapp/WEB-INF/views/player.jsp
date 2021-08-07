@@ -69,174 +69,6 @@ img {
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-<!-- 아래 script는 youtube-search, video API 사용해서 video 검색결과 가져오기. 변경할 때 예원에게 말해주세요!!! -->
-<script>
-	var maxResults = "20";
-	var idList = [ maxResults ]; //youtube Search 결과 저장 array
-	var titleList = [ maxResults ];
-	var dateList = [ maxResults ];
-	var viewCount = [ maxResults ];
-	var likeCount = [ maxResults ];
-	var dislikeCount = [ maxResults ];
-	var durationCount = [ maxResults ];
-	var count = 0;
-
-	function fnGetList(sGetToken) { // youtube api로 검색결과 가져오기 
-		count = 0;
-		var $getval = $("#search_box").val();
-		var $getorder = $("#opt").val();
-		if ($getval == "") {
-			alert("검색어를 입력하세요.");
-			$("#search_box").focus();
-			return;
-		}
-		$("#get_view").empty();
-		$("#nav_view").empty();
-
-		var key = "AIzaSyAAwiwQmW9kVJT5y-_no-A5lGJwk4B2QK8"; //AIzaSyCnS1z2Dk27-yex5Kbrs5XjF_DkRDhfM-c
-		var accessToken = "${accessToken}";
-		var sTargetUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&order="
-				+ $getorder
-				+ "&q="
-				+ encodeURIComponent($getval) //encoding
-				+ "&key=" + key
-				//+ "&access_token="
-				//+ accessToken
-				+ "&maxResults="
-				+ maxResults
-				+ "&type=video";
-
-		if (sGetToken != null) { //이전 or 다음페이지 이동할때 해당 페이지 token
-			sTargetUrl += "&pageToken=" + sGetToken + "";
-		}
-		$.ajax({
-					type : "POST",
-					url : sTargetUrl, //youtube-search api 
-					dataType : "jsonp",
-					async : false,
-					success : function(jdata) {
-						if (jdata.error) { //api 할당량 끝났을 때 에러메세지
-							$("#nav_view").append(
-									'<p>검색 일일 한도가 초과되었습니다 나중에 다시 시도해주세요!</p>');
-						}
-						//console.log(jdata);
-						$(jdata.items)
-								.each(
-										function(i) {
-											setAPIResultToList(i, this.id.videoId,
-													this.snippet.title,
-													this.snippet.publishedAt);
-										})
-								.promise()
-								.done(
-										$(jdata.items)
-												.each(
-														function(i) {
-															var id = idList[i];
-															var getVideo = "https://www.googleapis.com/youtube/v3/videos?part=statistics,contentDetails&id="
-																	+ id
-																	+ "&key=" + key;
-																	//+ "&access_token="
-																	//+ accessToken;
-
-															$.ajax({
-																		type : "GET",
-																		url : getVideo, //youtube-videos api
-																		dataType : "jsonp",
-																		success : function(jdata2) {
-																			//console.log(jdata2);
-																			setAPIResultDetails(
-																					i,
-																					jdata2.items[0].statistics.viewCount,
-																					jdata2.items[0].statistics.likeCount,
-																					jdata2.items[0].statistics.dislikeCount,
-																					jdata2.items[0].contentDetails.duration);
-																		},
-																		error : function(xhr, textStatus) {
-																			console.log(xhr.responseText);
-																			alert("video detail 에러");
-																			return;
-																		}
-
-																	})
-														}));
-
-						if (jdata.prevPageToken) {
-							lastAndNext(jdata.prevPageToken, " <-이전 ");
-						}
-						if (jdata.nextPageToken) {
-							lastAndNext(jdata.nextPageToken, " 다음-> ");
-						}
-
-					},
-
-					error : function(xhr, textStatus) {
-						console.log(xhr.responseText);
-						alert("an error occured for searching");
-						return;
-					}
-				});
-	}
-
-	function displayResultList() { //페이지별로 video 정보가 다 가져와지면 이 함수를 통해 결과 list 출력
-		for (var i = 0; i < maxResults; i++) {
-			var id = idList[i];
-			var view = viewCount[i];
-			var title = titleList[i].replace("'", "\\'").replace("\"","\\\"");
-			console.log("display: " + title);
-			
-			var thumbnail = '<img src="https://img.youtube.com/vi/' + id + '/0.jpg">';
-			//var url = '<a href="https://youtu.be/' + id + '">';
-			$("#get_view").append(
-					//'<div class="video" onclick="selectVideo(\'' + id.toString() + '\')" >' 
-					'<div class="searchedVideo" onclick="showForm(); selectVideo(\'' + id.toString()
-							+ '\'' + ',\'' + title + '\''
-							+ ',\'' + durationCount[i] + '\');" >' + thumbnail
-							+ titleList[i] + '</p>'
-							+ '<p class="info"> publised: <b>' + dateList[i]
-							+ '</b> view: <b>' + view
-							+ '</b> like: <b>' + likeCount[i]
-							+ '</b> dislike: <b>' + dislikeCount[i]
-							+ '</b> </p></div>');
-		}
-	}
-	function lastAndNext(token, direction) { // 검색결과 이전/다음 페이지 이동
-		$("#nav_view").append(
-				'<a href="javascript:fnGetList(\'' + token + '\');"> '
-						+ direction + ' </a>');
-	}
-
-	function setAPIResultToList(i, id, title, date) { // search api사용할 때 데이터 저장
-		idList[i] = id;
-		titleList[i] = title.replace("'", "\\'").replace("\"","\\\""); // 싱글따옴표나 슬래시 들어갼것 따로 처리해줘야함!
-		console.log(titleList[i]);
-		dateList[i] = date.substring(0, 10);
-	}
-
-	function setAPIResultDetails(i, view, like, dislike, duration) { // videos api 사용할 때 디테일 데이터 저장 
-		viewCount[i] = convertNotation(view);
-		likeCount[i] = convertNotation(like);
-		dislikeCount[i] = convertNotation(dislike);
-		durationCount[i] = duration;
-		count += 1;
-		if (count == 20)
-			displayResultList();
-	}
-
-	function convertNotation(value) { //조회수 등 단위 변환
-		var num = parseInt(value);
-
-		if (num >= 1000000)
-			return (parseInt(num / 1000000) + "m");
-		else if (num >= 1000)
-			return (parseInt(num / 1000) + "k");
-		else if (value === undefined)
-			return 0;
-		else
-			return value;
-	}
-</script>
-
 <body>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -433,6 +265,7 @@ img {
 			checkBoxArr.push($(this).val());
 		});
 		var title = $("#inputYoutubeTitle").val();
+		var newTitle = $("#newTitle").val();
 		var start_s = $("#start_s").val();
 		var end_s = $("#end_s").val();
 		var youtubeID = $("#inputYoutubeID").val();
@@ -445,6 +278,7 @@ img {
 			'data': {
 					playlistArr : checkBoxArr,
 					title : title,
+					newTitle : newTitle,
 					start_s : start_s,
 					end_s : end_s,
 					youtubeID : youtubeID,
@@ -550,7 +384,8 @@ img {
 	var tag;
 	
  	function searchTag(){
- 	 	console.log(tag);
+ 	 	//console.log(tag);
+ 	 	// 배경색 원상 복귀 
  	 	if(tag != null){
  	 		tag.forEach(function(element){
  	 	 		$("[tag*='"+ element + "']").css("background-color", "#d9edf7;"); 
@@ -563,6 +398,7 @@ img {
  	 	
 
  	 	tag.forEach(function(element){
+ 	 	 	console.log("element 확인" , element);
  	 		$("[tag*='"+ element + "']").css("background-color", "yellow");
  	 		$("[playlistname*='"+ element + "']").css("background-color", "green");
  	 	});
@@ -575,8 +411,8 @@ img {
 	 	
 	 	
 		<div id="addPlaylist">
-			<input type="text" id="playlistName" />
-			<button onclick="createPlaylist()">생성</button>
+			<!-- <input type="text" id="playlistName" /> -->
+			<button onclick="createPlaylist()" style= "width: 200px;">생 성</button>
 		</div>
 		<div>
 			<input type="text" id="tagName" />
@@ -587,19 +423,8 @@ img {
 		</div>
 	</div>
 
-	<form name="form1" method="post" onsubmit="return false;">
-		<select name="opt" id="opt">
-			<option value="relevance">관련순</option>
-			<option value="date">날짜순</option>
-			<option value="viewCount">조회순</option>
-			<option value="title">문자순</option>
-			<option value="rating">평가순</option>
-		</select> <input type="text" id="search_box">
-		<button onclick="fnGetList();">검색</button>
-	</form>
-
-	<div id="player_info"></div>
-	<div id="player"></div>
+	<!-- <div id="player_info"></div> -->
+	<br><div id="player"></div>
 	
 	<!-- (jw) 영상 구간 설정 부분  -->
 	<br>
@@ -610,7 +435,8 @@ img {
 	 	<input type="hidden" name="title" id="inputYoutubeTitle">
 	 	<input type="hidden" name="maxLength" id="maxLength">
 	 	<input type="hidden" name="duration" id="duration">
-		
+		 
+		<textarea id="newTitle" name="newTitle" cols="78" rows="2"> </textarea><br>
 		<button onclick="getCurrentPlayTime1()" type="button"> start time </button> : 
 		<input type="text" id="start_hh" maxlength="2" size="2"> 시 
 		<input type="text" id="start_mm" maxlength="2" size="2"> 분 
@@ -636,7 +462,6 @@ img {
 
 	<!-- Youtube video player -->
 	<script>
-	
 		// 각 video를 클릭했을 때 함수 parameter로 넘어오는 정보들
 		var videoId;
 		var videoTitle;
@@ -653,14 +478,25 @@ img {
 		var end_s;
 		var youtubeID;
 
+		window.onload = function() {
+			videoId = "${id}";
+			videoTitle = "${title}";
+			videoDuration = "${duration}";
+			selectVideo(videoId, videoTitle, videoDuration);
+			showForm();
+		}
+
 		function showYoutubePlayer(id, title){
 			$('html, body').animate({scrollTop: 0 }, 'slow'); //화면 상단으로 이동
 
 			videoId = id;
 			videoTitle = title;
-			
-			document.getElementById("player_info").innerHTML = '<h3 class="videoTitle">' + videoTitle + '</h3>';
 
+			console.log(videoTitle);
+			//document.getElementById("player_info").innerHTML = '<h5 class="videoTitle">' + videoTitle + '</h3>';
+			$('#newTitle').val(videoTitle);
+			$('#title').val(videoTitle);
+			
 			//아래는 youtube-API 공식 문서에서 iframe 사용방법으로 나온 코드.
 			tag = document.createElement('script');
 			tag.src = "https://www.youtube.com/iframe_api";
@@ -694,10 +530,8 @@ img {
         	
 	        var total_seconds = hours * 60 * 60 + minutes * 60 + seconds;
 
-	        //console("check here!!"+ total_seconds);
 			// validty check: 
 	        limit = parseInt(total_seconds);
-	        console.log("check here!!"+ limit);
 			document.getElementById("maxLength").value = limit;
 	        
 	        // 클릭한 영상의 videoId form에다가 지정. 
@@ -705,7 +539,7 @@ img {
 	        document.getElementById("inputYoutubeTitle").value = videoTitle;
 	        
 			//이미 다른 영상이 player로 띄워져 있을 때 새로운 id로 띄우기
-			player.loadVideoById(videoId, 0, "large");
+			//player.loadVideoById(videoId, 0, "large");
 	
 			document.getElementById("start_hh").value = 0;
 	        document.getElementById("start_mm").value = 0;
@@ -894,6 +728,7 @@ img {
 				return false;
 			}
 			if(end_time > limit){
+				//console.log(end_time,"  ", limit);
 				document.getElementById("warning2").innerHTML = "Please insert again";
 				document.getElementById("end_ss").focus();
 				return false;
