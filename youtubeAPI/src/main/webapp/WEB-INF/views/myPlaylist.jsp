@@ -9,7 +9,36 @@
 <title>MyPlaylist</title>
 <style>
 	.myPlaylist{
-		width: 30%;
+		width: 20%;
+		float: left;
+		border: 2px solid lightgrey;
+		padding: 5px;
+	}
+	
+	.selectedPlaylist{
+		display: flex;
+		float: right;
+		width: 70%;
+	}
+	
+	.playlist {
+		margin: 5px;
+	}
+	
+	.playlist > p{
+		display: inline;
+	}
+	
+	#playlistInfo {
+		display: inline;
+		margin: 10px;
+		width: 40%;
+	}
+	
+	#allVideo {
+		display: inline;
+		margin: 10px;
+		width: 60%;
 	}
 </style>
 </head>
@@ -18,18 +47,27 @@
   integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
   crossorigin="anonymous"></script>
 <script>
-	function getAllVideo(displayIdx, playlistID){ //해당 playlistID에 해당하는 비디오들을 가져온다
+	function getPlaylistInfo(playlistID, displayIdx){ //선택한 playlistInfo 가져오기
+		
+	}
+
+	function getAllVideo(playlistID, displayIdx){ //해당 playlistID에 해당하는 비디오들을 가져온다
 		$.ajax({
 			type:'post',
 		    url : 'http://localhost:8080/myapp/class/getOnePlaylist',
 		    data : {id : playlistID},
 		    success : function(result){
 			    videos = result.allVideo;
-			    $('#allVideo').empty();
 			    
-			    var lastIdx = $('#allVideo').attr('displayIdx');
+			    var lastIdx = $('#playlistInfo').attr('displayIdx'); //새로운 결과 출력 위해 이전 저장된 정보 비우기
 			    $('.playlist:eq(' + lastIdx + ')').css("background-color", "unset");
-			    
+			    $('#playlistInfo').empty(); 
+			    $('#allVideo').empty();
+
+			    //var name = '<h3>' + playlistName + '</h3>';
+			    //$('#playlistInfo').append(name); //중간영역
+			    $('#playlistInfo').attr('displayIdx', displayIdx); //현재 오른쪽에 가져와진 playlistID 저장
+			        
 			    $.each(videos, function( index, value ){ 
 				    var title = value.title;
 			    	if (title.length > 40){
@@ -42,15 +80,13 @@
 					+ '" youtubeID="' + value.youtubeID 
 					+ '" start_s="' + value.start_s
 					+ '" end_s="' + value.end_s + '" tag="' + value.tag + '" > ' + (value.seq+1) + ". " + title
-					+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' displayIdx + ', '
+					+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' + displayIdx + ', '
 						+ value.id + ')"> 삭제</a>'
 					+ '</div>';
 
 					$('#allVideo').append(html); 
 				});
 				
-				$('#allVideo').attr('displayIdx', displayIdx);
-				//if ($("#createVideoForm").css('display') === 'block') //video 추가할 Playlist 선택칸 보여주기
 				$(".playlist:eq(" + displayIdx + ")").css("background-color", "lightgrey");
 			}
 		});
@@ -77,6 +113,28 @@
 		}
 
 	}
+
+	function close_window(){ //playlist 선택완료하면 window 닫기
+		self.close();
+	}
+
+	function selectOK(){
+		var playlistID = $('input:radio[name="check"]:checked').val();
+		
+		if(playlistID){
+			$('#inputPlaylistID', opener.document).val(playlistID); //부모페이지에 선택한 playlistID 설정
+			$('#playlistTitle', opener.document).text(playlistID + "번 playlist 선택됨");
+			
+			if (confirm('창을 닫으시겠습니까?')){
+				close_window();
+			}
+		}
+		else {
+			alert('playlist를 선택해주세요!');
+			return false;
+		}
+			
+	}
 </script>
 <body>	
 	<div class="nav">
@@ -85,18 +143,30 @@
 		<button>영상추가</button>
 	</div>
 	
-	
+	<h2>MyPlaylist</h2>
 	<div class="myPlaylist">
-		<h2>MyPlaylist</h2>
-		<c:forEach items="${playlist}" var="u" varStatus="status">
-			<div class="playlist" playlistID="${u.playlistID}" onclick="getAllVideo(${status.index}, ${u.playlistID})">
-				<p>${status.count}. ${u.playlistName} /총 ${u.totalVideo}개 영상</p>
-			</div>
-		</c:forEach>
+		<c:choose>
+			<c:when test = "${empty playlist}">
+			 	저장된 playlist가 없습니다. 새로 만들어주세요.
+			</c:when>
+			<c:when test = "${!empty playlist}">
+			 	<c:forEach items="${playlist}" var="u" varStatus="status">
+					<div class="playlist" onclick="getPlaylistInfo(${u.playlistID}, ${status.index}); getAllVideo(${u.playlistID}, ${status.index})">
+						<input type="radio" name="check" value="${u.playlistID}" />
+						<p>${status.count}. ${u.playlistName} /총 ${u.totalVideo}개 영상</p>
+					</div>
+				</c:forEach>
+				<button class="selectOK" onclick="selectOK()">선택완료</button>
+			</c:when>
+		</c:choose>
+		
 	</div>
 	
-	<div id="selectedPlaylist"></div>
-	<div id="allVideo"></div>
+	<div class="selectedPlaylist">
+		<div id="playlistInfo"></div>
+		<div id="allVideo"></div>
+	</div>
+	
 	
 
 </body>

@@ -8,6 +8,12 @@
 <meta charset="UTF-8">
 <title>addContent</title>
 <style>
+	.selectContent{
+		border: 1px solid lightgrey;
+		padding: 10px;
+		text-align: center;
+		width: 60%;
+	}
 	.setTime{
 		width: 50px;
 	}
@@ -101,10 +107,10 @@
 		
 		<div class="selectContent">
 			<div id="selectedContent">
-				<p>playlist 정보 여기에</p>
+				<p id="playlistTitle">Playlist를 선택해주세요 </p>
 			</div>
 			<button type="button" onclick="popupOpen();">playlist가져오기</button>
-			<input type="hidden" name="playlistID" value="1">
+			<input type="hidden" name="playlistID" id="inputPlaylistID" value="1">
 		</div>
 		
 		<div class="inputTitle">
