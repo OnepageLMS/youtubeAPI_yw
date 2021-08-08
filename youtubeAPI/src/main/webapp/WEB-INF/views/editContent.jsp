@@ -7,6 +7,18 @@
 <head>
 <meta charset="UTF-8">
 <title>editContent</title>
+<style>
+	.selectContent{
+		border: 1px solid lightgrey;
+		padding: 10px;
+		text-align: center;
+		width: 60%;
+	}
+	
+	.setTime{
+		width: 50px;
+	}
+</style>
 </head>
 <script 
   src="http://code.jquery.com/jquery-3.5.1.js"
@@ -95,6 +107,14 @@
 		if (a)
 			location.href = '../contentList/' + id;
 	}
+
+	function popupOpen(){
+		var myEmail = "yewon.lee@onepage.edu"; //이부분 나중에 로그인 구현하면 로그인한 정보 가져오기
+		var url = "${pageContext.request.contextPath}/class/myPlaylist/" + myEmail;
+		var popOption = "width=500, height=600";
+		var p = window.open(url, "myPlaylist", popOption);
+		p.focus();
+	}
 </script>
 <body>
 	<div class="content">
@@ -104,10 +124,10 @@
 			
 			<div class="selectContent">
 				<div id="selectedContent">
-					<p>${vo.playlistID}번 playlist 정보 여기에</p>
+					<p id="playlistTitle">${vo.playlistID}번 playlist 선택됨 </p>
 				</div>
-				<button type="button" onclick="">playlist 수정</button>
-				<input type="hidden" name="playlistID" value="${vo.playlistID}">
+				<button type="button" onclick="popupOpen();">새로가져오기</button>
+				<input type="hidden" name="playlistID" id="inputPlaylistID" value="${vo.playlistID}">
 			</div>
 			
 			<div class="inputTitle">

@@ -14,7 +14,7 @@
 	
 	<update id="updateContent">
 		update lms_classPlaylist
-		set title=#{title}, description=#{description}, startDate=#{startDate}, endDate=#{endDate}
+		set title=#{title}, description=#{description}, startDate=#{startDate}, endDate=#{endDate}, playlistID=#{playlistID} 
 		where id=#{id}
 	</update>
 	
