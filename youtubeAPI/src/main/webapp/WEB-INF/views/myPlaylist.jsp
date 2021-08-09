@@ -110,7 +110,7 @@
 	function getPlaylistInfo(playlistID, displayIdx){ //선택한 playlistInfo 가져오기
 		$.ajax({
 			type : 'post',
-			url : 'http://localhost:8080/myapp/class/getPlaylistInfo',
+			url : '${pageContext.request.contextPath}/class/getPlaylistInfo',
 			data : {playlistID : playlistID},
 			datatype : 'json',
 			success : function(result){
@@ -159,7 +159,7 @@
 	function getAllVideo(playlistID, displayIdx){ //해당 playlistID에 해당하는 비디오들을 가져온다
 		$.ajax({
 			type : 'post',
-		    url : 'http://localhost:8080/myapp/class/getOnePlaylistVideos',
+		    url : '${pageContext.request.contextPath}/class/getOnePlaylistVideos',
 		    data : {id : playlistID},
 		    success : function(result){
 			    videos = result.allVideo;
@@ -196,7 +196,7 @@
 		if (confirm("정말 삭제하시겠습니까?")){
 			$.ajax({
 				'type' : "post",
-				'url' : "http://localhost:8080/myapp/deleteVideo",
+				'url' : "${pageContext.request.contextPath}/class/deleteVideo",
 				'data' : {	video : videoID,
 							playlist : playlistID
 					},
