@@ -10,7 +10,7 @@
 	
 	<update id="updateVideo">
 		update Video
-		set start_s=#{start_s}, end_s=#{end_s}
+		set newTitle=#{newTitle}, start_s=#{start_s}, end_s=#{end_s}, maxLength=#{maxLength}, duration=#{duration}, tag=#{tag}
 		where id=#{id}
 	</update>
 	

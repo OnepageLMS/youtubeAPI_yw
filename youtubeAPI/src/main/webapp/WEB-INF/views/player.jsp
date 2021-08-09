@@ -66,7 +66,9 @@ img {
 	font-size: 13.5px;
 }
 
-.modal-header {
+
+/* modal사용 안할시에 지울것 */ 
+/* .modal-header {
 	background: #F7941E;
 	color: #fff;
 }
@@ -74,7 +76,42 @@ img {
 .required:after {
 	content: "*";
 	color: red;
+} */
+
+#popup_bg{
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: rgba(0,0,0,0.7);
+	width: 100%;
+	height: 100%;
 }
+
+#popup_main_div{
+	postion: fixed;
+	width: 400px;
+	height: 500px;
+	border: 2px solid black;
+	border-radius: 5px;
+	background-color: white;
+	left: 50%;
+	float: center;
+	margin-right: 90px;
+	margin-top: 70px;
+	top: 50%;
+}
+
+#close_popup_div{
+	position: absolute;
+	width: 25px;
+	height: 25px;
+	border-radius: 25px;
+	border: 2px solid black;
+	text-align: center;
+	right: 5px;
+	top: 5px;
+}
+
 /* playlist 구간 끝 */
 </style>
 
@@ -90,6 +127,8 @@ img {
 	href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet"
 	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- fontawesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <body>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -104,13 +143,20 @@ img {
 		integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
 		crossorigin="anonymous"></script>
 
-
+	
 	<!-- playlist CRUD -->
 	<script>
 		$(function() { //페이지 처음 불러올때 playlist 띄우기
 			getAllPlaylist();
 		});
 
+		function togglePlaylist(index) {
+			//$(item.children).css({"display": "block"});
+			//$('.card-body:eq(' + playlistSeq + ')').setAttribute("style", "display: block");
+			//$(".card-body")[playlistSeq].children.setAttribute('style', 'display: block');
+			//var test = $(".card-body")[index].getAttribute('videoID');
+			//console.log(index);
+		}
 		function getAllPlaylist() { //all playlist 출력
 			$
 					.ajax({
@@ -127,10 +173,12 @@ img {
 												playlists,
 												function(index, value) { //여기서 index는 playlistID가 아님! 
 													var playlistID = value.playlistID;
+													var num = index;
 
-													var html = '<div class = "playlistSeq card text-white bg-info mb-10" >'
+													var html = '<div class = "playlistSeq card text-white bg-info mb-10" onclick="togglePlaylist("' + num + '")">'
 															+ '<div class="card-header" listID="' + playlistID + '"playlistName="' + value.playlistName + '" >'
 															+ '<input type="checkbox" value="' + playlistID + '" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;">'
+															+ '<i class="fa fa-caret-right fa-lg" style="margin:5px;"></i>'
 															+ (index + 1)
 															+ ' : '
 															+ value.playlistName
@@ -270,6 +318,7 @@ img {
 		function getAllVideo(playlistSeq) { //해당 playlistID에 해당하는 비디오들을 가져온다
 			var playlistID = $(".card-header")[playlistSeq]
 					.getAttribute('listid');
+			//$(".card-body")[playlistSeq].setAttribute('style', 'display: none');
 
 			$
 					.ajax({
@@ -293,23 +342,29 @@ img {
 															+ " ...";
 												}
 
-												var html2 = '<div class="videos" onclick=openSavedVideo(this) '
+												var html2 = '<div class="videos" onclick=openSavedVideo(this)'
 														+ ' playlistSeq="'
 														+ playlistSeq
 														+ '" videoID="'
 														+ value.id
 														+ '" youtubeID="'
 														+ value.youtubeID
+														+ '" title="'
+														+ value.title
+														+ '" newTitle="'
+														+ value.newTitle
 														+ '" start_s="'
 														+ value.start_s
 														+ '" end_s="'
 														+ value.end_s
+														+ '" maxLength="'
+														+ value.maxLength														
 														+ '" tag="'
 														+ value.tag
 														+ '" > '
 														+ (value.seq)
 														+ ". "
-														+ title
+														+ value.newTitle
 														+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo('
 														+ playlistSeq
 														+ ','
@@ -344,6 +399,7 @@ img {
 			var youtubeID = $("#inputYoutubeID").val();
 			var maxLength = $("#maxLength").val();
 			var duration = $('#duration').val();
+			var tag = $("#tag").val();
 
 			$.ajax({
 				'type' : "POST",
@@ -356,7 +412,8 @@ img {
 					end_s : end_s,
 					youtubeID : youtubeID,
 					maxLength : maxLength,
-					duration : duration
+					duration : duration,
+					tag : tag
 				},
 				success : function(data) {
 					console.log("ajax video저장 완료!");
@@ -375,16 +432,30 @@ img {
 		function updateVideo() { // 기존 playlist에 있던 video 정보 수정		
 			event.preventDefault(); // avoid to execute the actual submit of the form.
 
+			/* var start_s = $("#start_s").val();
+			var end_s = $("#end_s").val();
+			var videoID = $("#inputVideoID").val(); */
+
+			var newTitle = $("#newTitle").val();
 			var start_s = $("#start_s").val();
 			var end_s = $("#end_s").val();
+			var maxLength = $("#maxLength").val();
+			var duration = $("#duration").val();
+			var tag = $("#tag").val();
 			var videoID = $("#inputVideoID").val();
 
+			console.log(videoID);
+			console.log("태그 체크!!", tag);
 			$.ajax({
 				'type' : "POST",
 				'url' : "http://localhost:8080/myapp/updateVideo",
 				'data' : {
+					newTitle : newTitle,
 					start_s : start_s,
 					end_s : end_s,
+					maxLength : maxLength,
+					duration : duration,
+					tag : tag,
 					id : videoID
 				},
 				success : function(data) {
@@ -491,10 +562,15 @@ img {
 		</h3>
 
 
-		<div id="addPlaylist">
+		<!-- <div id="addPlaylist">
 			<button onclick="createPlaylist()" style="width: 200px;">생 성</button>
+		</div> -->
+		<div id="addPlaylist">
+			<input type="text" id="playlistName" placeholder="플레이리스트 이름"/>
+			<button onclick="createPlaylist()">생성</button>
 		</div>
-		<div class="container mt-5" style="background-color: transparent;">
+		
+		<%-- <div class="container mt-5" style="background-color: transparent;">
 			<button type="button" class="btn btn-primary" data-bs-toggle="modal"
 				data-bs-target="#myModal"> 플레이리스트 생성 </button>
 			<div class="modal" id="myModal">
@@ -530,7 +606,16 @@ img {
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> --%>
+		
+		<!-- <div id="popup_bg">
+			<div id="popup_main_div">
+				<div id="close_popup_div">
+					<p> X </p>
+				</div>
+			</div>
+		</div> -->
+		
 		<div>
 			<input type="text" id="playlistSearch" placeholder="플레이리스트 이름" />
 			<button onclick="searchPlaylist()">찾기</button>
@@ -542,6 +627,7 @@ img {
 
 	<!-- <div id="player_info"></div> -->
 	<br>
+	<div id="title"></div>
 	<div id="player"></div>
 
 	<!-- (jw) 영상 구간 설정 부분  -->
@@ -573,18 +659,17 @@ img {
 		<button onclick="seekTo2()" type="button">위치이동</button>
 		<span id=warning2 style="color: red;"></span> <br>
 
-		<button type="submit" class="submitBtn">추가</button>
-
 		tag: <input type="text" id="tag" name="tag">
 		<!-- 아래는 기존 playlist에서 video를 수정할 때 사용 -->
 		<!--  <input type="hidden" name="playlistID" id="inputPlaylistID"> -->
 		<input type="hidden" name="videoID" id="inputVideoID">
+		<button type="submit" class="submitBtn">추가</button>
 		<!-- id="btn-submit" disabled="disabled" -->
 	</form>
 
 	<!-- Youtube video player -->
 	<script>
-		// 각 video를 클릭했을 때 함수 parameter로 넘어오는 정보들
+		/*  각 video를 클릭했을 때 함수 parameter로 넘어오는 정보들 */
 		var videoId;
 		var videoTitle;
 		var videoDuration;
@@ -617,8 +702,7 @@ img {
 			videoTitle = title;
 
 			console.log(videoTitle);
-			//document.getElementById("player_info").innerHTML = '<h5 class="videoTitle">' + videoTitle + '</h3>';
-			$('#newTitle').val(videoTitle);
+			document.getElementById("title").innerHTML = '<h3 class="videoTitle">' + videoTitle + '</h3>';
 			$('#title').val(videoTitle);
 
 			//아래는 youtube-API 공식 문서에서 iframe 사용방법으로 나온 코드.
@@ -629,7 +713,7 @@ img {
 		}
 
 		function selectVideo(id, title, duration) { // 유튜브 검색결과에서 영상 아이디를 가지고 플레이어 띄우기
-			$('.videos').css({
+			$('.videos').css({ 
 				'fontWeight' : 'normal'
 			});
 			$('input:checkbox').prop("checked", false); //youtube 검색결과에서 비디오 선택하면 playlist 체크된것 다 초기화 
@@ -656,7 +740,7 @@ img {
 
 			var total_seconds = hours * 60 * 60 + minutes * 60 + seconds;
 
-			// validty check: 
+			// for validty check: 
 			limit = parseInt(total_seconds);
 			document.getElementById("maxLength").value = limit;
 
@@ -723,16 +807,20 @@ img {
 			});
 			$('.submitBtn').html('수정');
 
-			var youtubeTitle = item.innerText.replace('삭제', ''); //youtubeTitle 영상제목
-			item.style.fontWeight = 'bold';
-
+			//var youtubeTitle = item.innerText.replace('삭제', ''); //youtubeTitle 영상제목
+			var youtubeTitle = item.getAttribute('title');
+			var newTitle = item.getAttribute('newTitle');
+			console.log("newTitle", newTitle);
+			
 			youtubeID = item.getAttribute('youtubeID');
 			showYoutubePlayer(youtubeID, youtubeTitle);
+			$('#newTitle').val(newTitle);
 
 			start_s = item.getAttribute('start_s');
 			end_s = item.getAttribute('end_s');
 
 			limit = item.getAttribute('maxLength');
+			console.log("limit 검사!!", limit);
 
 			var seq = item.getAttribute('playlistseq');
 			$('input:checkbox').prop("checked", false);
@@ -849,6 +937,7 @@ img {
 			end_time = end_hh * 3600.00 + end_mm * 60.00 + end_ss * 1.00;
 			$('#end_s').val(end_time);
 
+			console.log(limit);
 			//console.log(end_time - start_time);
 			$('#duration').val(end_time - start_time);
 
