@@ -22,6 +22,16 @@ public class PlaylistDAO {
 		return result;
 	}
 	
+	public int updatePlaylistName(PlaylistVO vo) {
+		int result = sqlSession.update("Playlist.updatePlaylistName", vo);
+		return result;
+	}
+	
+	public int updateDescription(PlaylistVO vo) {
+		int result = sqlSession.update("Playlist.updateDescription", vo);
+		return result;
+	}
+	
 	public int deletePlaylist(int playlistID) {
 		int result = sqlSession.delete("Playlist.deletePlaylist", playlistID);
 		return result;

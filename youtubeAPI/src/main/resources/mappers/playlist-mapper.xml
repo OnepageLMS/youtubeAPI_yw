@@ -15,6 +15,16 @@
 		set seq=#{seq} where playlistID=#{playlistID}
 	</update>
 	
+	<update id="updatePlaylistName">
+		update lms_playlist
+		set playlistName=#{playlistName} where playlistID=#{playlistID}
+	</update>
+	
+	<update id="updateDescription">
+		update lms_playlist
+		set description=#{description} where playlistID=#{playlistID}
+	</update>
+	
 	<select id="getPlaylist" resultType="playlist">
 		select * from lms_playlist where playlistID=#{playlistID}
 	</select>

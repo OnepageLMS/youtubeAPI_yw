@@ -18,6 +18,7 @@ import com.mycom.myapp.classContent.ClassContentsService;
 import com.mycom.myapp.classContent.ClassContentsVO;
 import com.mycom.myapp.classes.ClassesService;
 import com.mycom.myapp.playlist.PlaylistService;
+import com.mycom.myapp.playlist.PlaylistVO;
 import com.mycom.myapp.video.VideoService;
 import com.mycom.myapp.video.VideoVO;
 
@@ -72,17 +73,56 @@ public class ContentsController {
 		return "myPlaylist";
 	}
 	
-	@RequestMapping(value = "/getOnePlaylist", method = RequestMethod.POST) //homecontroller에 있는것
+	@RequestMapping(value = "/getOnePlaylistVideos", method = RequestMethod.POST) //homecontroller에 있는것. 
 	@ResponseBody
 	public Object getOnePlaylist(@RequestParam(value = "id") String id) {
 		List<VideoVO> videos = new ArrayList<VideoVO>();
-		videos = videoService.getVideoList(Integer.parseInt(id));
+		videos = videoService.getVideoList(Integer.parseInt(id)); //playlist의 모든 video 가져오기
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("allVideo", videos);
-		map.put("code", "ok");
 		
 		return map;
+	}
+	
+	@RequestMapping(value = "/getPlaylistInfo", method = RequestMethod.POST)
+	@ResponseBody
+	public PlaylistVO getPlaylistInfo(@RequestParam(value = "playlistID") String playlistID) {
+		PlaylistVO vo = playlistService.getPlaylist(Integer.parseInt(playlistID));
+		
+		return vo;
+	}
+	
+	@RequestMapping(value = "/updatePlaylistName", method = RequestMethod.POST)
+	@ResponseBody
+	public String updatePlaylistName(@RequestParam(value = "playlistID") String playlistID, 
+												@RequestParam(value = "name") String name) {
+		PlaylistVO vo = new PlaylistVO();
+		vo.setPlaylistID(Integer.parseInt(playlistID));
+		vo.setPlaylistName(name);
+		
+		if (playlistService.updatePlaylistName(vo) == 0)
+			System.out.println("description 수정 실패!");
+		else
+			System.out.println("description 수정 성공!");
+		
+		return name;
+	}
+	
+	@RequestMapping(value = "/updatePlaylistDesciption", method = RequestMethod.POST)
+	@ResponseBody
+	public String updatePlaylistDesciption(@RequestParam(value = "playlistID") String playlistID, 
+												@RequestParam(value = "description") String description) {
+		PlaylistVO vo = new PlaylistVO();
+		vo.setPlaylistID(Integer.parseInt(playlistID));
+		vo.setDescription(description);
+		
+		if (playlistService.updateDescription(vo) == 0)
+			System.out.println("description 수정 실패!");
+		else
+			System.out.println("description 수정 성공!");
+		
+		return description;
 	}
 	
 	@RequestMapping(value = "/addContentOK", method = RequestMethod.POST)

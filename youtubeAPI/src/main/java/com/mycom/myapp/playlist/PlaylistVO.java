@@ -5,10 +5,12 @@ import java.util.Date;
 public class PlaylistVO {
 	private int playlistID;
 	private String playlistName;
+	private String description;
 	private String creatorEmail;
-	private int seq;
 	private int totalVideo;
-	//private boolean public; //public 이름 바꿔야함
+	private int totalVideoLength;
+	private int seq;
+	private int exposed;
 	private Date modDate;
 	
 	public int getPlaylistID() { 
@@ -22,6 +24,12 @@ public class PlaylistVO {
 	}
 	public void setPlaylistName(String playlistName) {
 		this.playlistName = playlistName;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	public String getCreatorEmail() {
 		return creatorEmail;
@@ -40,6 +48,18 @@ public class PlaylistVO {
 	}
 	public void setTotalVideo(int totalVideo) {
 		this.totalVideo = totalVideo;
+	}
+	public int getTotalVideoLength() {
+		return totalVideoLength;
+	}
+	public void setTotalVideoLength(int totalVideoLength) {
+		this.totalVideoLength = totalVideoLength;
+	}
+	public int isExposed() {
+		return exposed;
+	}
+	public void setExposed(int exposed) {
+		this.exposed = exposed;
 	}
 	public Date getModDate() {
 		return modDate;

@@ -20,6 +20,16 @@ public class PlaylistServiceImpl implements PlaylistService{
 	}
 	
 	@Override
+	public int updatePlaylistName(PlaylistVO vo) {
+		return playlistDAO.updatePlaylistName(vo);
+	}
+	
+	@Override
+	public int updateDescription(PlaylistVO vo) {
+		return playlistDAO.updateDescription(vo);
+	}
+	
+	@Override
 	public int deletePlaylist(int playlistID) {
 		return playlistDAO.deletePlaylist(playlistID);
 	}
