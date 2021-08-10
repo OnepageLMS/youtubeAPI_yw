@@ -311,7 +311,8 @@ img {
 		}
 
 		function getAllVideo(playlistSeq) { //해당 playlistID에 해당하는 비디오들을 가져온다
-			var playlistID = $(".card-header")[playlistSeq].getAttribute('listid');
+			/* var playlistID = $(".card-header")[playlistSeq].getAttribute('listid'); */
+			var playlistID = $(".card-header:eq(" + playlistSeq + ")").attr('listID');
 			
 			$(".card-body")[playlistSeq].setAttribute('style', 'display: none');
 
@@ -335,10 +336,12 @@ img {
 													40)
 													+ " ...";
 										}
+										
 
-										if(value.newTitle == null){
-											newTitle = title;
-											title = '';
+										if(value.newTitle == ""){
+											console.log(value.newTitle);
+											value.newTitle = title;
+											console.log(value.newTitle);
 										}
 										
 
@@ -401,12 +404,12 @@ img {
 			var duration = $('#duration').val();
 			var tag = $("#tag").val();
 
-			/* console.log(newTitle);
+			console.log("여기 검사!!", newTitle);
 
 			if(newTitle == title){
 				console.log("true");
 				newTitle = null;
-			} */
+			}
 			
 			$.ajax({
 				'type' : "POST",
