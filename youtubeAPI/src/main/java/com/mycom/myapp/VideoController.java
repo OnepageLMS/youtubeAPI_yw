@@ -23,7 +23,25 @@ public class VideoController {
 	@Autowired
 	private VideoService videoService;
 	
-	//선택한 playlist에 속한 video들 가져오기
+	//video 수정/재생page 이동
+	@RequestMapping(value = "/watch/{playlistID}/{videoID}", method = RequestMethod.GET) 
+	public String getSelectedPlaylistVideos(@PathVariable("playlistID") int playlistID, @PathVariable("videoID") int videoID, Model model) {
+		model.addAttribute("videoID", videoID);
+		model.addAttribute("videoList", playlistID);
+		
+		return "selectedPlaylist";
+	}
+	
+	//재생 및 수정할 video가져오기
+	@RequestMapping(value = "/getVideo", method = RequestMethod.POST) 
+	@ResponseBody
+	public VideoVO Video(@RequestParam(value = "id") String id) {
+		VideoVO vo = videoService.getVideo(Integer.parseInt(id));
+		
+		return vo;
+	}
+
+	//선택한 playlist에 속한 video list 가져오기
 	@RequestMapping(value = "/getOnePlaylistVideos", method = RequestMethod.POST) //homecontroller에 있는것. 
 	@ResponseBody
 	public Object getOnePlaylist(@RequestParam(value = "id") String playlistID) {
@@ -35,15 +53,6 @@ public class VideoController {
 		
 		return map;
 	}
-	
-	@RequestMapping(value = "/watch/{playlistID}/{videoID}", method = RequestMethod.GET)
-	public String getSelectedPlaylistVideos(@PathVariable("playlistID") int playlistID, @PathVariable("videoID") int videoID, Model model) {
-		model.addAttribute("video", videoService.getVideo(videoID));
-		model.addAttribute("videoList", videoService.getVideoList(playlistID));
-		
-		return "selectedPlaylist";
-	}
-	
-	
+
 
 }

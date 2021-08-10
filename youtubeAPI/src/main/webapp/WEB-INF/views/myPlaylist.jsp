@@ -142,8 +142,8 @@
 		var result = "";
 		
 		if (seconds_hh > 0)
-			result = seconds_hh;
-		result += seconds_mm + seconds_ss;
+			result = seconds_hh + ":";
+		result += seconds_mm + ":" + seconds_ss;
 		
 		return result;
 	}
@@ -161,9 +161,9 @@
 			    $('#playlistInfo').empty(); 
 
 			    $('#playlistInfo').attr('playlistID', playlistID);
-
+			    
 			    var thumbnail = '<img src="https://img.youtube.com/vi/' + result.thumbnailID + '/0.jpg" class="playlistPic">'
-			    				+ '<button onclick="">playlist 전체재생</button>';
+			    				+ '<button id="playAllVideo">playlist 전체재생</button>';
 			    $('#playlistInfo').append(thumbnail);
 			    
 				var name = '<div class="playlistName">'
@@ -183,7 +183,7 @@
 				var info = '<div class="info">' 
 								+ '<div>'
 									+ '<p class="totalInfo"> 총 영상 <b>' + result.totalVideo + '개</b></p>'
-									+ '<p class="totalInfo"> 총 길이 <b>' + totalVideoLength + '</b></p>'
+									+ '<p class="totalInfo"> 총 재생시간 <b>' + totalVideoLength + '</b></p>'
 								+ '</div>'
 								+ '<p> 업데이트 <b>' + modDate + '</b> </p>'
 								+ '<div class="description">'
@@ -201,7 +201,7 @@
 		
 	}
 
-	function getAllVideo(playlistID, displayIdx){ //해당 playlistID에 해당하는 비디오들을 가져온다
+	function getAllVideo(playlistID){ //해당 playlistID에 해당하는 비디오들을 가져온다
 		$.ajax({
 			type : 'post',
 		    url : '${pageContext.request.contextPath}/video/getOnePlaylistVideos',
@@ -211,14 +211,14 @@
 			    
 			    $('#allVideo').empty();
 			        
-			    $.each(videos, function( index, value ){ 
+			    $.each(videos, function( index, value ){
+				    
 			    	var newTitle = value.newTitle;
 			    	var title = value.title;
-			    	if (title.length > 45){
-						title = title.substring(0, 45) + " ..."; 
-					}
+			    	//if (title.length > 45
+						//title = title.substring(0, 45) + " ..."; 
 					
-			    	if (newTitle == null){
+			    	if (newTitle == null || newTitle == ''){
 			    		newTitle = title;
 						title = '';
 				    }
@@ -231,26 +231,35 @@
 			    	}
 			    	else 
 				    	var tags = '';
-						var html = '<div class="video" onclick="location.href="../video/watch/"' + value.playlistID + '/' + value.id + '" '
-							+ '	 videoID="' + value.id 
-							+ '" youtubeID="' + value.youtubeID + '"</div>'
-							+ thumbnail
-							+ '<p class="tag" class="inline">' + tags + '</p>'
-							+ '<p class="videoNewTitle">' + (value.seq+1) + ". " + newTitle + '</p>'
-							+ '<p class="videoOriTitle">' + title + '</p>'
-							+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' + displayIdx + ', ' + value.id + ')"> 삭제</a>'
-						+ '</div>'
-						+ '<div class="videoLine"></div>';
+
+			    	var address = "'../../video/watch/" + value.playlistID + '/' + value.id + "'";
+			    	
+			    	if (index == 0){
+				    	var forButton = 'location.href=' + address + '';
+						$("#playAllVideo").attr("onclick", forButton);
+						console.log($("#playAllVideo").attr('onclick'));
+					} 
+					
+					var html = '<div class="video" onclick="location.href=' + address + '"'
+						+ '	 videoID="' + value.id 
+						+ '" youtubeID="' + value.youtubeID + '">'
+						+ thumbnail
+						+ '<p class="tag" class="inline">' + tags + '</p>'
+						+ '<p class="videoNewTitle">' + (value.seq+1) + ". " + newTitle + '</p>'
+						+ '<p class="videoOriTitle">' + title + '</p>'
+						+ '<p class="duration"> 재생시간 ' + convertTotalLength(value.duration) + '</p>'
+						+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' + value.id + ')"> 삭제</a>'
+					+ '</div>'
+					+ '<div class="videoLine"></div>';
 
 					$('#allVideo').append(html); 
 				});
-				//displayVideoList();
 			}
 		});
 	}
 
-	function deleteVideo(displayIdx, videoID){ // video 삭제
-		//var playlistID = $(".video")[playlistSeq].getAttribute('listid');
+	function deleteVideo(displayIdx, videoID){ // video 삭제 (미완성)
+		//var playlistID = $(".card-header:eq(" + playlistSeq + ")").attr('listID');
 
 		if (confirm("정말 삭제하시겠습니까?")){
 			$.ajax({
@@ -390,7 +399,7 @@
 			</c:when>
 			<c:when test = "${!empty playlist}">
 			 	<c:forEach items="${playlist}" var="u" varStatus="status">
-					<div class="playlist" onclick="getPlaylistInfo(${u.playlistID}, ${status.index}); getAllVideo(${u.playlistID}, ${status.index})">
+					<div class="playlist" onclick="getPlaylistInfo(${u.playlistID}, ${status.index}); getAllVideo(${u.playlistID})">
 						<input type="radio" name="check" value="${u.playlistID}" />
 						<p>${status.count}. ${u.playlistName} /총 ${u.totalVideo}개 영상</p>
 					</div>
