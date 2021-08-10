@@ -251,15 +251,23 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
-	public String addVideo(@ModelAttribute VideoVO vo) {
+	public String addVideo(@ModelAttribute VideoVO vo, HttpServletRequest request) {
 		List<Integer> playlistArr = vo.getPlaylistArr();
 		System.out.println("controller: maxLength!!->" + vo.getmaxLength());
+
+		// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
+		int length = Integer.parseInt(request.getParameter("duration"));
 		
 		for(int i=0; i<playlistArr.size(); i++) {
 			int playlistID = playlistArr.get(i);
 			
 			vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
 			vo.setPlaylistID(playlistID);
+			
+			// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
+			PlaylistVO Pvo = new PlaylistVO();
+			Pvo.setPlaylistID(playlistID);
+			Pvo.setDuration(length);
 			
 			if(videoService.insertVideo(vo) != 0) {
 				System.out.println("title: " + vo.getTitle());
@@ -270,6 +278,11 @@ public class HomeController {
 					System.out.println("playlist totalVideo 업데이트 성공! ");
 				else
 					System.out.println("playlist totalVideo 업데이트 실패! ");
+				
+				if (playlistService.updateTotalVideoLength(Pvo) != 0)
+					System.out.println("playlist totalVideoLength 업데이트 성공! ");
+				else
+					System.out.println("playlist totalVideoLength 업데이트 실패! ");
 			}
 			else 
 				System.out.println("비디오 추가 실패 ");

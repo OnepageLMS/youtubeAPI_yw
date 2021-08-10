@@ -1,6 +1,7 @@
 package com.mycom.myapp.playlist;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +43,10 @@ public class PlaylistServiceImpl implements PlaylistService{
 	@Override
 	public int updateCount(int playlistID) {
 		return playlistDAO.updateCount(playlistID);
+	}
+
+	@Override
+	public int updateTotalVideoLength(PlaylistVO vo) {
+		return playlistDAO.updateTotalVideoLength(vo);
 	}
 }

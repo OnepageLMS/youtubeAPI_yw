@@ -10,4 +10,5 @@ public interface PlaylistService {
 	public List<PlaylistVO> getAllPlaylist();
 	public int getCount();
 	public int updateCount(int playlistID);
+	public int updateTotalVideoLength(PlaylistVO vo); // 한개 이상의 변수가 sql 쿼리문에 필요할시에 vo로 사용 
 }

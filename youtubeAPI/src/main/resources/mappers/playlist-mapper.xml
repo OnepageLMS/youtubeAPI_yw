@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Playlist">
 	<insert id="addPlaylist">
-		insert into lms_playlist (playlistName, creatorEmail, seq)
-		values (#{playlistName}, #{creatorEmail}, #{seq})
+		insert into lms_playlist (playlistName, creatorEmail, seq, totalVideoLength)
+		values (#{playlistName}, #{creatorEmail}, #{seq}, #{totalVideoLength})
 	</insert>
 	
 	<delete id="deletePlaylist">
@@ -38,6 +38,12 @@
 		set totalVideo = ( select count(*)
 			from Video
 			where playlistID=#{playlistID} )
+		where playlistID=#{playlistID}
+	</update>
+	
+	<update id="updateTotalVideoLength">
+		update lms_playlist
+		set totalVideoLength = totalVideoLength + #{duration}
 		where playlistID=#{playlistID}
 	</update>
 	
