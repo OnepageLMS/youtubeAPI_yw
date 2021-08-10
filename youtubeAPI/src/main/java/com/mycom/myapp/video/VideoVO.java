@@ -7,6 +7,7 @@ public class VideoVO {
 	private int id;	//video id 
 	private String youtubeID; 
 	private String title;
+	private String newTitle;
 	private double start_s;
 	private double end_s;
 	private int playlistID;
@@ -34,6 +35,12 @@ public class VideoVO {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public String getNewTitle() {
+		return newTitle;
+	}
+	public void setNewTitle(String newTitle) {
+		this.newTitle = newTitle;
 	}
 	public double getStart_s() {
 		return start_s;

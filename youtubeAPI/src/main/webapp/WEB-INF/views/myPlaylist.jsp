@@ -18,7 +18,10 @@
 	.selectedPlaylist{
 		display: flex;
 		float: right;
-		width: 70%;
+		width: 75%;
+		background-color: #F0F0F0;
+		min-height: 700px; /*responsive로 할때 수정하기*/
+		padding: 5px;
 	}
 	
 	.playlist {
@@ -29,16 +32,20 @@
 		display: inline;
 	}
 	
+	.playlistPic {
+		width: 300px;
+	}
+	
 	#playlistInfo {
 		display: inline;
 		margin: 5px;
-		width: 40%;
+		width: 30%;
 	}
 	
 	#allVideo {
 		display: inline;
 		margin: 5px;
-		width: 60%;
+		width: 70%;
 	}
 	
 	.playlistName {
@@ -48,12 +55,46 @@
 	}
 	
 	.description {
-		border: 1px solid lightgrey;
+		background-color: #DCDCDC;
 		padding: 5px;
 	}
 	.totalInfo{
 		display: inline;
 		padding-right: 5%;
+	}
+	
+	/*
+	.video {
+		height: 80px;
+		padding: 5px;
+	}*/
+	
+	.videoPic {
+		width: 120px;
+		height: 70px;
+		padding: 5px;
+	}
+	
+	.videoNewTitle{
+		font-size: 18px;
+	}
+	
+	.videoOriTitle {
+		font-size: 14px;
+	}
+	
+	.tag {
+		font-size: 13px;
+		color: #0033CC;
+	}
+	
+	.inline {
+		display: inline;
+	}
+	
+	.videoLine{
+		border: 1px solid grey;
+		width: 95%;
 	}
 	
 </style>
@@ -110,7 +151,7 @@
 	function getPlaylistInfo(playlistID, displayIdx){ //선택한 playlistInfo 가져오기
 		$.ajax({
 			type : 'post',
-			url : '${pageContext.request.contextPath}/class/getPlaylistInfo',
+			url : '${pageContext.request.contextPath}/playlist/getPlaylistInfo',
 			data : {playlistID : playlistID},
 			datatype : 'json',
 			success : function(result){
@@ -120,6 +161,10 @@
 			    $('#playlistInfo').empty(); 
 
 			    $('#playlistInfo').attr('playlistID', playlistID);
+
+			    var thumbnail = '<img src="https://img.youtube.com/vi/' + result.thumbnailID + '/0.jpg" class="playlistPic">'
+			    				+ '<button onclick="">playlist 전체재생</button>';
+			    $('#playlistInfo').append(thumbnail);
 			    
 				var name = '<div class="playlistName">'
 								+ '<p id="displayPlaylistName" style="display:inline";>' + result.playlistName + '</p>'
@@ -159,7 +204,7 @@
 	function getAllVideo(playlistID, displayIdx){ //해당 playlistID에 해당하는 비디오들을 가져온다
 		$.ajax({
 			type : 'post',
-		    url : '${pageContext.request.contextPath}/class/getOnePlaylistVideos',
+		    url : '${pageContext.request.contextPath}/video/getOnePlaylistVideos',
 		    data : {id : playlistID},
 		    success : function(result){
 			    videos = result.allVideo;
@@ -167,25 +212,39 @@
 			    $('#allVideo').empty();
 			        
 			    $.each(videos, function( index, value ){ 
-				    var title = value.title;
+			    	var newTitle = value.newTitle;
+			    	var title = value.title;
 			    	if (title.length > 45){
 						title = title.substring(0, 45) + " ..."; 
 					}
 					
-					var html = '<div class="video" onclick=openSavedVideo(this) '
-					//+ ' playlistSeq="' + playlistSeq
-					+ '" videoID="' + value.id 
-					+ '" youtubeID="' + value.youtubeID 
-					+ '" start_s="' + value.start_s
-					+ '" end_s="' + value.end_s + '" tag="' + value.tag + '" > ' + (value.seq+1) + ". " + title
-					+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' + displayIdx + ', '
-						+ value.id + ')"> 삭제</a>'
-					+ '</div>';
+			    	if (newTitle == null){
+			    		newTitle = title;
+						title = '';
+				    }
+
+			    	var thumbnail = '<img src="https://img.youtube.com/vi/' + value.youtubeID + '/0.jpg" class="inline videoPic">';
+
+			    	if (value.tag != null && value.tag.length > 0){
+				    	var tags = value.tag.replace(', ', ' #');
+			    		tags = '#'+ tags;
+			    	}
+			    	else 
+				    	var tags = '';
+						var html = '<div class="video" onclick="location.href="../video/watch/"' + value.playlistID + '/' + value.id + '" '
+							+ '	 videoID="' + value.id 
+							+ '" youtubeID="' + value.youtubeID + '"</div>'
+							+ thumbnail
+							+ '<p class="tag" class="inline">' + tags + '</p>'
+							+ '<p class="videoNewTitle">' + (value.seq+1) + ". " + newTitle + '</p>'
+							+ '<p class="videoOriTitle">' + title + '</p>'
+							+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' + displayIdx + ', ' + value.id + ')"> 삭제</a>'
+						+ '</div>'
+						+ '<div class="videoLine"></div>';
 
 					$('#allVideo').append(html); 
 				});
-				
-
+				//displayVideoList();
 			}
 		});
 	}
@@ -196,7 +255,7 @@
 		if (confirm("정말 삭제하시겠습니까?")){
 			$.ajax({
 				'type' : "post",
-				'url' : "${pageContext.request.contextPath}/class/deleteVideo",
+				'url' : "${pageContext.request.contextPath}/video/deleteVideo",
 				'data' : {	video : videoID,
 							playlist : playlistID
 					},
@@ -212,15 +271,30 @@
 	}
 
 	function savePlaylistName(){ //playlist name 수정
+		var playlistID = $('#playlistInfo').attr('playlistID');
+		var name = $("#inputPlaylistName").val();
 
+		$.ajax({
+			'type' : 'post',
+			'url' : '${pageContext.request.contextPath}/playlist/updatePlaylistName',
+			'data' :{
+					'playlistID' : playlistID,
+					'name' : name
+				},
+			success :function(data){
+				$("#displayPlaylistName").text(data);
+				hideEditPlaylistName();
+			}
+		});
 	}
 
-	function showEditPlaylistName(){ 
+	function showEditPlaylistName(){
 		$("#displayPlaylistName").css("display", "none");
 		$(".playlistName").children('button').css("display", "none");
 		
 		var value = $("#displayPlaylistName").text();
-		$("#inputPlaylistName").attr('value', value);
+		
+		$("#inputPlaylistName").val(value);
 		$("#inputPlaylistName").css("display", "inline");
 		
 		var buttons = '<button onclick="hideEditPlaylistName()">취소</button>' 
@@ -229,7 +303,7 @@
 	}
 
 	function hideEditPlaylistName(){
-		$(".editPlaylistNameButtons").empty();
+		$(".editPlaylistNameButtons").empty(); 
 		$("#inputPlaylistName").css("display", "none");
 		
 		$("#displayPlaylistName").css("display", "inline");
@@ -242,7 +316,7 @@
 
 		$.ajax({
 			'type' : 'post',
-			'url' : '${pageContext.request.contextPath}/class/updatePlaylistDesciption',
+			'url' : '${pageContext.request.contextPath}/playlist/updatePlaylistDesciption',
 			'data' :{
 					'playlistID' : playlistID,
 					'description' : description
@@ -266,10 +340,10 @@
 	function showEditDescription(){ //playlist설명 수정
 		$("#displayDescription").css("display", "none");
 		$(".description").children('button').css("display", "none");
-		
+
 		var value = $("#displayDescription").text();
 		if (value != "설명 없음")
-			$("#inputDescription").attr('value', value);
+			$("#inputDescription").val(value);
 
 		$("#inputDescription").css("display", "block");
 		
@@ -324,7 +398,6 @@
 				<button class="selectOK" onclick="selectOK()">선택완료</button>
 			</c:when>
 		</c:choose>
-		
 	</div>
 	
 	<div class="selectedPlaylist">

@@ -23,6 +23,11 @@
 		delete from Video where id=#{id}
 	</delete>
 	
+	<select id="getVideo" resultType="video">
+		select * from Video
+		where id=#{id}
+	</select>
+	
 	<select id="getVideoList" resultType="video">
 		select * from Video where
 		playlistID=#{playlistID} order by seq

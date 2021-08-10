@@ -32,8 +32,8 @@ public class VideoDAO {
 		return result;
 	}
 	
-	public VideoVO getVideo(int playlistID) {
-		return sqlSession.selectOne("Video.getVideo", playlistID);
+	public VideoVO getVideo(int id) {
+		return sqlSession.selectOne("Video.getVideo", id);
 	}
 	
 	public List<VideoVO> getVideoList(int playlistID) {
@@ -45,8 +45,4 @@ public class VideoDAO {
 		int result = sqlSession.selectOne("Video.getTotalCount", playlistID);
 		return result;
 	}
-	
-//	public PlaylistVO getPlaylist (int id) {
-//		return sqlSession.selectOne("Playlist.getPlaylist", id);
-//	}
 }

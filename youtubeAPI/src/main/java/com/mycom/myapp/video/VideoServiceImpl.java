@@ -31,10 +31,10 @@ public class VideoServiceImpl implements VideoService{
 		return videoDAO.changeSeq(vo);
 	}
 
-//	@Override
-//	public VideoVO getVideo(int playlistID) {
-//		return videoDAO.getVideo(playlistID);
-//	}
+	@Override
+	public VideoVO getVideo(int id) {
+		return videoDAO.getVideo(id);
+	}
 
 	@Override
 	public List<VideoVO> getVideoList(int playlistID) {

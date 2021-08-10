@@ -6,6 +6,7 @@ public class PlaylistVO {
 	private int playlistID;
 	private String playlistName;
 	private String description;
+	private String thumbnailID;
 	private String creatorEmail;
 	private int totalVideo;
 	private int totalVideoLength;
@@ -30,6 +31,12 @@ public class PlaylistVO {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public String getThumbnailID() {
+		return thumbnailID;
+	}
+	public void setThumbnailID(String thumbnailID) {
+		this.thumbnailID = thumbnailID;
 	}
 	public String getCreatorEmail() {
 		return creatorEmail;
