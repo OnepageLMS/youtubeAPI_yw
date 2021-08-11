@@ -109,6 +109,16 @@
 	}
 
 	function popupOpen(){
+		if ($('#inputPlaylistID').val() >= 0){
+			console.log($('#inputPlaylistID').val());
+			if('이미 선택한 Playlist가 있습니다. 새로 바꾸시겠습니까?'){
+				//$('#playlistThubmnail').empty();
+			}
+			else {
+				return false;
+			}
+		}
+		
 		var myEmail = "yewon.lee@onepage.edu"; //이부분 나중에 로그인 구현하면 로그인한 정보 가져오기
 		var url = "${pageContext.request.contextPath}/playlist/myPlaylist/" + myEmail;
 		var popOption = "width=500, height=600";
@@ -124,10 +134,11 @@
 			
 			<div class="selectContent">
 				<div id="selectedContent">
-					<p id="playlistTitle">${vo.playlistID}번 playlist 선택됨 </p>
+					<div id="playlistThubmnail"></div>
+					<p id="playlistTitle">Playlist를 선택해주세요 </p>
 				</div>
-				<button type="button" onclick="popupOpen();">새로가져오기</button>
-				<input type="hidden" name="playlistID" id="inputPlaylistID" value="${vo.playlistID}">
+				<button type="button" id="selectPlaylistBtn" onclick="popupOpen();">playlist가져오기</button>
+				<input type="hidden" name="playlistID" id="inputPlaylistID">
 			</div>
 			
 			<div class="inputTitle">

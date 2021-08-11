@@ -1,5 +1,10 @@
 package com.mycom.myapp;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mycom.myapp.playlist.PlaylistService;
 import com.mycom.myapp.playlist.PlaylistVO;
+import com.mycom.myapp.video.VideoVO;
 
 @Controller
 @RequestMapping(value="/playlist")
@@ -21,9 +27,22 @@ public class PlaylistController {
 	//myplaylist(내 playlist) 새창 띄우기
 	@RequestMapping(value = "/myPlaylist/{creatorEmail}", method = RequestMethod.GET) 
 	public String selectPlaylist(@PathVariable("creatorEmail") String creatorEmail, Model model) {
-		model.addAttribute("playlist", playlistService.getAllMyPlaylist(creatorEmail));
+		model.addAttribute("email", creatorEmail);
 		return "myPlaylist";
 	}
+	
+	@RequestMapping(value = "/getAllMyPlaylist", method = RequestMethod.POST) 
+	@ResponseBody
+	public Object getAllPlaylist(@RequestParam(value = "email") String creatorEmail) {
+		List<PlaylistVO> playlists = new ArrayList<PlaylistVO>();
+		playlists = playlistService.getAllMyPlaylist(creatorEmail); //playlist의 모든 video 가져오기
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("allPlaylist", playlists);
+		
+		return map;
+	}
+	
 	
 	//선택한 playlist의 자세한정보 가져오기
 	@RequestMapping(value = "/getPlaylistInfo", method = RequestMethod.POST)

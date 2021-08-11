@@ -73,6 +73,16 @@
 		
 	}
 	
+	/* 이동 타켓 */
+	.video-placeholder {
+		border: 1px dashed grey;
+		margin: 0 1em 1em 0;
+		height: 50px;
+		margin-left:auto;
+		margin-right:auto;
+		background-color: #E8E8E8;
+	}
+	
 	.video:hover {
 		background-color: lightgrey;
 	}
@@ -83,6 +93,7 @@
 		width: 20px;
 		background-color: lightgrey;
 		height: 80px;
+		cursor: grab;
 	}
 	
 	.videoIndex > p{
@@ -143,54 +154,61 @@
 	
 </style>
 </head>
+<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" /> <!-- jquery for drag&drop list order -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script 
   src="http://code.jquery.com/jquery-3.5.1.js"
   integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
   crossorigin="anonymous"></script>
+ <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
-	function convertTime(timestamp){ //timestamp형식을 사용자에게 보여주기
-		var date = new Date(timestamp- 540*60*1000); //GMT로 돼서 강제로 바꿔주기.. 이렇게 안하면 db설정을 바꿔야하는데 우리는 불가함.
-		var dd_mm_yyyy = date.toLocaleDateString();
-		var yyyy_mm_dd = dd_mm_yyyy.replace(/(\d+)\/(\d+)\/(\d+)/g, "$3-$2-$1");
-		/*
-		var d = new Date(timestamp), // Convert the passed timestamp to milliseconds
-	        yyyy = d.getFullYear(),
-	        mm = ('0' + (d.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
-	        dd = ('0' + d.getDate()).slice(-2),         // Add leading 0.
-	        hh = d.getHours(),
-	        h = hh,
-	        min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
-	        ampm = 'AM',
-	        time;
-            
-        if (hh > 12) {
-            h = hh - 12;
-            ampm = 'PM';
-        } else if (hh === 12) {
-            h = 12;
-            ampm = 'PM';
-        } else if (hh == 0) {
-            h = 12;
-        }
-        
-        // ie: 2013-02-18, 8:35 AM  
-        time = yyyy + '년' + mm + '월' + dd + '일' + h + ':' + min + ' ' + ampm;
-            */
-        return yyyy_mm_dd;
-	}
+	var email;
+	$(document).ready(function(){
+		email = '${email}'; 
+		getAllMyPlaylist(email); //나중에는 사용자 로그인정보로 email 가져와야할듯..
+	});
 
-	function convertTotalLength(seconds){
-		var seconds_hh = Math.floor(seconds / 3600);
-		var seconds_mm = Math.floor(seconds % 3600 / 60);
-		var seconds_ss = seconds % 3600 % 60;
-		var result = "";
-		
-		if (seconds_hh > 0)
-			result = seconds_hh + ":";
-		result += seconds_mm + ":" + seconds_ss;
-		
-		return result;
+	function getAllMyPlaylist(email){
+		$.ajax({
+			type : 'post',
+			url : '${pageContext.request.contextPath}/playlist/getAllMyPlaylist',
+			data : {email : email},
+			success : function(result){
+				playlists = result.allPlaylist;
+
+				$('.myPlaylist').empty();
+
+				if (playlists == null)
+					$('.myPlaylist').append('저장된 playlist가 없습니다.');
+
+				else{
+					var searchHtml = '<input type="text" name="search" placeholder="playlist 검색">'
+									+ '<button type="button">검색</button>';
+					$('.myPlaylist').append(searchHtml);
+							
+					$.each(playlists, function( index, value ){
+						var contentHtml = '<div class="playlist" onclick="getPlaylistInfo(' + value.playlistID + ', ' + index 
+																						+ ')" playlistID="' + value.playlistID + '" thumbnailID="' + value.thumbnailID + '">'
+												+ '<input type="radio" name="check" value="' + index + '">'
+												+ '<p class="playlistSeq">' + (index+1) + '. </p> '
+												+ '<p class="selectPlaylistName">' + value.playlistName + '/ </p>'
+												+ '<p class="totalVideo">' + value.totalVideo + '개 영상' + '</p>'
+											+ '</div>';
+											
+						$('.myPlaylist').append(contentHtml);
+					});
+					var selectButton = '<button class="selectOK" onclick="selectOK()">선택완료</button>';
+					$('.myPlaylist').append(selectButton);
+				}
+			}, error:function(request,status,error){
+				console.log(error);
+			}
+			
+		});
 	}
+	
 	
 	function getPlaylistInfo(playlistID, displayIdx){ //선택한 playlistInfo 가져오기
 		$.ajax({
@@ -308,6 +326,22 @@
 		});
 	}
 
+	$(function() { // playlist drag&drop으로 순서변경
+		$("#allVideo").sortable({
+			connectWith: "#allVideo", // 드래그 앤 드롭 단위 css 선택자
+			handle: ".video", // 움직이는 css 선택자
+			cancel: ".no-move", // 움직이지 못하는 css 선택자
+			placeholder: "video-placeholder", // 이동하려는 location에 추가 되는 클래스
+			cursor: "grab",
+
+			stop : function(e, ui){ // 이동 완료 후, 새로운 순서로 db update
+				//changeAllList();
+			}
+		});
+			$( "#allVideo" ).disableSelection(); //해당 클래스 하위의 텍스트는 변경x
+	
+	});
+
 	function changeAllVideo(deletedID){ // video 추가, 삭제, 순서변경 뒤 해당 playlist의 전체 video order 재정렬
 		var playlistID = $('.selectedPlaylist').attr('playlistID');
 		var idList = new Array();
@@ -330,21 +364,24 @@
 		      data : { changedList : idList },
 		      dataType  : "json", 
 		      success  : function(data) {
+			     	getPlaylistInfo(playlistID, $('#playlistInfo').attr('displayIdx'));
 		  	  		getAllVideo(playlistID); //새로 정렬한 뒤 video 새로 불러와서 출력하기
+		  	  		getAllMyPlaylist(email);
 		    	  
 		      }, error:function(request,status,error){
-			      console.log("error");
-		    	  //getAllVideo(playlistSeq); 
+		    	  	getPlaylistInfo(playlistID, $('#playlistInfo').attr('displayIdx'));
+		  	  		getAllVideo(playlistID);
+		  	  		getAllMyPlaylist(email);
 		       }
 		    });
 	}
 
 	function deleteVideo(videoID){ // video 삭제
-		var playlistID = $('.selectedPlaylist').attr('playlistID');
-		changeAllVideo(videoID);
-		console.log("deleteVideo: " + videoID + ":" + playlistID);
-
 		if (confirm("정말 삭제하시겠습니까?")){
+			var playlistID = $('.selectedPlaylist').attr('playlistID');
+			changeAllVideo(videoID);
+			console.log("deleteVideo: " + videoID + ":" + playlistID);
+			
 			$.ajax({
 				'type' : "post",
 				'url' : "${pageContext.request.contextPath}/video/deleteVideo",
@@ -360,6 +397,8 @@
 
 			});
 		}
+		else 
+			false;
 	}
 
 	function savePlaylistName(){ //playlist name 수정
@@ -375,6 +414,7 @@
 				},
 			success :function(data){
 				$("#displayPlaylistName").text(data);
+				//왼쪽 menu에서도 바뀌도록 변경하기! 
 				hideEditPlaylistName();
 			}
 		});
@@ -445,12 +485,69 @@
 		
 	}
 
-	function selectOK(){
-		var playlistID = $('input:radio[name="check"]:checked').val();
+	function convertTime(timestamp){ //timestamp형식을 사용자에게 보여주기
+		var date = new Date(timestamp- 540*60*1000); //GMT로 돼서 강제로 바꿔주기.. 이렇게 안하면 db설정을 바꿔야하는데 우리는 불가함.
+		var dd_mm_yyyy = date.toLocaleDateString();
+		var yyyy_mm_dd = dd_mm_yyyy.replace(/(\d+)\/(\d+)\/(\d+)/g, "$3-$2-$1");
+		/*
+		var d = new Date(timestamp), // Convert the passed timestamp to milliseconds
+	        yyyy = d.getFullYear(),
+	        mm = ('0' + (d.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
+	        dd = ('0' + d.getDate()).slice(-2),         // Add leading 0.
+	        hh = d.getHours(),
+	        h = hh,
+	        min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
+	        ampm = 'AM',
+	        time;
+            
+        if (hh > 12) {
+            h = hh - 12;
+            ampm = 'PM';
+        } else if (hh === 12) {
+            h = 12;
+            ampm = 'PM';
+        } else if (hh == 0) {
+            h = 12;
+        }
+        
+        // ie: 2013-02-18, 8:35 AM  
+        time = yyyy + '년' + mm + '월' + dd + '일' + h + ':' + min + ' ' + ampm;
+            */
+        return yyyy_mm_dd;
+	}
+
+	function convertTotalLength(seconds){
+		var seconds_hh = Math.floor(seconds / 3600);
+		var seconds_mm = Math.floor(seconds % 3600 / 60);
+		var seconds_ss = seconds % 3600 % 60;
+		var result = "";
 		
-		if(playlistID){
-			$('#inputPlaylistID', opener.document).val(playlistID); //부모페이지에 선택한 playlistID 설정
-			$('#playlistTitle', opener.document).text(playlistID + "번 playlist 선택됨");
+		if (seconds_hh > 0)
+			result = seconds_hh + ":";
+		result += seconds_mm + ":" + seconds_ss;
+		
+		return result;
+	}
+
+	function selectOK(){
+		var index = $('input:radio[name="check"]:checked').val();
+		
+		if(index){
+			var item = $('.playlist')[index].attributes;
+			var children = $('.playlist')[index].childNodes;
+			var playlistID = item[2].value;
+			var thumbnailID = item[3].value;	
+			var name = children[3].innerText.replace('/', '');
+			var totalVideo = children[4].innerText.replace('개 영상', '');
+			
+			var thumbnail = '<img src="https://img.youtube.com/vi/' + thumbnailID + '/0.jpg" class="videoPic">';
+			var playlistInfo = thumbnail + '<p>총 ' + totalVideo + '개의 비디오 </p>';
+			$('#playlistThubmnail', opener.document).append(playlistInfo);
+			
+			$('#playlistTitle', opener.document).text("playlist : " + name + " 선택됨");
+			
+			$('#inputPlaylistID', opener.document).val(item[2].value); //부모페이지에 선택한 playlistID 설정
+			$('#selectPlaylistBtn').text('새로 가져오기');
 			
 			if (confirm('playlist가 선택되었습니다. 현재 창을 닫으시겠습니까?')){
 				self.close();
@@ -472,26 +569,7 @@
 	
 	<h2>MyPlaylist</h2>
 	<div class="myPlaylist">
-		<c:choose>
-			<c:when test = "${empty playlist}">
-			 	저장된 playlist가 없습니다. 새로 만들어주세요.
-			</c:when>
-			<c:when test = "${!empty playlist}">
-				<!-- playlist 검색 구현하기 -->
-				<input type="text" name="search" placeholder="playlist 검색">
-				<button type="button">검색</button>
-				
-			 	<c:forEach items="${playlist}" var="u" varStatus="status">
-					<div class="playlist" onclick="getPlaylistInfo(${u.playlistID}, ${status.index});">
-						<input type="radio" name="check" value="${u.playlistID}" />
-						<p class="playlistSeq">${status.count}. </p>
-						<p class="selectPlaylistName">${u.playlistName}
-						<p class="totalVideo">${u.totalVideo}</p>개 영상
-					</div>
-				</c:forEach>
-				<button class="selectOK" onclick="selectOK()">선택완료</button>
-			</c:when>
-		</c:choose>
+		
 	</div>
 	
 	<div class="selectedPlaylist">
