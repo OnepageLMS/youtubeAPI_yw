@@ -13,4 +13,5 @@ public interface PlaylistService {
 	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail);
 	public int getCount();
 	public int updateCount(int playlistID);
+	public int updateTotalVideoLength(int playlistID);
 }

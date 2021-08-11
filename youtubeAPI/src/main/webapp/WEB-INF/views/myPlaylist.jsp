@@ -9,7 +9,7 @@
 <title>MyPlaylist</title>
 <style>
 	.myPlaylist{
-		width: 20%;
+		width: 250px;
 		float: left;
 		border: 2px solid lightgrey;
 		padding: 5px;
@@ -26,6 +26,11 @@
 	
 	.playlist {
 		margin: 5px;
+	}
+	
+	.playlist:hover{
+		background-color: lightgrey;
+		cursor: pointer;
 	}
 	
 	.playlist > p{
@@ -58,16 +63,44 @@
 		background-color: #DCDCDC;
 		padding: 5px;
 	}
+	
 	.totalInfo{
 		display: inline;
 		padding-right: 5%;
 	}
 	
-	/*
-	.video {
+	.video{
+		
+	}
+	
+	.video:hover {
+		background-color: lightgrey;
+	}
+
+	.videoIndex {
+		display: inline;
+		float: left;
+		width: 20px;
+		background-color: lightgrey;
 		height: 80px;
-		padding: 5px;
-	}*/
+	}
+	
+	.videoIndex > p{
+		display: inline;
+	}
+	
+	.videoContent:hover{
+		cursor: pointer;
+	}
+	
+	.thumbnailBox{
+		display: inline-grid;
+	}
+	
+	.duration{
+		text-align: center;
+		margin: 3px;
+	}
 	
 	.videoPic {
 		width: 120px;
@@ -75,12 +108,21 @@
 		padding: 5px;
 	}
 	
+	.titles {
+		display: inline;
+		float: right;
+		width: 75%;
+	}
+	
 	.videoNewTitle{
-		font-size: 18px;
+		font-size: 16px;
+		margin: 3px 0;
+		font-weight: bold;
 	}
 	
 	.videoOriTitle {
-		font-size: 14px;
+		font-size: 13px;
+		margin: 0;
 	}
 	
 	.tag {
@@ -88,14 +130,16 @@
 		color: #0033CC;
 	}
 	
-	.inline {
-		display: inline;
+	.aDeleteVideo{ /*button*/
+
+		
 	}
 	
 	.videoLine{
 		border: 1px solid grey;
 		width: 95%;
 	}
+	
 	
 </style>
 </head>
@@ -160,10 +204,10 @@
 			    $(".playlist:eq(" + displayIdx + ")").css("background-color", "lightgrey"); //클릭한 playlist 표시
 			    $('#playlistInfo').empty(); 
 
-			    $('#playlistInfo').attr('playlistID', playlistID);
+			    $('.selectedPlaylist').attr('playlistID', playlistID); //혹시 나중에 사용할 일 있지 않을까?
 			    
 			    var thumbnail = '<img src="https://img.youtube.com/vi/' + result.thumbnailID + '/0.jpg" class="playlistPic">'
-			    				+ '<button id="playAllVideo">playlist 전체재생</button>';
+			    				+ '<button id="playAllVideo" onclick="">playlist 전체재생</button>';
 			    $('#playlistInfo').append(thumbnail);
 			    
 				var name = '<div class="playlistName">'
@@ -196,6 +240,8 @@
 							
 				$('#playlistInfo').append(info);
 			    $('#playlistInfo').attr('displayIdx', displayIdx); //현재 오른쪽에 가져와진 playlistID 저장
+
+				getAllVideo(playlistID); //먼저 playlist info 먼저 셋팅하고 videolist 가져오기
 			}
 		});
 		
@@ -230,27 +276,31 @@
 			    		tags = '#'+ tags;
 			    	}
 			    	else 
-				    	var tags = '';
+				    	var tags = ' ';
 
 			    	var address = "'../../video/watch/" + value.playlistID + '/' + value.id + "'";
 			    	
 			    	if (index == 0){
 				    	var forButton = 'location.href=' + address + '';
 						$("#playAllVideo").attr("onclick", forButton);
-						console.log($("#playAllVideo").attr('onclick'));
 					} 
 					
-					var html = '<div class="video" onclick="location.href=' + address + '"'
-						+ '	 videoID="' + value.id 
-						+ '" youtubeID="' + value.youtubeID + '">'
-						+ thumbnail
-						+ '<p class="tag" class="inline">' + tags + '</p>'
-						+ '<p class="videoNewTitle">' + (value.seq+1) + ". " + newTitle + '</p>'
-						+ '<p class="videoOriTitle">' + title + '</p>'
-						+ '<p class="duration"> 재생시간 ' + convertTotalLength(value.duration) + '</p>'
-						+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo(' + value.id + ')"> 삭제</a>'
-					+ '</div>'
-					+ '<div class="videoLine"></div>';
+					var html = '<div class="video" videoID="' + value.id + '">'
+									+ '<div class="videoIndex">  <p>' + (value.seq+1) + '</p></div>'
+									+ '<div class="videoContent" onclick="location.href=' + address + '" videoID="' + value.id + '" youtubeID="' + value.youtubeID + '" >'
+										+ '<div class="thumbnailBox">' 
+											+ thumbnail 
+											+ '<p class="duration" > 재생시간 ' + convertTotalLength(value.duration) + '</p>'
+										+ '</div>'
+										+ '<div class="titles">'
+											+ '<p class="tag" class="inline">' + tags + '</p>'
+											+ '<p class="videoNewTitle">' + newTitle + '</p>'
+											+ '<p class="videoOriTitle">' + title + '</p>'
+										+ '</div>'
+									+'</div>'
+									+ '<button href="#" class="aDeleteVideo" onclick="deleteVideo(' + value.id + ')"> 삭제</button>'
+								+ '</div>'
+								+ '<div class="videoLine"></div>';
 
 					$('#allVideo').append(html); 
 				});
@@ -258,18 +308,51 @@
 		});
 	}
 
-	function deleteVideo(displayIdx, videoID){ // video 삭제 (미완성)
-		//var playlistID = $(".card-header:eq(" + playlistSeq + ")").attr('listID');
+	function changeAllVideo(deletedID){ // video 추가, 삭제, 순서변경 뒤 해당 playlist의 전체 video order 재정렬
+		var playlistID = $('.selectedPlaylist').attr('playlistID');
+		var idList = new Array();
+	
+		$('.video').each(function(){
+			var tmp = $(this)[0];
+			var tmp_videoID = tmp.getAttribute('videoID');
+
+			if (deletedID != null){ // 이 함수가 playlist 삭제 뒤에 실행됐을 땐 삭제된 playlistID	 제외하고 재정렬 (db에서 삭제하는것보다 list가 더 빨리 불러와져서 이렇게 해줘야함)
+				if (deletedID != tmp_videoID)
+					idList.push(tmp_videoID);
+			}
+			else
+				idList.push(tmp_videoID);
+		});
+		
+		$.ajax({
+		      type: "post",
+		      url: "${pageContext.request.contextPath}/video/changeVideosOrder", //새로 바뀐 순서대로 db update
+		      data : { changedList : idList },
+		      dataType  : "json", 
+		      success  : function(data) {
+		  	  		getAllVideo(playlistID); //새로 정렬한 뒤 video 새로 불러와서 출력하기
+		    	  
+		      }, error:function(request,status,error){
+			      console.log("error");
+		    	  //getAllVideo(playlistSeq); 
+		       }
+		    });
+	}
+
+	function deleteVideo(videoID){ // video 삭제
+		var playlistID = $('.selectedPlaylist').attr('playlistID');
+		changeAllVideo(videoID);
+		console.log("deleteVideo: " + videoID + ":" + playlistID);
 
 		if (confirm("정말 삭제하시겠습니까?")){
 			$.ajax({
 				'type' : "post",
 				'url' : "${pageContext.request.contextPath}/video/deleteVideo",
-				'data' : {	video : videoID,
-							playlist : playlistID
+				'data' : {	videoID : videoID,
+							playlistID : playlistID
 					},
 				success : function(data){
-					changeAllVideo(playlistSeq, videoID); //삭제한 videoID도 넘겨줘야 함.
+					changeAllVideo(videoID); //삭제한 videoID 넘겨줘야 함.
 			
 				}, error : function(err){
 					alert("video 삭제 실패! : ", err.responseText);
@@ -280,7 +363,7 @@
 	}
 
 	function savePlaylistName(){ //playlist name 수정
-		var playlistID = $('#playlistInfo').attr('playlistID');
+		var playlistID = $('.selectedPlaylist').attr('playlistID');
 		var name = $("#inputPlaylistName").val();
 
 		$.ajax({
@@ -320,7 +403,7 @@
 	}
 
 	function saveDescription(){ //description 수정
-		var playlistID = $('#playlistInfo').attr('playlistID');
+		var playlistID = $('.selectedPlaylist').attr('playlistID');
 		var description = $("#inputDescription").val();
 
 		$.ajax({
@@ -362,10 +445,6 @@
 		
 	}
 
-	function close_window(){ //playlist 선택완료하면 window 닫기
-		self.close();
-	}
-
 	function selectOK(){
 		var playlistID = $('input:radio[name="check"]:checked').val();
 		
@@ -374,11 +453,11 @@
 			$('#playlistTitle', opener.document).text(playlistID + "번 playlist 선택됨");
 			
 			if (confirm('playlist가 선택되었습니다. 현재 창을 닫으시겠습니까?')){
-				close_window();
+				self.close();
 			}
 		}
 		else {
-			alert('playlist를 선택해주세요!');
+			alert('playlist를 선택해주세요');
 			return false;
 		}
 			
@@ -398,10 +477,16 @@
 			 	저장된 playlist가 없습니다. 새로 만들어주세요.
 			</c:when>
 			<c:when test = "${!empty playlist}">
+				<!-- playlist 검색 구현하기 -->
+				<input type="text" name="search" placeholder="playlist 검색">
+				<button type="button">검색</button>
+				
 			 	<c:forEach items="${playlist}" var="u" varStatus="status">
-					<div class="playlist" onclick="getPlaylistInfo(${u.playlistID}, ${status.index}); getAllVideo(${u.playlistID})">
+					<div class="playlist" onclick="getPlaylistInfo(${u.playlistID}, ${status.index});">
 						<input type="radio" name="check" value="${u.playlistID}" />
-						<p>${status.count}. ${u.playlistName} /총 ${u.totalVideo}개 영상</p>
+						<p class="playlistSeq">${status.count}. </p>
+						<p class="selectPlaylistName">${u.playlistName}
+						<p class="totalVideo">${u.totalVideo}</p>개 영상
 					</div>
 				</c:forEach>
 				<button class="selectOK" onclick="selectOK()">선택완료</button>

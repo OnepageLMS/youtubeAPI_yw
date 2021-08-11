@@ -58,4 +58,9 @@ public class PlaylistServiceImpl implements PlaylistService{
 	public int updateCount(int playlistID) {
 		return playlistDAO.updateCount(playlistID);
 	}
+	
+	@Override
+	public int updateTotalVideoLength(int playlistID) {
+		return playlistDAO.updateTotalVideoLength(playlistID);
+	}
 }

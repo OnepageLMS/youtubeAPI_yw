@@ -107,6 +107,7 @@
 		
 		<div class="selectContent">
 			<div id="selectedContent">
+				<div id="playlistThubmnail"></div>
 				<p id="playlistTitle">Playlist를 선택해주세요 </p>
 			</div>
 			<button type="button" onclick="popupOpen();">playlist가져오기</button>

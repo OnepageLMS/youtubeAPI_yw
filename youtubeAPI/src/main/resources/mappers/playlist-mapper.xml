@@ -25,11 +25,11 @@
 		set description=#{description} where playlistID=#{playlistID}
 	</update>
 	
-	<select id="getPlaylist" resultType="playlist">
+	<select id="getPlaylist" resultType="playlist"> <!-- playlist info 가져올때 사용 -->
 		select * from lms_playlist where playlistID=#{playlistID}
 	</select>
 	
-	<select id="getAllPlaylist" resultType="playlist"> <!-- 이부분 바꿔야함...!!! -->
+	<select id="getAllPlaylist" resultType="playlist"> <!-- 이부분 exposed만 가져오도록 바꿔야함...!!! -->
 		select * from lms_playlist order by seq desc
 	</select>
 	
@@ -43,11 +43,19 @@
 		select count(*) from lms_playlist
 	</select>
 	
-	<update id="updateCount">
+	<update id="updateCount"> <!-- totalVideo 업데이트 -->
 		update lms_playlist
 		set totalVideo = ( select count(*)
 			from Video
 			where playlistID=#{playlistID} )
+		where playlistID=#{playlistID}
+	</update>
+	
+	<update id="updateTotalVideoLength">
+		update lms_playlist
+		set totalVideoLength = ( select sum(duration)
+				from Video
+				where playlistID=#{playlistID} )
 		where playlistID=#{playlistID}
 	</update>
 	
