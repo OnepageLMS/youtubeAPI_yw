@@ -542,11 +542,13 @@
 			
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + thumbnailID + '/0.jpg" class="videoPic">';
 			var playlistInfo = thumbnail + '<p>총 ' + totalVideo + '개의 비디오 </p>';
+			$('#playlistThubmnail').empty();
 			$('#playlistThubmnail', opener.document).append(playlistInfo);
 			
 			$('#playlistTitle', opener.document).text("playlist : " + name + " 선택됨");
 			
-			$('#inputPlaylistID', opener.document).val(item[2].value); //부모페이지에 선택한 playlistID 설정
+			$('#inputPlaylistID', opener.document).val(playlistID); //부모페이지에 선택한 playlistID 설정
+			$('#inputThumbnailID', opener.document).val(thumbnailID);
 			$('#selectPlaylistBtn').text('새로 가져오기');
 			
 			if (confirm('playlist가 선택되었습니다. 현재 창을 닫으시겠습니까?')){

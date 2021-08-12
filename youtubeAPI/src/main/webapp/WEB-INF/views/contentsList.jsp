@@ -49,7 +49,7 @@ $(document).ready(function(){
 		var date = new Date(allContents[i].startDate.time); //timestamp -> actural time
 		var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
 
-		var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');
+		var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')'); //한번에 contents를 가져왔기 때문에, 각 content를 해당 주차별 차시 순서에 맞게 나타나도록  
 		var onclickDetail = "location.href='../contentDetail/" + allContents[i].id + "'";
 		
 		content.append("<div class='content' seq='" + allContents[i].daySeq + "' onclick=" + onclickDetail + " style='cursor: pointer;'>"

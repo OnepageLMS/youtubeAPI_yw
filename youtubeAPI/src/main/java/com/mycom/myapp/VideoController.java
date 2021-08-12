@@ -106,7 +106,7 @@ public class VideoController {
 	}
 	
 	public void updateTotalVideo (int playlistID) {
-		if (playlistService.updateCount(playlistID) != 0)  //이거 진우오빠에서 이 함수 이렇게 바꿔야함... 
+		if (playlistService.updateCount(playlistID) != 0)
 			System.out.println(playlistID + " : totalVideo업데이트 성공! ");
 		else
 			System.out.println("totalVideo 업데이트 실패! ");

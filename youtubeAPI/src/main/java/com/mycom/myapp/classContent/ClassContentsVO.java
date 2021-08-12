@@ -8,6 +8,7 @@ public class ClassContentsVO {
 	private String description;
 	private int classID;
 	private int playlistID; //null값은 int에 저장안됨
+	private String thumbnailID;
 	private int week;
 	private int day;
 	private int daySeq;
@@ -45,6 +46,12 @@ public class ClassContentsVO {
 	}
 	public void setPlaylistID(int playlistID) {
 		this.playlistID = playlistID;
+	}
+	public String getThumbnailID() {
+		return thumbnailID;
+	}
+	public void setThumbnailID(String thumbnailID) {
+		this.thumbnailID = thumbnailID;
 	}
 	public int getWeek() {
 		return week;

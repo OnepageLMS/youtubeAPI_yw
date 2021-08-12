@@ -123,6 +123,7 @@
 			</div>
 			<button type="button" id="selectPlaylistBtn" onclick="popupOpen();">playlist가져오기</button>
 			<input type="hidden" name="playlistID" id="inputPlaylistID">
+			<input type="hidden" name="thumbnailID" id="inputThumbnailID" value="${vo.thumbnailID}">
 		</div>
 		
 		<div class="inputTitle">

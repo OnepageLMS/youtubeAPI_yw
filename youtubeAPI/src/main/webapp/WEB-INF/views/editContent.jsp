@@ -134,11 +134,13 @@
 			
 			<div class="selectContent">
 				<div id="selectedContent">
-					<div id="playlistThubmnail"></div>
-					<p id="playlistTitle">Playlist를 선택해주세요 </p>
+					<div id="playlistThubmnail">
+						<img src="https://img.youtube.com/vi/${vo.thumbnailID}/0.jpg" class="videoPic">
+					</div>
 				</div>
-				<button type="button" id="selectPlaylistBtn" onclick="popupOpen();">playlist가져오기</button>
-				<input type="hidden" name="playlistID" id="inputPlaylistID">
+				<button type="button" id="selectPlaylistBtn" onclick="popupOpen();">playlist 다시선택</button>
+				<input type="hidden" name="playlistID" id="inputPlaylistID" value="${vo.playlistID}">
+				<input type="hidden" name="thumbnailID" id="inputThumbnailID" value="${vo.thumbnailID}">
 			</div>
 			
 			<div class="inputTitle">
