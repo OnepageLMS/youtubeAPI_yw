@@ -25,7 +25,9 @@
 	</select>
 	
 	<select id="getAllPlaylist" resultType="playlist"> <!-- 이부분 바꿔야함...!!! -->
-		select * from lms_playlist order by seq desc
+		select * from lms_playlist 
+		where exposed=1
+		order by seq desc
 	</select>
 	
 	<select id="getAllMyPlaylist" resultType="playlist"> <!-- 내가만든것들만 볼 수 있도록니 -->

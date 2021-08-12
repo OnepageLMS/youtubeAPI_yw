@@ -189,6 +189,9 @@ img {
 													var hr = Math.floor(value.totalVideoLength / 3600);
 													var min = Math.floor(value.totalVideoLength % 3600 / 60); 
 													var sec = value.totalVideoLength % 3600 % 60;
+													if(sec % 1 !=0){ 	// 소수점 있을시에는 2자리까지만 표기 하도록. 
+														sec = parseFloat(sec).toFixed(2);
+													}													
 
 													var html = '<div class = "playlistSeq card text-white bg-info mb-10" >'
 															+ '<div class="card-header" listID="' + playlistID + '"playlistName="' + value.playlistName + '"onclick="togglePlaylist(\'' + num + '\')" >'
@@ -343,8 +346,8 @@ img {
 										}
 										
 
-										if(value.newTitle == ""){
-											console.log(value.newTitle);
+										if(value.newTitle == null){
+											//console.log(value.newTitle);
 											value.newTitle = title;
 											console.log(value.newTitle);
 										}
@@ -370,7 +373,7 @@ img {
 												+ '" tag="'
 												+ value.tag
 												+ '" > '
-												+ (value.seq)
+												+ (value.seq+1)
 												+ ". "
 												+ value.newTitle
 												+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo('
@@ -497,7 +500,9 @@ img {
 	<!-- <div id="player_info"></div> -->
 	<br>
 	<div id="title"></div>
-	<textarea id="newName" name="newName" cols="78" rows="2"> </textarea>
+	<div>
+		<textarea id="newName" name="newName" cols="78" rows="2"> </textarea>
+	</div>
 	<div id="player"></div>
 
 	<!-- (jw) 영상 구간 설정 부분  -->

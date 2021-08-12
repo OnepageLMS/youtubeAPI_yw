@@ -124,6 +124,23 @@ public class HomeController {
 		return "main";
 	}
 	
+	@RequestMapping(value = "/searchLms", method = RequestMethod.GET)
+	public String searchLms(Model model, String keyword) {
+		//String order = "relevance";
+		//String maxResults = "50";
+		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
+		
+		model.addAttribute("accessToken", accessToken);
+		
+		// String requestURL =
+		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
+
+		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
+		//model.addAttribute("videos", videos);																
+
+		return "search";
+	}
+	
 	@RequestMapping(value = "/youtube", method = RequestMethod.GET)
 	public String youtube(Model model, String keyword) {
 		//String order = "relevance";
