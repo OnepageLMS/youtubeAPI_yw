@@ -10,6 +10,7 @@ public class PlaylistVO {
 	private boolean exposed; //public 이름 바꿔야함
 	private double totalVideoLength;
 	private double duration;
+	private String thumbnailID;
 	
 	public int getPlaylistID() { 
 		return playlistID;
@@ -64,5 +65,11 @@ public class PlaylistVO {
 	}
 	public void setDuration(double duration) {
 		this.duration = duration;
+	}
+	public String getThumbnailID() {
+		return thumbnailID;
+	}
+	public void setThumbnailID(String thumbnailID) {
+		this.thumbnailID = thumbnailID;
 	}
 }

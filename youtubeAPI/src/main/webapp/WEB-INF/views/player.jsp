@@ -186,6 +186,10 @@ img {
 													var playlistID = value.playlistID;
 													var num = index;
 
+													var hr = Math.floor(value.totalVideoLength / 3600);
+													var min = Math.floor(value.totalVideoLength % 3600 / 60); 
+													var sec = value.totalVideoLength % 3600 % 60;
+
 													var html = '<div class = "playlistSeq card text-white bg-info mb-10" >'
 															+ '<div class="card-header" listID="' + playlistID + '"playlistName="' + value.playlistName + '"onclick="togglePlaylist(\'' + num + '\')" >'
 															+ '<input type="checkbox" value="' + playlistID + '" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;" onclick="stopDefaultAction(event);">'
@@ -194,6 +198,10 @@ img {
 															+ (index + 1)
 															+ ' : '
 															+ value.playlistName
+															+ '  ('
+															+ value.totalVideo
+															+ '개: '
+															+ hr + '시간 ' + min + '분 ' + sec + '초 )'
 															+ '<a href="#" class="aUpdatePlaylist" onclick="updatePlaylist(\''
 															+ playlistID
 															+ '\')" style="display:none;"> 수정 </a>'
@@ -311,12 +319,9 @@ img {
 		}
 
 		function getAllVideo(playlistSeq) { //해당 playlistID에 해당하는 비디오들을 가져온다
-			/* var playlistID = $(".card-header")[playlistSeq].getAttribute('listid'); */
 			var playlistID = $(".card-header:eq(" + playlistSeq + ")").attr('listID');
-			
-			$(".card-body")[playlistSeq].setAttribute('style', 'display: none');
-
-			//console.log(playlistSeq);
+		
+			$(".card-body:eq(" + playlistSeq + ")").attr('style', 'display: none');
 
 			$.ajax({
 				type : 'post',
@@ -396,19 +401,17 @@ img {
 				checkBoxArr.push($(this).val());
 			});
 			var title = $("#inputYoutubeTitle").val();
-			var newTitle = $("#newTitle").val();
+			var newName = $("#newName").val();
 			var start_s = $("#start_s").val();
 			var end_s = $("#end_s").val();
 			var youtubeID = $("#inputYoutubeID").val();
 			var maxLength = $("#maxLength").val();
 			var duration = $('#duration').val();
 			var tag = $("#tag").val();
-
-			console.log("여기 검사!!", newTitle);
-
-			if(newTitle == title){
-				console.log("true");
-				newTitle = null;
+			var newTitle;
+			
+			if(newName != title){
+				newTitle = newName;
 			}
 			
 			$.ajax({
@@ -436,6 +439,8 @@ img {
 					console.log("ajax video저장 실패!" + error);
 				}
 			});
+
+			confirmSearch();
 			return false;
 		}
 
@@ -480,52 +485,6 @@ img {
 			<button onclick="createPlaylist()">생성</button>
 		</div>
 		
-		<%-- <div class="container mt-5" style="background-color: transparent;">
-			<button type="button" class="btn btn-primary" data-bs-toggle="modal"
-				data-bs-target="#myModal"> 플레이리스트 생성 </button>
-			<div class="modal" id="myModal">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title"></h5>
-							<button type="button" class="glyphicon glyphicon-remove"
-								data-bs-dismiss="modal"
-								style="background-color: transparent; border: none; float: right;"></button>
-						</div>
-						<div class="modal-body">
-							<form>
-								<div class="mb-3">
-									<label class="form-label required">Name</label> <input
-										type="text" class="form-control">
-								</div>
-								<div class="mb-3">
-									<label class="form-label required">Email</label> <input
-										type="email" class="form-control">
-								</div>
-								<div class="mb-3">
-									<label class="form-label required">Type ypur message
-										here</label>
-									<textarea class="form-control"></textarea>
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-primary">Submit</button>
-							<button type="submit" class="btn btn-danger">Cancel</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div> --%>
-		
-		<!-- <div id="popup_bg">
-			<div id="popup_main_div">
-				<div id="close_popup_div">
-					<p> X </p>
-				</div>
-			</div>
-		</div> -->
-		
 		<div>
 			<input type="text" id="playlistSearch" placeholder="플레이리스트 이름" />
 			<button onclick="searchPlaylist()">찾기</button>
@@ -538,31 +497,29 @@ img {
 	<!-- <div id="player_info"></div> -->
 	<br>
 	<div id="title"></div>
-	<textarea id="newTitle" name="newTitle" cols="78" rows="2"> </textarea>
+	<textarea id="newName" name="newName" cols="78" rows="2"> </textarea>
 	<div id="player"></div>
 
 	<!-- (jw) 영상 구간 설정 부분  -->
 	<br>
 	<form id="createVideoForm" onsubmit="return validation(event)"
 		style="display: none">
-		<input type="hidden" name="youtubeID" id="inputYoutubeID"> <input
-			type="hidden" name="start_s" id="start_s"> <input
-			type="hidden" name="end_s" id="end_s"> <input type="hidden"
-			name="title" id="inputYoutubeTitle"> <input type="hidden"
-			name="maxLength" id="maxLength"> <input type="hidden"
-			name="duration" id="duration">
+		<input type="hidden" name="youtubeID" id="inputYoutubeID"> 
+		<input type="hidden" name="start_s" id="start_s"> 
+		<input type="hidden" name="end_s" id="end_s"> 
+		<input type="hidden" name="title" id="inputYoutubeTitle">
+		<input type="hidden" name="maxLength" id="maxLength"> 
+		<input type="hidden" name="duration" id="duration">
 
 		<br>
-		<button onclick="getCurrentPlayTime1()" type="button">start
-			time</button>
-		: <input type="text" id="start_hh" maxlength="2" size="2"> 시 <input
-			type="text" id="start_mm" maxlength="2" size="2"> 분 <input
-			type="text" id="start_ss" maxlength="5" size="5"> 초
+		<button onclick="getCurrentPlayTime1()" type="button">start time</button>
+		: <input type="text" id="start_hh" maxlength="2" size="2"> 시 
+		<input type="text" id="start_mm" maxlength="2" size="2"> 분 
+		<input type="text" id="start_ss" maxlength="5" size="5"> 초
 		<button onclick="seekTo1()" type="button">위치이동</button>
 		<span id=warning1 style="color: red;"></span> <br>
 
-		<button onclick="getCurrentPlayTime2()" type="button">end
-			time</button>
+		<button onclick="getCurrentPlayTime2()" type="button">end time</button>
 		: <input type="text" id="end_hh" max="" maxlength="2" size="2">
 		시 <input type="text" id="end_mm" max="" maxlength="2" size="2">
 		분 <input type="text" id="end_ss" maxlength="5" size="5"> 초
@@ -613,7 +570,7 @@ img {
 
 			console.log(videoTitle);
 			//document.getElementById("newTitle").innerHTML = '<h3 class="videoTitle">' + videoTitle + '</h3>';
-			$('#newTitle').val(videoTitle);
+			$('#newName').val(videoTitle);
 
 			//아래는 youtube-API 공식 문서에서 iframe 사용방법으로 나온 코드.
 			tag = document.createElement('script');
@@ -801,9 +758,19 @@ img {
 				document.getElementById("end_ss").focus();
 				return false;
 			} else {
-				if ($('#inputVideoID').val() > -1)
-					return updateVideo(event);
+				/* if ($('#inputVideoID').val() > -1)
+					return updateVideo(event); */
 				return createVideo(event);
+			}
+		}
+		function confirmSearch(){
+			var result = confirm("선택하신 영상이 추가되었습니다.\n영상 추가를 더 원하신다면 확인 버튼을 눌러주세요. ");
+
+			if(result){
+				window.history.back();
+			}
+			else {
+				window.location.href = 'main';
 			}
 		}
 	</script>

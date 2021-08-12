@@ -6,6 +6,11 @@
 		values (#{playlistName}, #{creatorEmail}, #{seq}, #{totalVideoLength})
 	</insert>
 	
+	<insert id="addThumbnailID">
+		update lms_playlist 
+		set thumbnailID=#{thumbnailID} where playlistID=#{playlistID}
+	</insert>
+	
 	<delete id="deletePlaylist">
 		delete from lms_playlist where playlistID=#{playlistID}
 	</delete>

@@ -251,23 +251,38 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
-	public String addVideo(@ModelAttribute VideoVO vo, HttpServletRequest request) {
+	public String addVideo(@ModelAttribute VideoVO vo) {
 		List<Integer> playlistArr = vo.getPlaylistArr();
 		System.out.println("controller: maxLength!!->" + vo.getmaxLength());
 
 		// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
-		int length = Integer.parseInt(request.getParameter("duration"));
+		double length = vo.getDuration();
 		
 		for(int i=0; i<playlistArr.size(); i++) {
 			int playlistID = playlistArr.get(i);
-			
-			vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
-			vo.setPlaylistID(playlistID);
 			
 			// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
 			PlaylistVO Pvo = new PlaylistVO();
 			Pvo.setPlaylistID(playlistID);
 			Pvo.setDuration(length);
+			Pvo.setThumbnailID(vo.getYoutubeID());
+			System.out.println("thumbnail id check" + Pvo.getThumbnailID());
+			
+			// (jw) 썸네일 추가를 위한 코드 (21/08/11) 
+			int count = videoService.getTotalCount(playlistID);
+			
+			if(count == 0) {
+				if(playlistService.addThumbnailID(Pvo) != 0) {
+					System.out.println("playlist 썸네일 추가 성공! ");
+				}
+				else {
+					System.out.println("playlist 썸네일 추가 실패! ");
+				}
+			}
+				
+			vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
+			vo.setPlaylistID(playlistID);
+			
 			
 			if(videoService.insertVideo(vo) != 0) {
 				System.out.println("title: " + vo.getTitle());

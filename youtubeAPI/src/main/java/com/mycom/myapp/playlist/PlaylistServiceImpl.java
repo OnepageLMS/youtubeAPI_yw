@@ -16,6 +16,11 @@ public class PlaylistServiceImpl implements PlaylistService{
 	}
 	
 	@Override
+	public int addThumbnailID(PlaylistVO vo) {
+		return playlistDAO.addThumbnailID(vo);
+	}
+	
+	@Override
 	public int changeSeq(PlaylistVO vo) {
 		return playlistDAO.changeSeq(vo);
 	}
@@ -49,4 +54,6 @@ public class PlaylistServiceImpl implements PlaylistService{
 	public int updateTotalVideoLength(PlaylistVO vo) {
 		return playlistDAO.updateTotalVideoLength(vo);
 	}
+
+	
 }
