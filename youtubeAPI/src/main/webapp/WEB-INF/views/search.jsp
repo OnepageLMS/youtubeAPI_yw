@@ -152,6 +152,15 @@ img {
 			else{
 				$(".card-body")[index].setAttribute('style', 'display: block');
 			}
+
+			var div = $(".card-header:eq(" + index + ")").find(".caret-icon");
+			console.log("check for true??", div);
+
+			if(div.hasClass("fa-caret-right")){
+				div.addClass("fa-caret-down").removeClass("fa-caret-right");
+			} else {
+				div.addClass("fa-caret-right").removeClass("fa-caret-down");
+			}
 		}
 		function getAllPlaylist() { //all playlist 출력
 			$
@@ -182,7 +191,7 @@ img {
 															+ '<div class="card-header" listID="' + playlistID + '"playlistName="' + value.playlistName + '"onclick="togglePlaylist(\'' + num + '\')" >'
 															+ '<input type="checkbox" value="' + playlistID + '" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;" onclick="stopDefaultAction(event);">'
 															
-															+ '<i class="fa fa-caret-right fa-lg" style="margin:5px;"></i>'
+															+ '<i class="caret-icon fa fa-caret-right fa-lg" style="margin:5px;"></i>'
 															+ (index + 1)
 															+ ' : '
 															+ value.playlistName
@@ -241,12 +250,18 @@ img {
 													+ " ...";
 										}
 										
-
 										if(value.newTitle == null){
 											//console.log(value.newTitle);
 											value.newTitle = title;
 											console.log(value.newTitle);
 										}
+
+										if (value.tag != null && value.tag.length > 0){
+									    	var tags = value.tag.replace(', ', ' #');
+								    		tags = '#'+ tags;
+								    	}
+								    	else 
+									    	var tags = ' ';
 
 										var thumbnail = '<img src="https://img.youtube.com/vi/' + value.youtubeID + '/0.jpg">';
 			
@@ -274,8 +289,9 @@ img {
 												+ (value.seq+1)
 												+ ". "
 												+ value.newTitle
-												+ '<span style="text-align: right">'
-												+ 
+												+ '<span style="text-align: right; color: blue;">'
+												+ tags
+												+ '</span>'
 												+ '<a href="#" class="aDeleteVideo" onclick="deleteVideo('
 												+ playlistSeq
 												+ ','

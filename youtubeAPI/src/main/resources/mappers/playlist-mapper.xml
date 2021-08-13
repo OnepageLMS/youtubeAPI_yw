@@ -24,13 +24,13 @@
 		select * from lms_playlist where playlistID=#{playlistID}
 	</select>
 	
-	<select id="getAllPlaylist" resultType="playlist"> <!-- 이부분 바꿔야함...!!! -->
+	<select id="getAllPlaylist" resultType="playlist"> 
 		select * from lms_playlist 
 		where exposed=1
 		order by seq desc
 	</select>
 	
-	<select id="getAllMyPlaylist" resultType="playlist"> <!-- 내가만든것들만 볼 수 있도록니 -->
+	<select id="getAllMyPlaylist" resultType="playlist"> 
 		select * from lms_playlist 
 		where creatorEmail=#{creatorEmail}
 		order by seq desc
@@ -50,7 +50,9 @@
 	
 	<update id="updateTotalVideoLength">
 		update lms_playlist
-		set totalVideoLength = totalVideoLength + #{duration}
+		set totalVideoLength = (select sum(duration)
+								from Video
+								where playlistID = #{playlistID})
 		where playlistID=#{playlistID}
 	</update>
 	

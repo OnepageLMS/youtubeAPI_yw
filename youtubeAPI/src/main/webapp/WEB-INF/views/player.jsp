@@ -150,8 +150,9 @@ img {
 
 	<!-- playlist CRUD -->
 	<script>
+	var email = "yewon.lee@onepage.edu";
 		$(function() { //페이지 처음 불러올때 playlist 띄우기
-			getAllPlaylist();
+			getAllMyPlaylist(email);
 		});
 
 		function togglePlaylist(index) {
@@ -167,7 +168,81 @@ img {
 			else{
 				$(".card-body")[index].setAttribute('style', 'display: block');
 			}
+
+			var div = $(".card-header:eq(" + index + ")").find(".caret-icon");
+			console.log("check for true??", div);
+
+			if(div.hasClass("fa-caret-right")){
+				div.addClass("fa-caret-down").removeClass("fa-caret-right");
+			} else {
+				div.addClass("fa-caret-right").removeClass("fa-caret-down");
+			}
 		}
+	
+		function getAllMyPlaylist(email) { //all playlist 출력
+			console.log("check here", email);
+			$
+					.ajax({
+						type : 'post',
+						url : 'getAllMyPlaylist',
+						data : {email : email},
+						async : false,
+						success : function(result) {
+							if (result.code == "ok") {
+								$('#allMyPlaylist').empty();
+								playlists = result.allMyPlaylist; //order seq desc 로 가져온다.
+
+								$.each(
+										playlists,
+										function(index, value) { //여기서 index는 playlistID가 아님! 
+											var playlistID = value.playlistID;
+											var num = index;
+
+											var hr = Math.floor(value.totalVideoLength / 3600);
+											var min = Math.floor(value.totalVideoLength % 3600 / 60); 
+											var sec = value.totalVideoLength % 3600 % 60;
+											if(sec % 1 !=0){ 	// 소수점 있을시에는 2자리까지만 표기 하도록. 
+												sec = parseFloat(sec).toFixed(2);
+											}											
+
+											var html = '<div class = "playlistSeq card text-white bg-info mb-10" >'
+													+ '<div class="card-header" listID="' + playlistID + '"playlistName="' + value.playlistName + '"onclick="togglePlaylist(\'' + num + '\')" >'
+													+ '<input type="checkbox" value="' + playlistID + '" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;" onclick="stopDefaultAction(event);">'
+													+ '<i class="caret-icon fa fa-caret-right fa-lg" style="margin:5px;"></i>'
+													+ (index + 1)
+													+ ' : '
+													+ value.playlistName
+													+ '  ('
+													+ value.totalVideo
+													+ '개: '
+													+ hr + '시간 ' + min + '분 ' + sec + '초 )'
+													+ '<a href="#" class="aUpdatePlaylist" onclick="updatePlaylist(\''
+													+ playlistID
+													+ '\')" style="display:none;"> 수정 </a>'
+													+ '<a href="#" class="aDeletePlaylist" onclick="deletePlaylist(\''
+													+ playlistID
+													+ '\')" style="display:none;"> 삭제 </a></div>'
+													+ '<div class="card-body"></div>'
+													+ '</div>';
+
+											$('#allMyPlaylist').append(
+													html);
+											getAllVideo(index);
+
+										});
+						if ($("#createVideoForm").css('display') === 'block') //video 추가할 Playlist 선택칸 보여주기
+							$(".selectPlaylists").css("display",
+									"inline");
+					} else
+						alert('playlist 불러오기 실패! ');
+
+				},
+				error : function(json) {
+					console.log("ajax로 youtube api 부르기 실패 ");
+				}
+			});
+		}
+		
 		function getAllPlaylist() { //all playlist 출력
 			$
 					.ajax({
@@ -233,6 +308,7 @@ img {
 		}
 
 		function createPlaylist() { //playlist 추가
+			var popup = window.open('addPlaylistPopup')
 			var playlistName = $("#playlistName").val();
 			var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
 
@@ -244,7 +320,7 @@ img {
 					creator : creatorEmail,
 				},
 				success : function(data) {
-					getAllPlaylist();
+					getAllMyPlaylist(email);
 
 				},
 				error : function(err) {
@@ -293,11 +369,11 @@ img {
 				},
 				dataType : "json",
 				success : function(data) {
-					getAllPlaylist();
+					getAllMyPlaylist(email);
 				},
 				error : function(request, status, error) {
 					//alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-					getAllPlaylist();
+					getAllMyPlaylist(email);
 				}
 			});
 		}
@@ -351,7 +427,6 @@ img {
 											value.newTitle = title;
 											console.log(value.newTitle);
 										}
-										
 
 										var html2 = '<div class="videos"'
 												+ ' playlistSeq="'
@@ -438,7 +513,7 @@ img {
 					}
 				},
 				error : function(error) {
-					getAllPlaylist();
+					getAlMyPlaylist();
 					console.log("ajax video저장 실패!" + error);
 				}
 			});
@@ -480,19 +555,19 @@ img {
 		</h3>
 
 
-		<!-- <div id="addPlaylist">
-			<button onclick="createPlaylist()" style="width: 200px;">생 성</button>
-		</div> -->
 		<div id="addPlaylist">
+			<button onclick="createPlaylist()" style="width: 200px;">생 성</button>
+		</div>
+		<!-- div id="addPlaylist">
 			<input type="text" id="playlistName" placeholder="플레이리스트 이름"/>
 			<button onclick="createPlaylist()">생성</button>
-		</div>
+		</div> -->
 		
 		<div>
 			<input type="text" id="playlistSearch" placeholder="플레이리스트 이름" />
 			<button onclick="searchPlaylist()">찾기</button>
 		</div>
-		<div id="allPlaylist" class="">
+		<div id="allMyPlaylist" class="">
 			<!-- 각 카드 리스트 박스 추가되는 공간-->
 		</div>
 	</div>

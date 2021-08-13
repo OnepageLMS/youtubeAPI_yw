@@ -9,7 +9,16 @@
 <body>
 	<h4> Playlist 추가 </h4>
 	
-	playlist 명 <input type="text" id="playlistName" name="playlistName">
-	설명 <textarea id="description" name="description"> </textarea>
+	<form method="post" action="player.jsp">
+		playlist 명 <input type="text" id="playlistName" name="playlistName" placeholder="플레이리스트 이름">
+		설명 <textarea id="description" name="description"> </textarea>
+		<button type="submit"> 생성 </button>
+		<button onclick="close_window();return false;"> 취소 </button>
+	</form>
+	
+	
 </body>
+
+<script>
+</script>
 </html>

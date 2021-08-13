@@ -55,5 +55,10 @@ public class PlaylistServiceImpl implements PlaylistService{
 		return playlistDAO.updateTotalVideoLength(vo);
 	}
 
+	@Override
+	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail) {
+		return playlistDAO.getAllMyPlaylist(creatorEmail);
+	}
+
 	
 }
