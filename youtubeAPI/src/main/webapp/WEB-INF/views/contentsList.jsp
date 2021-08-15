@@ -40,7 +40,7 @@
   crossorigin="anonymous"></script>
 <script>
 $(document).ready(function(){
-	var allContents = JSON.parse('${allContents}');
+	var allContents = JSON.parse('${allContents}'); //class에 해당하는 모든 contents 가져오기
 	console.log(allContents);
 
 	for(var i=0; i<allContents.length; i++){
