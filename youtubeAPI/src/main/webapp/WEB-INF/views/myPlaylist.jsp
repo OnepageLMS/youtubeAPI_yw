@@ -193,8 +193,8 @@
 																						+ ')" playlistID="' + value.playlistID + '" thumbnailID="' + value.thumbnailID + '">'
 												+ '<input type="radio" name="check" value="' + index + '">'
 												+ '<p class="playlistSeq">' + (index+1) + '. </p> '
-												+ '<p class="selectPlaylistName">' + value.playlistName + '/ </p>'
-												+ '<p class="totalVideo">' + value.totalVideo + '개 영상' + '</p>'
+												+ '<p class="selectPlaylistName">' + value.playlistName + ' </p>'
+												+ '<p class="totalVideo">' + convertTotalLength(value.totalVideoLength) + '</p>'
 											+ '</div>';
 											
 						$('.myPlaylist').append(contentHtml);

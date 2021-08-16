@@ -9,6 +9,10 @@ public class ClassesServiceImpl implements ClassesService {
 	ClassesDAO classesDAO;
 	
 	@Override
+	public int updateDays(ClassesVO vo) {
+		return classesDAO.updateDays(vo);
+	}
+	@Override
 	public ClassesVO getClass(int id) {
 		return classesDAO.getClass(id);
 	}

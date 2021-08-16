@@ -97,6 +97,7 @@ $(document).ready(function(){
 </script>
 <body>
 	<div class="contents" classID="${classInfo.id}">
+		<button onclick="">강의추가</button>
 		<c:forEach var="j" begin="1" end="${classInfo.days}">
 			<div class="day" day="${j}">
 				<h3>${j} 일 강의</h3>

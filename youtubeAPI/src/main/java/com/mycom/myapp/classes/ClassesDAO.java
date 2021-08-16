@@ -9,6 +9,11 @@ public class ClassesDAO {
 	@Autowired
 	SqlSession sqlSession;
 	
+	public int updateDays(ClassesVO vo){
+		int result = sqlSession.update("Classes.updateDays", vo);
+		return result;
+	}
+	
 	public ClassesVO getClass(int id) {
 		ClassesVO vo = sqlSession.selectOne("Classes.getClass", id);
 		return vo;
