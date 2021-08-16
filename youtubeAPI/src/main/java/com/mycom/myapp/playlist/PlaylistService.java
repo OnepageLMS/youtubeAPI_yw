@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface PlaylistService {
 	public int addPlaylist(PlaylistVO vo);
+	public int addThumbnailID(PlaylistVO vo);
 	public int changeSeq(PlaylistVO vo);
 	public int updatePlaylistName(PlaylistVO vo);
 	public int updateDescription(PlaylistVO vo);
@@ -13,5 +14,5 @@ public interface PlaylistService {
 	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail);
 	public int getCount();
 	public int updateCount(int playlistID);
-	public int updateTotalVideoLength(int playlistID);
+	public int updateTotalVideoLength(int playlistID); 
 }

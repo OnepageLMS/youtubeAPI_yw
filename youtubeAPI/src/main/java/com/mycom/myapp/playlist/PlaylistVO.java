@@ -32,12 +32,6 @@ public class PlaylistVO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getThumbnailID() {
-		return thumbnailID;
-	}
-	public void setThumbnailID(String thumbnailID) {
-		this.thumbnailID = thumbnailID;
-	}
 	public String getCreatorEmail() {
 		return creatorEmail;
 	}

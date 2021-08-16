@@ -18,7 +18,7 @@ public class ClassContentsVO {
 	private String thumbnailID; //join attributes
 	private int totalVideo;
 	private float totalVideoLength;
-	
+
 	public int getId() {
 		return id;
 	}
@@ -103,5 +103,5 @@ public class ClassContentsVO {
 	public void setTotalVideoLength(float totalVideoLength) {
 		this.totalVideoLength = totalVideoLength;
 	}
-	
 }
+

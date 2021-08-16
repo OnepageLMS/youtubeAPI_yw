@@ -16,6 +16,5 @@ public class ClassesServiceImpl implements ClassesService {
 	public ClassesVO getClass(int id) {
 		return classesDAO.getClass(id);
 	}
-	
-	
 }
+

@@ -3,14 +3,14 @@
 <mapper namespace="Video">
 
 	<insert id="insertVideo">
-		insert into Video(youtubeID, start_s, end_s, playlistID, title, seq, tag, maxLength, duration)
+		insert into Video(youtubeID, start_s, end_s, playlistID, title, newTitle, seq, tag, maxLength, duration)
 		values
-		(#{youtubeID}, #{start_s}, #{end_s}, #{playlistID}, #{title}, #{seq}, #{tag}, #{maxLength}, #{duration})
+		(#{youtubeID}, #{start_s}, #{end_s}, #{playlistID}, #{title}, #{newTitle}, #{seq}, #{tag}, #{maxLength}, #{duration})
 	</insert>
 	
 	<update id="updateVideo">
 		update Video
-		set newTitle=#{newTitle}, start_s=#{start_s}, end_s=#{end_s}, duration=#{duration}, tag=#{tag} 
+		set newTitle=#{newTitle}, start_s=#{start_s}, end_s=#{end_s}, maxLength=#{maxLength}, duration=#{duration}, tag=#{tag}
 		where id=#{id}
 	</update>
 	

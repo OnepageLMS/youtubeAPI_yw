@@ -263,7 +263,7 @@ img {
 					var playlistID = value.playlistID;
 
 					var html = '<div class = "playlistSeq card text-white bg-info mb-10" >' 
-						+ '<div class="card-header" listID="' + playlistID + '" >' 
+						+ '<div class="card-header" listID="' + playlistID + '"playlistName="' + value.playlistName + '" >' 
 						+ '<input type="checkbox" value="' + playlistID + '" class="selectPlaylists custom-control-input" style="margin:2px 4px; display:none;">'
 						+ (index+1) + ' : ' + value.playlistName 
 						+ '<a href="#" class="aUpdatePlaylist" onclick="updatePlaylist(\'' + playlistID + '\')" style="display:none;"> 수정 </a>'
@@ -549,13 +549,21 @@ img {
 	var tag;
 	
  	function searchTag(){
- 		$("[tag*='"+ tag + "']").css("background-color", "#d9edf7;"); 
- 		
+ 	 	console.log(tag);
+ 	 	if(tag != null){
+ 	 		tag.forEach(function(element){
+ 	 	 		$("[tag*='"+ element + "']").css("background-color", "#d9edf7;"); 
+ 	 	 		$("[playlistname*='"+ element + "']").css("background-color", "#d9edf7;"); 
+ 	 	 	});	
+ 	 	}
+ 	 	
  	 	tag = $("#tagName").val();
  	 	tag = tag.replace(/ /g, '').split(",");
+ 	 	
 
  	 	tag.forEach(function(element){
  	 		$("[tag*='"+ element + "']").css("background-color", "yellow");
+ 	 		$("[playlistname*='"+ element + "']").css("background-color", "green");
  	 	});
  	}
 	</script>

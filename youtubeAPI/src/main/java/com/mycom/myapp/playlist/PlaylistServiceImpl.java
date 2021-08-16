@@ -1,6 +1,7 @@
 package com.mycom.myapp.playlist;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,11 @@ public class PlaylistServiceImpl implements PlaylistService{
 	@Override
 	public int addPlaylist(PlaylistVO vo) {
 		return playlistDAO.addPlaylist(vo);
+	}
+	
+	@Override
+	public int addThumbnailID(PlaylistVO vo) {
+		return playlistDAO.addThumbnailID(vo);
 	}
 	
 	@Override
@@ -58,9 +64,24 @@ public class PlaylistServiceImpl implements PlaylistService{
 	public int updateCount(int playlistID) {
 		return playlistDAO.updateCount(playlistID);
 	}
-	
+
 	@Override
 	public int updateTotalVideoLength(int playlistID) {
 		return playlistDAO.updateTotalVideoLength(playlistID);
+	}
+
+	@Override
+	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail) {
+		return playlistDAO.getAllMyPlaylist(creatorEmail);
+	}
+
+	@Override
+	public int updatePlaylistName(PlaylistVO vo) {
+		return playlistDAO.updatePlaylistName(vo);
+	}
+
+	@Override
+	public int updateDescription(PlaylistVO vo) {
+		return playlistDAO.updateDescription(vo);
 	}
 }

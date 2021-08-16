@@ -2,8 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Playlist">
 	<insert id="addPlaylist">
-		insert into lms_playlist (playlistName, creatorEmail, seq)
-		values (#{playlistName}, #{creatorEmail}, #{seq})
+		insert into lms_playlist (playlistName, creatorEmail, seq, totalVideoLength)
+		values (#{playlistName}, #{creatorEmail}, #{seq}, #{totalVideoLength})
+	</insert>
+	
+	<insert id="addThumbnailID">
+		update lms_playlist 
+		set thumbnailID=#{thumbnailID} where playlistID=#{playlistID}
 	</insert>
 	
 	<delete id="deletePlaylist">
@@ -29,8 +34,16 @@
 		select * from lms_playlist where playlistID=#{playlistID}
 	</select>
 	
-	<select id="getAllPlaylist" resultType="playlist"> <!-- 이부분 exposed만 가져오도록 바꿔야함...!!! -->
-		select * from lms_playlist order by seq desc
+	<select id="getAllPlaylist" resultType="playlist"> 
+		select * from lms_playlist 
+		where exposed=1
+		order by seq desc
+	</select>
+	
+	<select id="getAllMyPlaylist" resultType="playlist"> 
+		select * from lms_playlist 
+		where creatorEmail=#{creatorEmail}
+		order by seq desc
 	</select>
 	
 	<select id="getAllMyPlaylist" resultType="playlist"> <!-- 내가만든것들만 볼 수 있도록 -->

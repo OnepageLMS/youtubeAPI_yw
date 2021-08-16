@@ -92,8 +92,5 @@ public class ContentsController {
 		return "redirect:../../contentList/" + classID;
 	}
 	
-	
-	
-
-
 }
+
