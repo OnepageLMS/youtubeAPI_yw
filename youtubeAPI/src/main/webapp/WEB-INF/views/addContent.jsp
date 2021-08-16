@@ -84,7 +84,7 @@
 	function addCancel(id) {
 		var a = confirm("등록을 취소하시겠습니까?");
 		if (a)
-			location.href = '../../../contentList/' + id;
+			location.href = '${pageContext.request.contextPath}/class/contentList/' + id;
 	}
 
 	function popupOpen(){
@@ -113,7 +113,6 @@
 	
 	<form id="addContent" action="../../../addContentOK" method="post">
 		<input type="hidden" name="classID" value="${content.classID}"/>
-		<input type="hidden" name="week" value="${content.week}"/>
 		<input type="hidden" name="day" value="${content.day}"/>
 		
 		<div class="selectContent">

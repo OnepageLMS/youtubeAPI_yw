@@ -6,7 +6,6 @@ public class ClassesVO {
 	private int id;
 	private String instructorEmail;
 	private String className;
-	private int weeks;
 	private int days;
 	private Date startDate;
 	private boolean active;
@@ -28,12 +27,6 @@ public class ClassesVO {
 	}
 	public void setClassName(String className) {
 		this.className = className;
-	}
-	public int getWeeks() {
-		return weeks;
-	}
-	public void setWeeks(int weeks) {
-		this.weeks = weeks;
 	}
 	public int getDays() {
 		return days;

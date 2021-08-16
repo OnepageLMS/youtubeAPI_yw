@@ -25,6 +25,13 @@
 		padding-left: 5px;
 	}
 	
+	.videoPic {
+		width: 120px;
+		height: 70px;
+		padding: 5px;
+		display: inline;
+	}
+	
 	.title {
 		font-size: 16px;
 	}
@@ -44,15 +51,19 @@ $(document).ready(function(){
 	console.log(allContents);
 
 	for(var i=0; i<allContents.length; i++){
-		var week = allContents[i].week - 1;
+		console.log(allContents[i]);
 		var day = allContents[i].day - 1;
 		var date = new Date(allContents[i].startDate.time); //timestamp -> actural time
 		var startDate = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes();
 
-		var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')'); //한번에 contents를 가져왔기 때문에, 각 content를 해당 주차별 차시 순서에 맞게 나타나도록  
+		//var content = $('.week:eq(' + week + ')').children('.day:eq(' + day+ ')');  
+		var content = $('.day:eq(' + day + ')'); //한번에 contents를 가져왔기 때문에, 각 content를 해당 주차별 차시 순서에 맞게 나타나도록 
 		var onclickDetail = "location.href='../contentDetail/" + allContents[i].id + "'";
+		var thumbnail = '<img src="https://img.youtube.com/vi/' + allContents[i].thumbnailID + '/0.jpg" class="inline videoPic">';
 		
 		content.append("<div class='content' seq='" + allContents[i].daySeq + "' onclick=" + onclickDetail + " style='cursor: pointer;'>"
+						+ thumbnail
+						+ '<p class="playlistInfo">' + convertTotalLength(allContents[i].totalVideoLength) + '</p>'
 						+ '<p class="title"> <b>' +  (allContents[i].daySeq+1) + " " + allContents[i].title 
 							+ '</b><a href="../editContent/' + allContents[i].id + '"> 수정</a>'
 							+ '<a href="javascript:deleteCheck(' + allContents[i].classID +","+ allContents[i].id + ')"> 삭제</a>'
@@ -63,24 +74,33 @@ $(document).ready(function(){
 	}
 });
 
-function deleteCheck(classID, id){
-	var a = confirm("정말 삭제하시겠습니까?");
-	if (a)
-		location.href = '../deleteContent/' + classID + "/" + id;
-}
+	function convertTotalLength(seconds){
+		var seconds_hh = Math.floor(seconds / 3600);
+		var seconds_mm = Math.floor(seconds % 3600 / 60);
+		var seconds_ss = seconds % 3600 % 60;
+		var result = "";
+		
+		if (seconds_hh > 0)
+			result = seconds_hh + ":";
+		result += seconds_mm + ":" + seconds_ss;
+		
+		return result;
+	}
+	
+	function deleteCheck(classID, id){
+		var a = confirm("정말 삭제하시겠습니까?");
+		if (a)
+			location.href = '../deleteContent/' + classID + "/" + id;
+	}
 	
 
 </script>
 <body>
 	<div class="contents" classID="${classInfo.id}">
-		<c:forEach var="i" begin="1" end="${classInfo.weeks}">
-			<div class="week" week="${i}">
-				<h3>${i}주차</h3>
-				<c:forEach var="j" begin="1" end="${classInfo.days}">
-					<div class="day" day="${j}">${j} 차시
-						<a href="../addContent/${classInfo.id}/${i}/${j}">+페이지추가</a>
-					</div>
-				</c:forEach>
+		<c:forEach var="j" begin="1" end="${classInfo.days}">
+			<div class="day" day="${j}">
+				<h3>${j} 일 강의</h3>
+				<a href="../addContent/${classInfo.id}/${j}">+페이지추가</a>
 			</div>
 		</c:forEach>
 

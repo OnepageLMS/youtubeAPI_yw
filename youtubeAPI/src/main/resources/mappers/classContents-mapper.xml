@@ -23,13 +23,13 @@
 	</delete>
 	
 	<select id="getOneContent" resultType="classContents">
-		select * from lms_classPlaylist
+		select * from lms_classPlaylist join lms_playlist on lms_classPlaylist.playlistID = lms_playlist.playlistID
 		where id=#{id}
 	</select>
 	
 	<select id="getAllClassContents" resultType="classContents">
-		select * from lms_classPlaylist
-		where classID=#{classID} order by week and day and daySeq
+		select * from lms_classPlaylist join lms_playlist on lms_classPlaylist.playlistID = lms_playlist.playlistID
+		where classID=#{classID} order by day and daySeq
 	</select>
 
 </mapper>

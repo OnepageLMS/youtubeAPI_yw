@@ -542,7 +542,7 @@
 			
 			var thumbnail = '<img src="https://img.youtube.com/vi/' + thumbnailID + '/0.jpg" class="videoPic">';
 			var playlistInfo = thumbnail + '<p>총 ' + totalVideo + '개의 비디오 </p>';
-			$('#playlistThubmnail').empty();
+			$('#playlistThubmnail', opener.document).empty();
 			$('#playlistThubmnail', opener.document).append(playlistInfo);
 			
 			$('#playlistTitle', opener.document).text("playlist : " + name + " 선택됨");
