@@ -307,12 +307,16 @@ img {
 					});
 		}
 
-		function createPlaylist() { //playlist 추가
-			var popup = window.open('addPlaylistPopup')
-			var playlistName = $("#playlistName").val();
-			var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
+		//function createPlaylist() { //playlist 추가
+			/* var popup = window.open('addPlaylistPopup') */
+			//var playlistName = $("#playlistName").val();
+			//var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
+			//var url = "/addPlaylistPopup" + creatorEmail;
+			//var popOption = "width=500, height=600";
 
-			$.ajax({
+			//var popup = window.open(url, "addPlaylistPopup", popOption);
+			
+			/* $.ajax({
 				'type' : "post",
 				'url' : "addPlaylist",
 				'data' : {
@@ -321,14 +325,13 @@ img {
 				},
 				success : function(data) {
 					getAllMyPlaylist(email);
-
 				},
 				error : function(err) {
 					alert("playlist 추가 실패! : ", err.responseText);
 				}
 
-			});
-		}
+			}); */
+		//}
 
 		function deletePlaylist(id) { // playlist 삭제
 			if (confirm("playlist에 속한 비디오들까지 삭제됩니다. 정말 삭제하시겠습니까? ")) {

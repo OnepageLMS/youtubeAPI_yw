@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -189,6 +190,11 @@ public class HomeController {
 		model.addAttribute("duration", playerDuration);
 		
 		return "player";
+	}
+	@RequestMapping(value= "/addPlaylistPopup/{creatorEmail}", method= RequestMethod.GET)
+	public String popup(@PathVariable("creatorEmail") String creatorEmail, Model model) {
+		model.addAttribute("email", creatorEmail);
+		return "addPlaylistPopup";
 	}
 	
 	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
