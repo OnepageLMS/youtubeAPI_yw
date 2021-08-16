@@ -8,8 +8,6 @@ public class ClassContentsVO {
 	private String description;
 	private int classID;
 	private int playlistID; //null값은 int에 저장안됨
-	private String thumbnailID;
-	private int week;
 	private int day;
 	private int daySeq;
 	private boolean published;
@@ -17,6 +15,10 @@ public class ClassContentsVO {
 	private Date endDate;
 	private Date modDate;
 	
+	private String thumbnailID; //join attributes
+	private int totalVideo;
+	private float totalVideoLength;
+
 	public int getId() {
 		return id;
 	}
@@ -46,18 +48,6 @@ public class ClassContentsVO {
 	}
 	public void setPlaylistID(int playlistID) {
 		this.playlistID = playlistID;
-	}
-	public String getThumbnailID() {
-		return thumbnailID;
-	}
-	public void setThumbnailID(String thumbnailID) {
-		this.thumbnailID = thumbnailID;
-	}
-	public int getWeek() {
-		return week;
-	}
-	public void setWeek(int week) {
-		this.week = week;
 	}
 	public int getDay() {
 		return day;
@@ -95,5 +85,23 @@ public class ClassContentsVO {
 	public void setModDate(Date modDate) {
 		this.modDate = modDate;
 	}
-	
+	public String getThumbnailID() {
+		return thumbnailID;
+	}
+	public void setThumbnailID(String thumbnailID) {
+		this.thumbnailID = thumbnailID;
+	}
+	public int getTotalVideo() {
+		return totalVideo;
+	}
+	public void setTotalVideo(int totalVideo) {
+		this.totalVideo = totalVideo;
+	}
+	public float getTotalVideoLength() {
+		return totalVideoLength;
+	}
+	public void setTotalVideoLength(float totalVideoLength) {
+		this.totalVideoLength = totalVideoLength;
+	}
 }
+

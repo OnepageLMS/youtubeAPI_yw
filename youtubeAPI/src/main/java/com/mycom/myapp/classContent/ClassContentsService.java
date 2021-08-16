@@ -10,3 +10,4 @@ public interface ClassContentsService {
 	public List<ClassContentsVO> getAllClassContents(int classID);
 	public int getDaySeq(ClassContentsVO vo);
 }
+

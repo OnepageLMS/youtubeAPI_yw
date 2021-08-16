@@ -39,14 +39,11 @@ public class ContentsController {
 		return "contentDetail";
 	}
 	
-	
-	@RequestMapping(value = "/addContent/{classID}/{week}/{day}", method = RequestMethod.GET) //class contents 추가
-	public String addContent(@PathVariable("classID") int classID, @PathVariable("week") int week, 
-			@PathVariable("day") int day, Model model) {
+	@RequestMapping(value = "/addContent/{classID}/{day}", method = RequestMethod.GET) //class contents 추가
+	public String addContent(@PathVariable("classID") int classID, @PathVariable("day") int day, Model model) {
 		
 		ClassContentsVO vo = new ClassContentsVO();
 		vo.setClassID(classID);
-		vo.setWeek(week);
 		vo.setDay(day);
 		model.addAttribute("content", vo);
 		
@@ -95,8 +92,5 @@ public class ContentsController {
 		return "redirect:../../contentList/" + classID;
 	}
 	
-	
-	
-
-
 }
+

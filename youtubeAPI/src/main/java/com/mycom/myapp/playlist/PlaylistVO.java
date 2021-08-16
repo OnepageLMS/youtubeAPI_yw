@@ -1,16 +1,18 @@
 package com.mycom.myapp.playlist;
 
+import java.util.Date;
+
 public class PlaylistVO {
 	private int playlistID;
 	private String playlistName;
 	private String description;
-	private String creatorEmail;
-	private int seq;
-	private int totalVideo;
-	private boolean exposed; //public 이름 바꿔야함
-	private double totalVideoLength;
-	private double duration;
 	private String thumbnailID;
+	private String creatorEmail;
+	private int totalVideo;
+	private int totalVideoLength;
+	private int seq;
+	private int exposed;
+	private Date modDate;
 	
 	public int getPlaylistID() { 
 		return playlistID;
@@ -48,28 +50,22 @@ public class PlaylistVO {
 	public void setTotalVideo(int totalVideo) {
 		this.totalVideo = totalVideo;
 	}
-	public boolean isExposed() {
-		return exposed;
-	}
-	public void setExposed(boolean exposed) {
-		this.exposed = exposed;
-	}
-	public double getTotalVideoLength() {
+	public int getTotalVideoLength() {
 		return totalVideoLength;
 	}
-	public void setTotalVideoLength(double totalVideoLength) {
+	public void setTotalVideoLength(int totalVideoLength) {
 		this.totalVideoLength = totalVideoLength;
 	}
-	public double getDuration() {
-		return duration;
+	public int isExposed() {
+		return exposed;
 	}
-	public void setDuration(double duration) {
-		this.duration = duration;
+	public void setExposed(int exposed) {
+		this.exposed = exposed;
 	}
-	public String getThumbnailID() {
-		return thumbnailID;
+	public Date getModDate() {
+		return modDate;
 	}
-	public void setThumbnailID(String thumbnailID) {
-		this.thumbnailID = thumbnailID;
+	public void setModDate(Date modDate) {
+		this.modDate = modDate;
 	}
 }

@@ -7,6 +7,8 @@
 		<typeAlias alias="playlist"
 			type="com.mycom.myapp.playlist.PlaylistVO" />
 		<typeAlias alias="video" type="com.mycom.myapp.video.VideoVO" />
+		<typeAlias alias="classes" type="com.mycom.myapp.classes.ClassesVO" />
+		<typeAlias alias="classContents" type="com.mycom.myapp.classContent.ClassContentsVO" />
 	</typeAliases>
 	
 </configuration>

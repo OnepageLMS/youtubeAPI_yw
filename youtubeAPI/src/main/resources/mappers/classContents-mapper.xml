@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ClassContents">
+	<insert id="insertContent">
+		insert into lms_classPlaylist (title, description, classID, playlistID, week, day, daySeq, startDate, endDate)
+		values (#{title}, #{description}, #{classID}, #{playlistID}, #{week}, #{day}, 
+			#{daySeq}, #{startDate}, #{endDate})
+	</insert>
+	
+	<select id="getDaySeq" resultType="int">
+		select count(*) from lms_classPlaylist 
+		where classID=#{classID} and week=#{week} and day=#{day}
+	</select>
+	
+	<update id="updateContent">
+		update lms_classPlaylist
+		set title=#{title}, description=#{description}, startDate=#{startDate}, endDate=#{endDate}, playlistID=#{playlistID} 
+		where id=#{id}
+	</update>
+	
+	<delete id="deleteContent">
+		delete from lms_classPlaylist where id=#{id}
+	</delete>
+	
+	<select id="getOneContent" resultType="classContents">
+		select * from lms_classPlaylist join lms_playlist on lms_classPlaylist.playlistID = lms_playlist.playlistID
+		where id=#{id}
+	</select>
+	
+	<select id="getAllClassContents" resultType="classContents">
+		select * from lms_classPlaylist join lms_playlist on lms_classPlaylist.playlistID = lms_playlist.playlistID
+		where classID=#{classID} order by day and daySeq
+	</select>
+
+</mapper>

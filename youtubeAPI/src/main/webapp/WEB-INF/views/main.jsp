@@ -390,8 +390,7 @@ img {
 	}
 	
 	function getAllVideo(playlistSeq){ //해당 playlistID에 해당하는 비디오들을 가져온다
-		var playlistID = $(".card-header")[playlistSeq].getAttribute('listid');
-		
+		var playlistID = $(".card-header:eq(" + playlistSeq + ")").attr('listID');
 		$.ajax({
 			type:'post',
 		    url : 'http://localhost:8080/myapp/getOnePlaylist',
@@ -495,7 +494,7 @@ img {
 	
 
 	function deleteVideo(playlistSeq, videoID){ // video 삭제
-		var playlistID = $(".card-header")[playlistSeq].getAttribute('listid');
+		var playlistID = $(".card-header:eq(" + playlistSeq + ")").attr('listID');
 
 		if (confirm("정말 삭제하시겠습니까?")){
 			$.ajax({

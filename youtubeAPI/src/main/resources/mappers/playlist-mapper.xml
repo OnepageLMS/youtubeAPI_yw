@@ -20,7 +20,17 @@
 		set seq=#{seq} where playlistID=#{playlistID}
 	</update>
 	
-	<select id="getPlaylist" resultType="playlist">
+	<update id="updatePlaylistName">
+		update lms_playlist
+		set playlistName=#{playlistName} where playlistID=#{playlistID}
+	</update>
+	
+	<update id="updateDescription">
+		update lms_playlist
+		set description=#{description} where playlistID=#{playlistID}
+	</update>
+	
+	<select id="getPlaylist" resultType="playlist"> <!-- playlist info 가져올때 사용 -->
 		select * from lms_playlist where playlistID=#{playlistID}
 	</select>
 	
@@ -36,11 +46,17 @@
 		order by seq desc
 	</select>
 	
+	<select id="getAllMyPlaylist" resultType="playlist"> <!-- 내가만든것들만 볼 수 있도록 -->
+		select * from lms_playlist 
+		where creatorEmail=#{creatorEmail}
+		order by seq desc
+	</select>
+	
 	<select id="getPlaylistCount" resultType="int">
 		select count(*) from lms_playlist
 	</select>
 	
-	<update id="updateCount">
+	<update id="updateCount"> <!-- totalVideo 업데이트 -->
 		update lms_playlist
 		set totalVideo = ( select count(*)
 			from Video
@@ -50,9 +66,9 @@
 	
 	<update id="updateTotalVideoLength">
 		update lms_playlist
-		set totalVideoLength = (select sum(duration)
-								from Video
-								where playlistID = #{playlistID})
+		set totalVideoLength = ( select sum(duration)
+				from Video
+				where playlistID=#{playlistID} )
 		where playlistID=#{playlistID}
 	</update>
 	

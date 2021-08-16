@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mycom.myapp.playlist.PlaylistService;
+
 import com.mycom.myapp.playlist.PlaylistVO;
 import com.mycom.myapp.video.VideoService;
 import com.mycom.myapp.video.VideoVO;
@@ -25,7 +26,16 @@ import com.mycom.myapp.video.VideoVO;
 @Controller
 @RequestMapping(value="/video")
 public class VideoController {
-	
+
+import com.mycom.myapp.video.VideoService;
+import com.mycom.myapp.video.VideoVO;
+
+import net.sf.json.JSONArray;
+
+@Controller
+@RequestMapping(value="/video")
+public class VideoController {
+
 	@Autowired
 	private VideoService videoService;
 	@Autowired
@@ -176,6 +186,5 @@ public class VideoController {
 		
 		return "youtube";
 	}
-
 
 }

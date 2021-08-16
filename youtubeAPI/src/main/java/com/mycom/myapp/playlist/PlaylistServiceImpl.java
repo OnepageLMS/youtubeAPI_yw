@@ -26,6 +26,16 @@ public class PlaylistServiceImpl implements PlaylistService{
 	}
 	
 	@Override
+	public int updatePlaylistName(PlaylistVO vo) {
+		return playlistDAO.updatePlaylistName(vo);
+	}
+	
+	@Override
+	public int updateDescription(PlaylistVO vo) {
+		return playlistDAO.updateDescription(vo);
+	}
+	
+	@Override
 	public int deletePlaylist(int playlistID) {
 		return playlistDAO.deletePlaylist(playlistID);
 	}
@@ -38,6 +48,11 @@ public class PlaylistServiceImpl implements PlaylistService{
 	@Override
 	public List<PlaylistVO> getAllPlaylist() {
 		return playlistDAO.getAllPlaylist();
+	}
+	
+	@Override
+	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail){
+		return playlistDAO.getAllMyPlaylist(creatorEmail);
 	}
 	
 	@Override
@@ -69,6 +84,4 @@ public class PlaylistServiceImpl implements PlaylistService{
 	public int updateDescription(PlaylistVO vo) {
 		return playlistDAO.updateDescription(vo);
 	}
-
-	
 }
