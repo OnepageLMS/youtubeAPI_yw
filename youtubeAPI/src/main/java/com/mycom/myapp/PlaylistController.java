@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +18,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mycom.myapp.playlist.PlaylistService;
 import com.mycom.myapp.playlist.PlaylistVO;
+import com.mycom.myapp.video.VideoService;
+import com.mycom.myapp.video.VideoVO;
 
 @Controller
 @RequestMapping(value="/playlist")
 public class PlaylistController {
 	@Autowired
 	private PlaylistService playlistService;
+	@Autowired
+	VideoService videoService;
 	
 	//myplaylist(내 playlist) 새창 띄우기
 	@RequestMapping(value = "/myPlaylist/{creatorEmail}", method = RequestMethod.GET) 
@@ -41,6 +47,28 @@ public class PlaylistController {
 //		
 //		return map;
 //	}
+	
+	@RequestMapping(value= "/addPlaylistPopup/{creatorEmail}", method= RequestMethod.GET)
+	public String popup(@PathVariable("creatorEmail") String creatorEmail, Model model) {
+		model.addAttribute("email", creatorEmail);
+		return "addPlaylistPopup";
+	}
+	
+	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
+	@ResponseBody
+	public void addPlaylist(HttpServletRequest request) {
+		
+		PlaylistVO vo = new PlaylistVO();
+		vo.setCreatorEmail(request.getParameter("creator"));
+		vo.setPlaylistName(request.getParameter("name"));
+		vo.setSeq(playlistService.getCount()); //새로운 playlist의 seq가 될 숫자 구하기
+
+		if(playlistService.addPlaylist(vo) != 0) 
+			System.out.println("playlist 추가 성공! ");
+		else
+			System.out.println("playlist 추가 실패! ");
+	}
+	
 	@RequestMapping(value = "/getAllMyPlaylist", method = RequestMethod.POST)
 	@ResponseBody
 	public Object getAllMyPlaylist(@RequestParam(value = "email") String creatorEmail) {
@@ -58,7 +86,6 @@ public class PlaylistController {
 	@ResponseBody
 	public PlaylistVO getPlaylistInfo(@RequestParam(value = "playlistID") String playlistID) {
 		PlaylistVO vo = playlistService.getPlaylist(Integer.parseInt(playlistID));
-		
 		return vo;
 	}
 	
@@ -97,6 +124,19 @@ public class PlaylistController {
 	}
 	
 	// (jw) 2021/08/16 
+	@RequestMapping(value = "/getOnePlaylist", method = RequestMethod.POST)
+	@ResponseBody
+	public Object getOnePlaylist(@RequestParam(value = "id") String id) {
+		List<VideoVO> videos = new ArrayList<VideoVO>();
+		videos = videoService.getVideoList(Integer.parseInt(id));
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("allVideo", videos);
+		map.put("code", "ok");
+		
+		return map;
+	}
+	
 	@RequestMapping(value = "/player", method = RequestMethod.POST)
 	public String player(Model model,
 			@RequestParam(required = false) String playerId,

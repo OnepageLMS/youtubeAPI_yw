@@ -1,10 +1,5 @@
 package com.mycom.myapp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -12,12 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,9 +18,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mycom.myapp.playlist.PlaylistService;
-import com.mycom.myapp.playlist.PlaylistVO;
 import com.mycom.myapp.video.VideoService;
-import com.mycom.myapp.video.VideoVO;
 import com.mycom.myapp.youtube.youtubeProvider;
 
 /**
@@ -106,8 +96,6 @@ public class HomeController {
 		return "redirect:/main";
 	}
 	
-
-	
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String main(Model model, String keyword) {
 		//String order = "relevance";
@@ -125,28 +113,17 @@ public class HomeController {
 		return "main";
 	}
 	
+	// (jw) 2021/08/16 : 일단 access Token 을 사용해야하니 이건 여기에 냅두고 그 이후에는 Controller 에서 처리하도록 
 	@RequestMapping(value = "/searchLms", method = RequestMethod.GET)
-	public String searchLms(Model model, String keyword) {
-		//String order = "relevance";
-		//String maxResults = "50";
-		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
-		
-		model.addAttribute("accessToken", accessToken);
-		
-		// String requestURL =
-		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
-
-		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
-		//model.addAttribute("videos", videos);																
-
+	public String searchLms(Model model, String keyword) {		
+		model.addAttribute("accessToken", accessToken);													
 		return "search";
 	}
 	
+	// (jw) 2021/08/16 : 일단 access Token 을 사용해야하니 이건 여기에 냅두고 그 이후에는 PlaylistController 에서 처리하도록 
 	@RequestMapping(value = "/youtube", method = RequestMethod.GET)
 	public String youtube(Model model, String keyword) {
-		
 		model.addAttribute("accessToken", accessToken);														
-
 		return "youtube";
 	}
 	
@@ -165,39 +142,19 @@ public class HomeController {
 		
 		return "player";
 	}
-	@RequestMapping(value= "/addPlaylistPopup/{creatorEmail}", method= RequestMethod.GET)
-	public String popup(@PathVariable("creatorEmail") String creatorEmail, Model model) {
-		model.addAttribute("email", creatorEmail);
-		return "addPlaylistPopup";
-	}
 	
-	@RequestMapping(value = "/addPlaylist", method = RequestMethod.POST)
-	@ResponseBody
-	public void addPlaylist(HttpServletRequest request) {
-		
-		PlaylistVO vo = new PlaylistVO();
-		vo.setCreatorEmail(request.getParameter("creator"));
-		vo.setPlaylistName(request.getParameter("name"));
-		vo.setSeq(playlistService.getCount()); //새로운 playlist의 seq가 될 숫자 구하기
-
-		if(playlistService.addPlaylist(vo) != 0) 
-			System.out.println("playlist 추가 성공! ");
-		else
-			System.out.println("playlist 추가 실패! ");
-	}
-	
-	@RequestMapping(value = "/deletePlaylist", method = RequestMethod.POST)
-	@ResponseBody
-	public void deletePlaylist(HttpServletRequest request) {
-		int playlistID = Integer.parseInt(request.getParameter("id"));
-		
-		if( playlistService.deletePlaylist(playlistID) != 0) {
-			System.out.println("playlist 삭제 성공! ");
-			//playlist 내에 video들도 삭제? 
-		}
-		else
-			System.out.println("playlist 삭제 실패! ");
-	}
+//	@RequestMapping(value = "/deletePlaylist", method = RequestMethod.POST)
+//	@ResponseBody
+//	public void deletePlaylist(HttpServletRequest request) {
+//		int playlistID = Integer.parseInt(request.getParameter("id"));
+//		
+//		if( playlistService.deletePlaylist(playlistID) != 0) {
+//			System.out.println("playlist 삭제 성공! ");
+//			//playlist 내에 video들도 삭제? 
+//		}
+//		else
+//			System.out.println("playlist 삭제 실패! ");
+//	}
 	
 //	@RequestMapping(value = "/getAllMyPlaylist", method = RequestMethod.POST) 
 //	@ResponseBody
@@ -210,172 +167,91 @@ public class HomeController {
 //		
 //		return map;
 //	}
-	@RequestMapping(value = "/getAllPlaylist", method = RequestMethod.POST)
-	@ResponseBody
-	public Object getAllPlaylist() {
-		List<PlaylistVO> playlists = new ArrayList<PlaylistVO>();
-		playlists = playlistService.getAllPlaylist();
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allPlaylist", playlists);
-		map.put("code", "ok");
-		
-		return map;
-	}
+//	@RequestMapping(value = "/getAllPlaylist", method = RequestMethod.POST)
+//	@ResponseBody
+//	public Object getAllPlaylist() {
+//		List<PlaylistVO> playlists = new ArrayList<PlaylistVO>();
+//		playlists = playlistService.getAllPlaylist();
+//		
+//		Map<String, Object> map = new HashMap<String, Object>();
+//		map.put("allPlaylist", playlists);
+//		map.put("code", "ok");
+//		
+//		return map;
+//	}
 	
-	@RequestMapping(value = "/getAllMyPlaylist", method = RequestMethod.POST)
-	@ResponseBody
-	public Object getAllMyPlaylist(@RequestParam(value = "email") String creatorEmail) {
-		List<PlaylistVO> playlists = new ArrayList<PlaylistVO>();
-		playlists = playlistService.getAllMyPlaylist(creatorEmail);
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allMyPlaylist", playlists);
-		
-		return map;
-	}
+//	@RequestMapping(value = "/changePlaylistOrder", method = RequestMethod.POST) //playlist 순서 변경될때
+//	@ResponseBody
+//	public String changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
+//		int size = changedList.size()-1;
+//		
+//		for(String order : changedList) {
+//			PlaylistVO vo = new PlaylistVO();
+//			vo.setPlaylistID(Integer.parseInt(order));
+//			vo.setSeq(size);
+//			
+//			if (playlistService.changeSeq(vo) != 0)
+//				size-=1;
+//		}
+//
+//		if (size == -1)
+//			System.out.println("playlist 순서 변경 성공! ");
+//		else
+//			System.out.println("playlist 순서 변경 실패! ");
+//		return "ok";
+//	}
 	
-	@RequestMapping(value = "/changePlaylistOrder", method = RequestMethod.POST) //playlist 순서 변경될때
-	@ResponseBody
-	public String changeItemsOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
-		int size = changedList.size()-1;
-		
-		for(String order : changedList) {
-			PlaylistVO vo = new PlaylistVO();
-			vo.setPlaylistID(Integer.parseInt(order));
-			vo.setSeq(size);
-			
-			if (playlistService.changeSeq(vo) != 0)
-				size-=1;
-		}
-
-		if (size == -1)
-			System.out.println("playlist 순서 변경 성공! ");
-		else
-			System.out.println("playlist 순서 변경 실패! ");
-		return "ok";
-	}
-	
-	@RequestMapping(value = "/getOnePlaylist", method = RequestMethod.POST)
-	@ResponseBody
-	public Object getOnePlaylist(@RequestParam(value = "id") String id) {
-		List<VideoVO> videos = new ArrayList<VideoVO>();
-		videos = videoService.getVideoList(Integer.parseInt(id));
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allVideo", videos);
-		map.put("code", "ok");
-		
-		return map;
-	}
-	
-	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)
-	public String addVideo(@ModelAttribute VideoVO vo) {
-		List<Integer> playlistArr = vo.getPlaylistArr();
-		System.out.println("controller: maxLength!!->" + vo.getmaxLength());
-
-		// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
-		double length = vo.getDuration();
-		
-		for(int i=0; i<playlistArr.size(); i++) {
-			int playlistID = playlistArr.get(i);
-			
-			// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
-			PlaylistVO Pvo = new PlaylistVO();
-			Pvo.setPlaylistID(playlistID);
-			Pvo.setDuration(length);
-			Pvo.setThumbnailID(vo.getYoutubeID());
-			System.out.println("thumbnail id check" + Pvo.getThumbnailID());
-			
-			// (jw) 썸네일 추가를 위한 코드 (21/08/11) 
-			int count = videoService.getTotalCount(playlistID);
-			
-			if(count == 0) {
-				if(playlistService.addThumbnailID(Pvo) != 0) {
-					System.out.println("playlist 썸네일 추가 성공! ");
-				}
-				else {
-					System.out.println("playlist 썸네일 추가 실패! ");
-				}
-			}
-				
-			vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
-			vo.setPlaylistID(playlistID);
-			
-			
-			if(videoService.insertVideo(vo) != 0) {
-				System.out.println("title: " + vo.getTitle());
-				
-				System.out.println(playlistID + "번 비디오 추가 성공!! ");
-				
-				if (playlistService.updateCount(playlistID) != 0)
-					System.out.println("playlist totalVideo 업데이트 성공! ");
-				else
-					System.out.println("playlist totalVideo 업데이트 실패! ");
-				
-				if (playlistService.updateTotalVideoLength(playlistID) != 0)
-					System.out.println("playlist totalVideoLength 업데이트 성공! ");
-				else
-					System.out.println("playlist totalVideoLength 업데이트 실패! ");
-			}
-			else 
-				System.out.println("비디오 추가 실패 ");
-		}
-		
-		return "home";
-	}
-	
-	@RequestMapping(value = "/updateVideo", method = RequestMethod.POST)
-	@ResponseBody
-	public String updateVideo(@ModelAttribute VideoVO vo){
-		if(videoService.updateVideo(vo) != 0)
-			System.out.println("controller update video 성공! "); 
-		else
-			System.out.println("controller update video 실패! "); 
-		
-		return "home";
-	}
-	
-	@RequestMapping(value = "/deleteVideo", method = RequestMethod.POST)
-	@ResponseBody
-	public String deleteVideo(HttpServletRequest request) {
-		int videoID = Integer.parseInt(request.getParameter("video"));
-		int playlistID = Integer.parseInt(request.getParameter("playlist"));
-		
-		if( videoService.deleteVideo(videoID) != 0) {
-			System.out.println("controller video 삭제 성공! "); 
-			
-			if (playlistService.updateCount(playlistID) != 0)
-				System.out.println("playlist totalVideo 업데이트 성공! ");
-			else
-				System.out.println("playlist totalVideo 업데이트 실패! ");
-		}
-		else
-			System.out.println("controller video 삭제 실패! ");
-		
-		return "home";
-	}
-	
-	@RequestMapping(value = "/changeVideosOrder", method = RequestMethod.POST) //video 순서 변경될때
-	@ResponseBody
-	public String changeVideosOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
-		int size = changedList.size()-1;
-		
-		for(String order : changedList) {
-			VideoVO vo = new VideoVO();
-			vo.setId(Integer.parseInt(order));
-			vo.setSeq(size);
-			
-			if (videoService.changeSeq(vo) != 0)
-				size-=1;
-		}
-
-		if (size == -1)
-			System.out.println("video 순서 변경 성공! ");
-		else
-			System.out.println("video 순서 변경 실패! ");
-		return "ok";
-	}
+//	@RequestMapping(value = "/updateVideo", method = RequestMethod.POST)
+//	@ResponseBody
+//	public String updateVideo(@ModelAttribute VideoVO vo){
+//		if(videoService.updateVideo(vo) != 0)
+//			System.out.println("controller update video 성공! "); 
+//		else
+//			System.out.println("controller update video 실패! "); 
+//		
+//		return "home";
+//	}
+//	
+//	@RequestMapping(value = "/deleteVideo", method = RequestMethod.POST)
+//	@ResponseBody
+//	public String deleteVideo(HttpServletRequest request) {
+//		int videoID = Integer.parseInt(request.getParameter("video"));
+//		int playlistID = Integer.parseInt(request.getParameter("playlist"));
+//		
+//		if( videoService.deleteVideo(videoID) != 0) {
+//			System.out.println("controller video 삭제 성공! "); 
+//			
+//			if (playlistService.updateCount(playlistID) != 0)
+//				System.out.println("playlist totalVideo 업데이트 성공! ");
+//			else
+//				System.out.println("playlist totalVideo 업데이트 실패! ");
+//		}
+//		else
+//			System.out.println("controller video 삭제 실패! ");
+//		
+//		return "home";
+//	}
+//	
+//	@RequestMapping(value = "/changeVideosOrder", method = RequestMethod.POST) //video 순서 변경될때
+//	@ResponseBody
+//	public String changeVideosOrder(@RequestParam(value = "changedList[]") List<String> changedList) {
+//		int size = changedList.size()-1;
+//		
+//		for(String order : changedList) {
+//			VideoVO vo = new VideoVO();
+//			vo.setId(Integer.parseInt(order));
+//			vo.setSeq(size);
+//			
+//			if (videoService.changeSeq(vo) != 0)
+//				size-=1;
+//		}
+//
+//		if (size == -1)
+//			System.out.println("video 순서 변경 성공! ");
+//		else
+//			System.out.println("video 순서 변경 실패! ");
+//		return "ok";
+//	}
 	
 	
 	

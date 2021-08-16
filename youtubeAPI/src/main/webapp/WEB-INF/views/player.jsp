@@ -254,8 +254,7 @@ img {
 								$('#allPlaylist').empty();
 								playlists = result.allPlaylist; //order seq desc 로 가져온다.
 
-								$
-										.each(
+								$.each(
 												playlists,
 												function(index, value) { //여기서 index는 playlistID가 아님! 
 													var playlistID = value.playlistID;
@@ -496,8 +495,8 @@ img {
 			}
 			
 			$.ajax({
-				'type' : "POST",
-				'url' : "addVideo",
+				'type' : "POST", 
+				'url' : "${pageContext.request.contextPath}/video/addVideo",
 				'data' : {
 					playlistArr : checkBoxArr,
 					title : title,
