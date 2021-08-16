@@ -18,16 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mycom.myapp.playlist.PlaylistService;
 import com.mycom.myapp.playlist.PlaylistVO;
-import com.mycom.myapp.video.VideoService;
-import com.mycom.myapp.video.VideoVO;
 
 @Controller
 @RequestMapping(value="/playlist")
 public class PlaylistController {
 	@Autowired
 	private PlaylistService playlistService;
-	@Autowired
-	VideoService videoService;
 	
 	//myplaylist(내 playlist) 새창 띄우기
 	@RequestMapping(value = "/myPlaylist/{creatorEmail}", method = RequestMethod.GET) 
@@ -81,6 +77,19 @@ public class PlaylistController {
 		return map;
 	}
 	
+	@RequestMapping(value = "/getAllPlaylist", method = RequestMethod.POST)
+	@ResponseBody
+	public Object getAllPlaylist() {
+		List<PlaylistVO> playlists = new ArrayList<PlaylistVO>();
+		playlists = playlistService.getAllPlaylist();
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("allPlaylist", playlists);
+		map.put("code", "ok");
+		
+		return map;
+	}
+	
 	//선택한 playlist의 자세한정보 가져오기
 	@RequestMapping(value = "/getPlaylistInfo", method = RequestMethod.POST)
 	@ResponseBody
@@ -121,20 +130,6 @@ public class PlaylistController {
 			System.out.println("description 수정 성공!");
 		
 		return description;
-	}
-	
-	// (jw) 2021/08/16 
-	@RequestMapping(value = "/getOnePlaylist", method = RequestMethod.POST)
-	@ResponseBody
-	public Object getOnePlaylist(@RequestParam(value = "id") String id) {
-		List<VideoVO> videos = new ArrayList<VideoVO>();
-		videos = videoService.getVideoList(Integer.parseInt(id));
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allVideo", videos);
-		map.put("code", "ok");
-		
-		return map;
 	}
 	
 	@RequestMapping(value = "/player", method = RequestMethod.POST)

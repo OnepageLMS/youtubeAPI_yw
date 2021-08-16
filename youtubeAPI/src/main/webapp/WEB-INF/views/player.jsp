@@ -184,7 +184,7 @@ img {
 			$
 					.ajax({
 						type : 'post',
-						url : 'getAllMyPlaylist',
+						url : '${pageContext.request.contextPath}/playlist/getAllMyPlaylist',
 						data : {email : email},
 						async : false,
 						success : function(result) {
@@ -247,7 +247,7 @@ img {
 			$
 					.ajax({
 						type : 'post',
-						url : 'getAllPlaylist',
+						url : '${pageContext.request.contextPath}/playlist/getAllPlaylist',
 						async : false,
 						success : function(result) {
 							if (result.code == "ok") {
@@ -306,18 +306,19 @@ img {
 					});
 		}
 
-		//function createPlaylist() { //playlist 추가
+		// 진행중 (2021/08/16) 
+		function createPlaylist() { //playlist 추가
 			/* var popup = window.open('addPlaylistPopup') */
 			//var playlistName = $("#playlistName").val();
 			//var creatorEmail = "yewon.lee@onepage.edu"; //나중에 사용자 로그인 정보 가져오기!
-			//var url = "/addPlaylistPopup" + creatorEmail;
+			//var url = "${pageContext.request.contextPath}/playlist/addPlaylistPopup" + creatorEmail;
 			//var popOption = "width=500, height=600";
 
 			//var popup = window.open(url, "addPlaylistPopup", popOption);
 			
-			/* $.ajax({
+			$.ajax({
 				'type' : "post",
-				'url' : "addPlaylist",
+				'url' : '${pageContext.request.contextPath}/playlist/addPlaylist',
 				'data' : {
 					name : playlistName,
 					creator : creatorEmail,
@@ -329,14 +330,14 @@ img {
 					alert("playlist 추가 실패! : ", err.responseText);
 				}
 
-			}); */
-		//}
+			}); 
+		}
 
-		function deletePlaylist(id) { // playlist 삭제
+		/* function deletePlaylist(id) { // playlist 삭제
 			if (confirm("playlist에 속한 비디오들까지 삭제됩니다. 정말 삭제하시겠습니까? ")) {
 				$.ajax({
 					'type' : "post",
-					'url' : "deletePlaylist",
+					'url' : "${pageContext.request.contextPath}/playlist/deletePlaylist",
 					'data' : {
 						id : id
 					},
@@ -349,9 +350,9 @@ img {
 					}
 				});
 			}
-		}
+		} */
 
-		function changeAllList(deletedID) { // playlist 추가, 삭제 뒤 전체 list order 재정렬
+		/* function changeAllList(deletedID) { // playlist 추가, 삭제 뒤 전체 list order 재정렬
 			var idList = new Array();
 
 			$(".card-header").each(function(index) {
@@ -365,7 +366,7 @@ img {
 
 			$.ajax({
 				type : "post",
-				url : "changePlaylistOrder", //새로 바뀐 순서대로 db update
+				url : "${pageContext.request.contextPath}/playlist/changePlaylistOrder", //새로 바뀐 순서대로 db update
 				data : {
 					changedList : idList
 				},
@@ -378,7 +379,7 @@ img {
 					getAllMyPlaylist(email);
 				}
 			});
-		}
+		} */
 
 		/* $(function() { // playlist drag&drop으로 순서변경
 			$("#allPlaylist").sortable({
@@ -406,7 +407,7 @@ img {
 
 			$.ajax({
 				type : 'post',
-				url : 'getOnePlaylist',
+				url : '${pageContext.request.contextPath}/video/getOnePlaylistVideos',
 				data : {
 					id : playlistID
 				},

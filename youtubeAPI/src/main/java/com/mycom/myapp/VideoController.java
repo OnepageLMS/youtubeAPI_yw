@@ -26,12 +26,6 @@ import com.mycom.myapp.video.VideoVO;
 @RequestMapping(value="/video")
 public class VideoController {
 	
-	final static String GOOGLE_AUTH_BASE_URL = "https://accounts.google.com/o/oauth2/v2/auth";
-	final static String GOOGLE_TOKEN_BASE_URL = "https://accounts.google.com/o/oauth2/token"; //https://oauth2.googleapis.com/token
-	final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
-	static String accessToken = "";
-	static String refreshToken = "";
-	
 	@Autowired
 	private VideoService videoService;
 	@Autowired
@@ -125,32 +119,6 @@ public class VideoController {
 		else
 			System.out.println("totalVideoLength 업데이트 실패! ");
 		
-	}
-	
-	// (jw) controller 합치는 과정 
-	@RequestMapping(value = "/searchLms", method = RequestMethod.GET)
-	public String searchLms(Model model, String keyword) {
-		//String order = "relevance";
-		//String maxResults = "50";
-		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
-		
-		model.addAttribute("accessToken", accessToken);
-		
-		// String requestURL =
-		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
-
-		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
-		//model.addAttribute("videos", videos);																
-
-		return "search";
-	}
-	
-	@RequestMapping(value = "/youtube", method = RequestMethod.GET)
-	public String youtube(Model model, String keyword) {
-		
-		model.addAttribute("accessToken", accessToken);														
-
-		return "youtube";
 	}
 	
 	@RequestMapping(value = "/addVideo", method = RequestMethod.POST)

@@ -166,7 +166,7 @@ img {
 			$
 					.ajax({
 						type : 'post',
-						url : 'getAllPlaylist',
+						url : '${pageContext.request.contextPath}/playlist/getAllPlaylist',
 						async : false,
 						success : function(result) {
 							if (result.code == "ok") {
@@ -233,7 +233,7 @@ img {
 
 			$.ajax({
 				type : 'post',
-				url : 'getOnePlaylist',
+				url : '${pageContext.request.contextPath}/video/getOnePlaylistVideos',
 				data : {
 					id : playlistID
 				},
