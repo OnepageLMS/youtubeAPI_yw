@@ -271,7 +271,7 @@ img {
 	<div id="player"></div>
 	
 	<div>
-		<form action="player" id="form2" method="post" style="display: none">
+		<form action="playlist/player" id="form2" method="post" style="display: none">
 		<input type="hidden" name="playerId" id="playerId">
 		<input type="hidden" name="playerTitle" id="playerTitle">
 		<input type="hidden" name="playerDuration" id="playerDuration">

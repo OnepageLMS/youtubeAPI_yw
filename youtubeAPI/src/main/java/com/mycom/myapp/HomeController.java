@@ -144,17 +144,8 @@ public class HomeController {
 	
 	@RequestMapping(value = "/youtube", method = RequestMethod.GET)
 	public String youtube(Model model, String keyword) {
-		//String order = "relevance";
-		//String maxResults = "50";
-		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
 		
-		model.addAttribute("accessToken", accessToken);
-		
-		// String requestURL =
-		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
-
-		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
-		//model.addAttribute("videos", videos);																
+		model.addAttribute("accessToken", accessToken);														
 
 		return "youtube";
 	}
@@ -167,23 +158,6 @@ public class HomeController {
 			@RequestParam(required = false) String keyword) throws Exception{
 		
 		System.out.println(playerId);
-		
-		//String order = "relevance";
-		//String maxResults = "50";
-		//String requestURL = "https://www.googleapis.com/youtube/v3/search?part=snippet&order=" + order + "&q="+ keyword;
-		
-		//model.addAttribute("accessToken", accessToken);
-		
-		// String requestURL =
-		// "https://www.googleapis.com/youtube/v3/search?access_token="+accessToken+"&part=snippet&q="+keyword+"&type=video";
-
-		//List<youtubeVO> videos = service.fetchVideosByQuery(keyword, accessToken); // keyword, google OAuth2
-		//model.addAttribute("videos", videos);			
-		
-//		Map<String, Object> map  = new HashMap<String, Object>();
-//		map.put("id", id);
-//		map.put("title",title);
-//		map.put("duration", duration);
 		
 		model.addAttribute("id", playerId);
 		model.addAttribute("title", playerTitle);
@@ -257,7 +231,6 @@ public class HomeController {
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("allMyPlaylist", playlists);
-		map.put("code", "ok");
 		
 		return map;
 	}
@@ -340,7 +313,7 @@ public class HomeController {
 				else
 					System.out.println("playlist totalVideo 업데이트 실패! ");
 				
-				if (playlistService.updateTotalVideoLength(Pvo) != 0)
+				if (playlistService.updateTotalVideoLength(playlistID) != 0)
 					System.out.println("playlist totalVideoLength 업데이트 성공! ");
 				else
 					System.out.println("playlist totalVideoLength 업데이트 실패! ");

@@ -6,11 +6,13 @@ public interface PlaylistService {
 	public int addPlaylist(PlaylistVO vo);
 	public int addThumbnailID(PlaylistVO vo);
 	public int changeSeq(PlaylistVO vo);
+	public int updatePlaylistName(PlaylistVO vo);
+	public int updateDescription(PlaylistVO vo);
 	public int deletePlaylist(int playlistID);
 	public PlaylistVO getPlaylist(int playlistID);
 	public List<PlaylistVO> getAllPlaylist();
 	public List<PlaylistVO> getAllMyPlaylist(String creatorEmail);
 	public int getCount();
 	public int updateCount(int playlistID);
-	public int updateTotalVideoLength(PlaylistVO vo); // 한개 이상의 변수가 sql 쿼리문에 필요할시에 vo로 사용 
+	public int updateTotalVideoLength(int playlistID); 
 }
