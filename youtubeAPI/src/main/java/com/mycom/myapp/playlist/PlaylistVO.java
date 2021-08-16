@@ -14,6 +14,15 @@ public class PlaylistVO {
 	private int exposed;
 	private Date modDate;
 	
+	public String getThumbnailID() {
+		return thumbnailID;
+	}
+	public void setThumbnailID(String thumbnailID) {
+		this.thumbnailID = thumbnailID;
+	}
+	public int getExposed() {
+		return exposed;
+	}
 	public int getPlaylistID() { 
 		return playlistID;
 	}

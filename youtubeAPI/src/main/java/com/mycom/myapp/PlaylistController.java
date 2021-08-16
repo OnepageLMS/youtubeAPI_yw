@@ -89,7 +89,10 @@ public class PlaylistController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("allPlaylist", playlists);
 		map.put("code", "ok");
-
+		
+		return map;
+	}
+	
 	@RequestMapping(value = "/getAllMyPlaylist", method = RequestMethod.POST) 
 	@ResponseBody
 	public Object getAllPlaylist(@RequestParam(value = "email") String creatorEmail) {

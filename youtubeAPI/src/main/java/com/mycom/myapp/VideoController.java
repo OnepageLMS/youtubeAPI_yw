@@ -23,13 +23,6 @@ import com.mycom.myapp.playlist.PlaylistVO;
 import com.mycom.myapp.video.VideoService;
 import com.mycom.myapp.video.VideoVO;
 
-@Controller
-@RequestMapping(value="/video")
-public class VideoController {
-
-import com.mycom.myapp.video.VideoService;
-import com.mycom.myapp.video.VideoVO;
-
 import net.sf.json.JSONArray;
 
 @Controller
@@ -145,7 +138,7 @@ public class VideoController {
 			// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
 			PlaylistVO Pvo = new PlaylistVO();
 			Pvo.setPlaylistID(playlistID);
-			Pvo.setDuration(length);
+			//Pvo.setDuration(length);
 			Pvo.setThumbnailID(vo.getYoutubeID());
 			System.out.println("thumbnail id check" + Pvo.getThumbnailID());
 			

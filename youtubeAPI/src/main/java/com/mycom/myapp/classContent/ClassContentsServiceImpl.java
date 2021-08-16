@@ -39,5 +39,6 @@ public class ClassContentsServiceImpl implements ClassContentsService{
 	public int getDaySeq(ClassContentsVO vo) {
 		return classContentsDAO.getDaySeq(vo);
 	}
+}
 
 
