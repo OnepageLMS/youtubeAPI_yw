@@ -225,8 +225,7 @@ img {
 													+ '<div class="card-body"></div>'
 													+ '</div>';
 
-											$('#allMyPlaylist').append(
-													html);
+											$('#allMyPlaylist').append(html);
 											getAllVideo(index);
 
 										});
