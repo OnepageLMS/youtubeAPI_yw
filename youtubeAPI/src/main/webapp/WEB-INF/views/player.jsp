@@ -188,10 +188,14 @@ img {
 						data : {email : email},
 						async : false,
 						success : function(result) {
-							if (result.code == "ok") {
-								$('#allMyPlaylist').empty();
 								playlists = result.allMyPlaylist; //order seq desc 로 가져온다.
 
+								$('#allMyPlaylist').empty();
+
+								if (playlists == null)
+									$('#allMyPlaylist').append('저장된 playlist가 없습니다.');
+
+								else{
 								$.each(
 										playlists,
 										function(index, value) { //여기서 index는 playlistID가 아님! 
@@ -229,16 +233,13 @@ img {
 											getAllVideo(index);
 
 										});
-						if ($("#createVideoForm").css('display') === 'block') //video 추가할 Playlist 선택칸 보여주기
-							$(".selectPlaylists").css("display",
-									"inline");
-					} else
-						alert('playlist 불러오기 실패! ');
-
-				},
-				error : function(json) {
-					console.log("ajax로 youtube api 부르기 실패 ");
-				}
+									if ($("#createVideoForm").css('display') === 'block') //video 추가할 Playlist 선택칸 보여주기
+									$(".selectPlaylists").css("display",
+											"inline");
+								}
+					}, error : function(json) {
+						console.log("ajax로 youtube api 부르기 실패 ");
+					}
 			});
 		}
 		
