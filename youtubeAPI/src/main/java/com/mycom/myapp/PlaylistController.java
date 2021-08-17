@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.mycom.myapp.playlist.PlaylistService;
 import com.mycom.myapp.playlist.PlaylistVO;
 
-import com.mycom.myapp.video.VideoVO;
-
 
 @Controller
 @RequestMapping(value="/playlist")
@@ -66,18 +64,6 @@ public class PlaylistController {
 			System.out.println("playlist 추가 성공! ");
 		else
 			System.out.println("playlist 추가 실패! ");
-	}
-	
-	@RequestMapping(value = "/getAllMyPlaylist", method = RequestMethod.POST)
-	@ResponseBody
-	public Object getAllMyPlaylist(@RequestParam(value = "email") String creatorEmail) {
-		List<PlaylistVO> playlists = new ArrayList<PlaylistVO>();
-		playlists = playlistService.getAllMyPlaylist(creatorEmail);
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allMyPlaylist", playlists);
-		
-		return map;
 	}
 	
 	@RequestMapping(value = "/getAllPlaylist", method = RequestMethod.POST)
