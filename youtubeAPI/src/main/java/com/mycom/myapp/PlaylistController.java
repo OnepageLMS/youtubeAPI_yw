@@ -86,7 +86,7 @@ public class PlaylistController {
 		playlists = playlistService.getAllMyPlaylist(creatorEmail); //playlist의 모든 video 가져오기
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("allPlaylist", playlists);
+		map.put("allMyPlaylist", playlists);
 		
 		return map;
 	}
@@ -147,6 +147,12 @@ public class PlaylistController {
 		model.addAttribute("duration", playerDuration);
 		
 		return "player";
+	}
+	
+	// (jw) 2021/08/16 : 일단 access Token 을 사용해야하니 이건 여기에 냅두고 그 이후에는 Controller 에서 처리하도록 
+	@RequestMapping(value = "/searchLms", method = RequestMethod.GET)
+	public String searchLms(Model model, String keyword) {													
+		return "search";
 	}
 
 }

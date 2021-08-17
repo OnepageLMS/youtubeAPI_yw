@@ -113,13 +113,6 @@ public class HomeController {
 		return "main";
 	}
 	
-	// (jw) 2021/08/16 : 일단 access Token 을 사용해야하니 이건 여기에 냅두고 그 이후에는 Controller 에서 처리하도록 
-	@RequestMapping(value = "/searchLms", method = RequestMethod.GET)
-	public String searchLms(Model model, String keyword) {		
-		model.addAttribute("accessToken", accessToken);													
-		return "search";
-	}
-	
 	// (jw) 2021/08/16 : 일단 access Token 을 사용해야하니 이건 여기에 냅두고 그 이후에는 PlaylistController 에서 처리하도록 
 	@RequestMapping(value = "/youtube", method = RequestMethod.GET)
 	public String youtube(Model model, String keyword) {

@@ -262,7 +262,7 @@ img {
 	<div class="nav">
 		<button onclick="moveToMyPlaylist();">내 컨텐츠</button>
 		<button onclick="#">영상추가</button>
-		<button onclick="location.href='${pageContext.request.contextPath}/searchLms'">LMS내 컨텐츠</button>
+		<button onclick="location.href='${pageContext.request.contextPath}/playlist/searchLms'">LMS내 컨텐츠</button>
 	</div>
 
 	<form name="form1" method="post" onsubmit="return false;">

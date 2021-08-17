@@ -566,7 +566,7 @@
 	<div class="nav">
 		<button onclick="#">내 컨텐츠</button>
 		<button onclick="location.href='${pageContext.request.contextPath}/youtube'">영상추가</button>
-		<button onclick="location.href='${pageContext.request.contextPath}/searchLms'">LMS내 컨텐츠</button>
+		<button onclick="location.href='${pageContext.request.contextPath}/playlist/searchLms'">LMS내 컨텐츠</button>
 	</div>
 	
 	<h2>MyPlaylist</h2>
