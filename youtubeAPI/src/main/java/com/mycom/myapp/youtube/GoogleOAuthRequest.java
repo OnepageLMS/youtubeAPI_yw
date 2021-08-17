@@ -1,4 +1,4 @@
-package com.mycom.myapp;
+package com.mycom.myapp.youtube;
 
 import lombok.Builder;
 import lombok.Data;

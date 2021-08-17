@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mycom.myapp.playlist.PlaylistService;
 import com.mycom.myapp.video.VideoService;
+import com.mycom.myapp.youtube.GoogleOAuthRequest;
+import com.mycom.myapp.youtube.GoogleOAuthResponse;
 import com.mycom.myapp.youtube.youtubeProvider;
 
 /**

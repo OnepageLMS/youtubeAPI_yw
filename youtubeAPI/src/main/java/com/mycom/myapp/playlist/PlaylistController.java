@@ -1,4 +1,4 @@
-package com.mycom.myapp;
+package com.mycom.myapp.playlist;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.mycom.myapp.playlist.PlaylistService;
-import com.mycom.myapp.playlist.PlaylistVO;
 
 
 @Controller

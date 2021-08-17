@@ -1,4 +1,4 @@
-package com.mycom.myapp;
+package com.mycom.myapp.video;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.mycom.myapp.playlist.PlaylistService;
 
 import com.mycom.myapp.playlist.PlaylistVO;
-import com.mycom.myapp.video.VideoService;
-import com.mycom.myapp.video.VideoVO;
 
 import net.sf.json.JSONArray;
 

@@ -1,4 +1,4 @@
-package com.mycom.myapp;
+package com.mycom.myapp.classContent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.mycom.myapp.classContent.ClassContentsService;
-import com.mycom.myapp.classContent.ClassContentsVO;
 import com.mycom.myapp.classes.ClassesService;
 
 import net.sf.json.JSONArray;
