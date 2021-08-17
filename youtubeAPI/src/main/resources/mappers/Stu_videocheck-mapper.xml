@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Stu_VideoCheck">
+	<insert id="insertTime">
+		insert into videocheck (id, videoID, playlistID, studentEmail ,lastTime, timer, watched)
+		values
+		(#{id}, #{videoID},  #{playlistID}, #{studentEmail}, #{lastTime}, #{timer}, #{watched})
+	</insert>
+	
+	<update id="updateTime">
+		update videocheck
+		set lastTime=#{lastTime}, timer=#{timer}
+		where studentEmail=#{studentEmail} AND videoID=#{videoID}
+	</update>
+	
+	<update id="updateWatch">
+		update videocheck
+		set lastTime=#{lastTime}, timer=#{timer}, watched=#{watched}
+		where studentEmail=#{studentEmail} AND videoID=#{videoID}
+	</update>
+	
+	<delete id="deleteTime">
+		delete from videocheck where id=#{id}
+	</delete>
+	
+	<select id="getTime" resultType="VideoCheckVO">
+		select * 
+		from videocheck 
+		where id=#{id}
+	</select>
+	
+	<select id="getTime2" resultType="VideoCheckVO">
+		select *
+		from videocheck
+		where studentEmail=#{studentEmail} AND videoID=#{videoID}
+	</select>
+	
+	<select id="getTimeList" resultType="VideoCheckVO">
+		SELECT * 
+		FROM videocheck order
+		by id desc
+	</select>
+	
+</mapper>

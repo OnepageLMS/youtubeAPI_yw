@@ -4,11 +4,16 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
-		<typeAlias alias="playlist"
-			type="com.mycom.myapp.playlist.PlaylistVO" />
+		<typeAlias alias="playlist" type="com.mycom.myapp.playlist.PlaylistVO" />
 		<typeAlias alias="video" type="com.mycom.myapp.video.VideoVO" />
 		<typeAlias alias="classes" type="com.mycom.myapp.classes.ClassesVO" />
 		<typeAlias alias="classContents" type="com.mycom.myapp.classContent.ClassContentsVO" />
+		
+		<typeAlias alias="VideoCheckVO" type="com.mycom.myapp.student.videocheck.Stu_VideoCheckVO" />
+        <typeAlias alias="VideoVO" type="com.mycom.myapp.student.video.Stu_VideoVO" />
+        <typeAlias alias="PlaylistCheckVO" type="com.mycom.myapp.student.playlistCheck.Stu_PlaylistCheckVO" />
+        <typeAlias alias="ClassContentsVO" type="com.mycom.myapp.student.classContent.Stu_ClassContentsVO" />
+        <typeAlias alias="ClassesVO" type="com.mycom.myapp.student.classes.Stu_ClassesVO" />	
 	</typeAliases>
 	
 </configuration>

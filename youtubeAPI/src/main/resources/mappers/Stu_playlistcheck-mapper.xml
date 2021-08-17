@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Stu_PlaylistCheck">
+	<insert id="insertPlaylist">
+		insert into lms_playlistCheck(studentID, playlistID, classPlaylistID, classID, totalVideo, totalWatched, regdate, updateWatched)
+		values
+		(#{studentID}, #{playlistID}, #{classPlaylistID}, #{classID}, #{totalVideo}, #{totalWatched}, #{regdate}, #{updateWatched})
+	</insert>
+	
+	<update id="updatePlaylist">
+		update lms_playlistCheck
+		set totalWatched=#{totalWatched} , updateWatched=#{updateWatched}
+		where id=${id}
+	</update>
+	
+	<update id="updateTotalWatched">
+		update lms_playlistCheck
+		set totalWatched = totalWatched + (select duration
+		from Video join videocheck on Video.id = videocheck.videoID
+		where studentID=#{studentID} AND lms_playlistCheck.playlistID=#{playlistID} AND videocheck.videoID=#{videoID} AND videocheck.watched=1 )
+		where playlistID=#{playlistID}
+	</update>
+	
+	<delete id="deletePlaylist">
+		delete from lms_playlistCheck where id=#{id}
+	</delete>
+	
+	<select id="getPlaylist" resultType="PlaylistCheckVO">
+		select * 
+		from lms_playlistCheck
+		where id=#{id}
+	</select>
+	
+	<select id="getTotalVideo" resultType="int">
+		select totalVideo from lms_playlist
+		where lms_playlist.playlistID  = #{playlistID}
+	</select>
+	
+	<select id="getPlaylistByPlaylistID" resultType="PlaylistCheckVO">
+		select * 
+		from lms_playlistCheck
+		where playlistID=#{playlistID} AND classPlaylistID = #{classPlaylistID}
+	</select>
+	
+	<select id="getAllPlaylist" resultType="PlaylistCheckVO">
+		SELECT * 
+		FROM lms_playlistCheck order
+		by id desc
+	</select>
+
+</mapper>

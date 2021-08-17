@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Stu_ClassContents">
+	
+	<select id="getDaySeq" resultType="int">
+		select count(*) from lms_classPlaylist 
+		where classID=#{classID} and week=#{week} and day=#{day}
+	</select>
+	
+	<select id="getOneContent" resultType="ClassContentsVO">
+		select * from lms_classPlaylist
+		where id=#{id}
+	</select>
+	
+	<select id="getWeekClassContents" resultType="ClassContentsVO">
+		select * 
+		from lms_classPlaylist join lms_playlist on lms_classPlaylist.playlistID = lms_playlist.playlistID
+		where classID=#{classID} AND published =1 order by day, daySeq
+	</select>
+	
+	<select id="getSamePlaylistID" resultType="ClassContentsVO">
+		SELECT * 
+		FROM lms_classPlaylist
+		where playlistID = #{playlistID} AND id = #{id}
+	</select>
+	
+	<select id="getAllClassContents" resultType="ClassContentsVO">
+		select * from lms_classPlaylist
+		where classID=#{classID} order by day and daySeq
+	</select>
+
+</mapper>
