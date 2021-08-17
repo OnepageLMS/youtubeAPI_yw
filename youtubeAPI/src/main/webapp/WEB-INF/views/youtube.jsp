@@ -247,14 +247,23 @@ img {
 		else
 			return value;
 	}
-</script>
 
-<body>
+	function moveToMyPlaylist(){
+		var myEmail = "yewon.lee@onepage.edu"; //이부분 로그인 구현한뒤 현재 로그인한 사용자 정보로 바꾸기 !!
+		location.href = '${pageContext.request.contextPath}/playlist/myPlaylist/' + myEmail;
+	}
+</script>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	
+<body>
+
+	<div class="nav">
+		<button onclick="moveToMyPlaylist();">내 컨텐츠</button>
+		<button onclick="#">영상추가</button>
+		<button onclick="location.href='${pageContext.request.contextPath}/searchLms'">LMS내 컨텐츠</button>
+	</div>
 
 	<form name="form1" method="post" onsubmit="return false;">
 		<select name="opt" id="opt">

@@ -335,19 +335,21 @@ img {
 						"green");
 			});
 		}
+
+		function moveToMyPlaylist(){
+			var myEmail = "yewon.lee@onepage.edu"; //이부분 로그인 구현한뒤 현재 로그인한 사용자 정보로 바꾸기 !!
+			location.href = '${pageContext.request.contextPath}/playlist/myPlaylist/' + myEmail;
+		}
 	</script>
 
-
+	<div class="nav">
+		<button onclick="moveToMyPlaylist();">내 컨텐츠</button>
+		<button onclick="location.href='${pageContext.request.contextPath}/youtube'">영상추가</button>
+		<button onclick="#">LMS내 컨텐츠</button>
+	</div>
 	<div class="container-fluid playlist">
-		<div class="nav">
-			<button>내 컨텐츠</button>
-			<button>LMS내 컨텐츠</button>
-			<button>영상추가</button>
-		</div>
 		
-		<h3>
-			LMS내 컨텐츠 검색
-		</h3>	
+		<h3>LMS내 컨텐츠 검색</h3>	
 
 		<!-- <div id="addPlaylist">
 			<button onclick="createPlaylist()" style="width: 200px;">생 성</button>

@@ -127,21 +127,7 @@ public class HomeController {
 		return "youtube";
 	}
 	
-	@RequestMapping(value = "/player", method = RequestMethod.POST)
-	public String player(Model model,
-			@RequestParam(required = false) String playerId,
-			@RequestParam(required = false) String playerTitle,
-			@RequestParam(required = false) String playerDuration,
-			@RequestParam(required = false) String keyword) throws Exception{
-		
-		System.out.println(playerId);
-		
-		model.addAttribute("id", playerId);
-		model.addAttribute("title", playerTitle);
-		model.addAttribute("duration", playerDuration);
-		
-		return "player";
-	}
+	
 	
 //	@RequestMapping(value = "/deletePlaylist", method = RequestMethod.POST)
 //	@ResponseBody

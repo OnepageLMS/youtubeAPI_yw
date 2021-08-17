@@ -138,7 +138,6 @@ public class VideoController {
 			// (jw) totalVideoLength 추가를 위한 코드 (21/08/09) 
 			PlaylistVO Pvo = new PlaylistVO();
 			Pvo.setPlaylistID(playlistID);
-			//Pvo.setDuration(length);
 			Pvo.setThumbnailID(vo.getYoutubeID());
 			System.out.println("thumbnail id check" + Pvo.getThumbnailID());
 			
@@ -157,21 +156,13 @@ public class VideoController {
 			vo.setSeq(videoService.getTotalCount(playlistID)); //새로운 video의 seq 구하기
 			vo.setPlaylistID(playlistID);
 			
-			
 			if(videoService.insertVideo(vo) != 0) {
 				System.out.println("title: " + vo.getTitle());
-				
 				System.out.println(playlistID + "번 비디오 추가 성공!! ");
 				
-				if (playlistService.updateCount(playlistID) != 0)
-					System.out.println("playlist totalVideo 업데이트 성공! ");
-				else
-					System.out.println("playlist totalVideo 업데이트 실패! ");
+				updateTotalVideo(playlistID);
+				updateTotalLength(playlistID);
 				
-				if (playlistService.updateTotalVideoLength(playlistID) != 0)
-					System.out.println("playlist totalVideoLength 업데이트 성공! ");
-				else
-					System.out.println("playlist totalVideoLength 업데이트 실패! ");
 			}
 			else 
 				System.out.println("비디오 추가 실패 ");

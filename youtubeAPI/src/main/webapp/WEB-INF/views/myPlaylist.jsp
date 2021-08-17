@@ -564,9 +564,9 @@
 </script>
 <body>	
 	<div class="nav">
-		<button>내 컨텐츠</button>
-		<button>LMS내 컨텐츠</button>
-		<button>영상추가</button>
+		<button onclick="#">내 컨텐츠</button>
+		<button onclick="location.href='${pageContext.request.contextPath}/youtube'">영상추가</button>
+		<button onclick="location.href='${pageContext.request.contextPath}/searchLms'">LMS내 컨텐츠</button>
 	</div>
 	
 	<h2>MyPlaylist</h2>

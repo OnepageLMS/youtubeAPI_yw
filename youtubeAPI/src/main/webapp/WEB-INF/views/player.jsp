@@ -553,9 +553,7 @@ img {
 
 	<div class="container-fluid playlist">
 		<!-- Playlist CRUD -->
-		<h3>
-			Playlist 
-		</h3>
+		<h3>Playlist </h3>
 
 
 		<div id="addPlaylist">
